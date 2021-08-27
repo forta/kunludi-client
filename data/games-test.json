@@ -16,9 +16,29 @@
 			"group": "0"
 		},
 		{
+			"name": "vampiro2",
+			"type": "0",
+			"group": "0"
+		},
+		{
 			"name": "venganza",
 			"type": "0",
 			"group": "0"
+		},
+		{
+			"name": "wild-party",
+			"type": "0",
+			"group": "0"
+		},
+		{
+			"name": "venganza-meta",
+			"type": "0",
+			"group": "0"
+		},
+		{
+			"name": "texel",
+			"type": "0",
+			"group": "1"
 		}
 	]
 
