@@ -1,8 +1,8 @@
 // remote connection -------------------------------
-const serverName = "www.kunludi.com"
+// const serverName = "www.kunludi.com"
 // const serverName = "buitroff.ll.iac.es"
 // const serverName = "paco-pc"
-//const serverName = "localhost"
+const serverName = "localhost"
 
 // local connection -------------------------------
 const kunludiLocalClient = require ('./KunludiLocalClient.js').default;
