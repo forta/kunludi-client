@@ -7,3 +7,5 @@ test/unit/coverage
 test/e2e/reports
 data/games/tresfuentes
 data/games/texel
+static/acme-challenge
+

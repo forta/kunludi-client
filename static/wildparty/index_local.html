@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" style="overflow: scroll;overflow-y: scroll">
+
+<head>
+<meta name="tipo_contenido"  content="text/html;" http-equiv="content-type" charset="utf-8">
+
+<script src="./wildparty.js"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="./mini-default.min.css">
+<!--
+<link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css">
+-->
+
+
+</head>
+
+<body onload="init()" onkeypress="htmlPulsaTecla()" >
+
+<div id = "todo" style = "padding: 10px;">
+
+<header>
+<h1 id = "titulo">Fiesta Salvaje</h1>
+
+</header>
+
+<nav>
+<button id="start" onclick="htmlStart()">Empieza</button>
+<label id="idioma">Idioma:</label>
+<select id="comboLang" onchange="htmlChangeLang(this)">
+  <option value="es" label = "español" selected >español</option>
+  <option value="en" label = "english" >english</option>
+</select>	
+</nav>
+
+<a href="#abajo"><span id="enlaceabajo" hidden>Abajo</span></a>
+
+<section>
+<p id="reaction"></p>
+</section>
+
+<aside>
+<p id="botones"></p>
+<a href="#titulo"><span id="enlacearriba" hidden>Arriba</span></a><br/>
+<div style="width:100%;">
+  <div id="left" style="float:left;width:100px;"><span id="pulsatecla1"></span></div>
+  <div id="right" style ="float:right;width:100px;"><span id="pulsatecla2"></span></div>
+</div>
+</aside>
+
+<footer id = "abajo" style ="float:left;width:100%;">
+
+<p><span id = "credits">Creado por el equipo de <a href="http://www.kunludi.com"  target="_blank">kunludi.com</a></span></p>
+
+<div id="extra">
+<p><span id = "contacto">Contacto</span>: <a href="mailto:ludi.ludon@gmail.com">ludi.ludon@gmail.com</a>.</p>
+<p><span id = "node">Este juego se puede ejecutar, además de a través de esta página, desde línea de comandos con node.js: </span><q><strong>node <a href="./wildparty.js" target="_blank">./wildparty.js</a></strong></q></p>
+<p><span id = "etcocomp2019">Participante en el concurso <a href="https://itch.io/jam/ectocomp-2019-espanol"  target="_blank">ectocomp 2019</a></span></p>
+<p><span id = "nota"><strong>Nota:</strong> en los botones "Lee más" es suficiente que pulses una tecla para proseguir con la lectura.</span></p>
+</div>
+
+</footer>
+
+</div>
+
+
+</body>
+</html>

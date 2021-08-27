@@ -5,7 +5,7 @@ Kunludi-client: Multilingual interactive fiction
 
 ---------------------------------------------------------
 
-The kunludi system is being developed in javascript on both the server side (with [node.js] (https://nodejs.org/)) and the client side (using [vue.js v1.0] (https://vuejs.org/)).
+The kunludi system is being developed in javascript on both the server side (with [node.js] (https://nodejs.org/)) and the client side (using [vue.js v2.0] (https://vuejs.org/)).
 
 It is played from a web browser, either against the updated version on the internet (http://www.kunludi.com) or against a local web service (http: // localhost: 8080), which must be installed and launched, as we will see below.
 
@@ -36,7 +36,7 @@ In * production mode *, it would execute:
 node build/build.js
 ```
 
-3) To play locally: http://localhost:8080
+3) To play locally: http://localhost:8101
 
 4) To go directly to a game, you must use its internal name. By example, for the game "My Dear Sister": http://localhost:8080/#!/ludi/games/miqueridahermana
 

@@ -23,6 +23,7 @@
     <li>Source code of kunludi: <a href="https://github.com/forta/kunludi_vue" target="_blank"> https://github.com/forta/kunludi_vue</a> (Two games included: Vampiro and My Dear Sister)</li>
     <li>Source code of game The Three Fountains: <a href="https://github.com/forta/kunludiGame_tresfuentes" target="_blank">https://github.com/forta/kunludiGame_tresfuentes</a></li>
     <li>Source code of game Texel: <a href="https://github.com/forta/kunludiGame_texel" target="_blank">https://github.com/forta/kunludiGame_texel</a></li>
+    <li>Game <strong>Wild Party</strong> (not strictly a kunludi game): <a href="./static/wildparty" target="_blank">Wild Party</a></li>
     </ul>
 
     </div>
@@ -49,6 +50,7 @@
         <li>Código fuente de kunludi: <a href="https://github.com/forta/kunludi_vue" target="_blank"> https://github.com/forta/kunludi_vue</a> (Incluye dos juegos: Vampiro y Mi Querida Hermana)</li>
         <li>Código fuente del juego Las Tres Fuentes: <a href="https://github.com/forta/kunludiGame_tresfuentes" target="_blank">https://github.com/forta/kunludiGame_tresfuentes</a></li>
         <li>Código fuente del juego Texel: <a href="https://github.com/forta/kunludiGame_texel" target="_blank">https://github.com/forta/kunludiGame_texel</a></li>
+		<li>Juego <strong>Fiesta Salvaje</strong> (no es estrictamente un juego kunludi): <a href="./static/wildparty" target="_blank"> Fiesta Salvaje </a> </li>
         </ul>
     </div>
 
@@ -75,6 +77,7 @@
         <li>Kodo de kunludi: <a href="https://github.com/forta/kunludi_vue" target="_blank"> https://github.com/forta/kunludi_vue</a> (Du ludoj inkluzivitaj: Vampiro kaj Mia Kara Fratino)</li>
         <li>Kodo de la ludo La Tri Fontoj: <a href="https://github.com/forta/kunludiGame_tresfuentes" target="_blank">https://github.com/forta/kunludiGame_tresfuentes</a></li>
         <li>Kodo de la ludo Texel: <a href="https://github.com/forta/kunludiGame_texel" target="_blank">https://github.com/forta/kunludiGame_texel</a></li>
+		<li>Ludo <strong>Sovaĝa Festo</strong> (ne strikte kunludi ludo): <a href="./static/wildparty" target="_blank">Sovaĝa Festo</a> </li>
         </ul>
 
     </div>
@@ -101,6 +104,7 @@
         <li>Code source de kunludi: <a href="https://github.com/forta/kunludi_vue" target="_blank"> https://github.com/forta/kunludi_vue</a> (Y compris les jeux: Vampiro et Ma Chère sœur</li>
         <li>Code source du jeu juego Las Tres Fuentes: <a href="https://github.com/forta/kunludiGame_tresfuentes" target="_blank">https://github.com/forta/kunludiGame_tresfuentes</a></li>
         <li>Code source du jeu Texel: <a href="https://github.com/forta/kunludiGame_texel" target="_blank">https://github.com/forta/kunludiGame_texel</a></li>
+		<li>Jeu <strong>Fête sauvage</strong> (pas strictement un jeu de kunludi) : <a href="./static/wildparty" target="_blank">Fête sauvage</a></li>
         </ul>
 
     </div>

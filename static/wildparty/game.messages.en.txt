@@ -1,0 +1,114 @@
+Introduction 0	Ana is in the dark in the middle of the luxurious Halloween party. It had all started very well, but a while ago many guests began to stick together more and more strongly. Ana moved sneakily to the exit door of the ballroom, just at the moment the light went out and everything was filled with darkness and screams ... and the unpleasant sound of teeth chewing raw meat.
+Introduction 1	Seeking refuge, Ana dodged invisible blows in the dark, although some of them stripped her of some of her northern witch clothes. In the end, on the top floor of the mansion, when he turned hopelessly one more knob, a door opened.
+Introduction 2	Ana entered and was blinded for a moment by a light that fell on her face. He heard the door close behind him and when his pupils adjusted, he saw a woman with a cell phone in his hand, who looked at her with wide eyes and whispered disconsolately in Russian - Tu nyé Andrey -, and retired to the back of the room, turning off the light. They are both dark.
+Introduction 3	Hopeful for this unexpected ally, Ana starts talking to her. Who knows if together they can survive this nightmare
+you enter2_1	I see you get bored of dancing with the zombies
+Ana speaks for the first time	Boasting acute polyglotism, Ana tries to speak with the woman in several languages, but by not reacting to them, she resigns herself to speaking in English, the language to which she does respond.
+End conversation and exit	leaves the room.
+menu_erika introduce yourself	Presents itself.
+tell me about yourself first	Tell me about yourself first, I don't know if I trust.
+I would like to leave your mobile	I'd like to leave it to you, but it's the last thing I have left of my boyfriend.
+Who you are?	question - who are you?
+I'm Erika	My name is Erika. I thought you would be my boyfriend. I am very worried about him.
+three touches	If you go out, don't forget to hit three times to know it's you and let you in.
+you go out	Ana leaves the room and hears the door close from inside
+Erika does not react	Erika does not react and remains silent.
+Ask for the boyfriend	ask Erika for her boyfriend
+you show up 0	Ana makes a brief summary of her story:
+you introduce yourself 1	This morning he had reached the opulent mansion on the outskirts of St. Petersburg. He had been invited by Russian friends from the University of Helsinki where he is from Erasmus, Yuri and Tanya, children of rich parents but good people.
+you introduce yourself 2	Upon arrival she felt dazzled by the high level of cars and dresses of the guests. Then, when he was required to hand over his cell phone and take the pills required to access the Halloween party, he didn't like a hair. However, as he had informed his friends and family about who he would be with this time, he felt fairly safe. The day would come when she was a responsible adult; I was still in the age of nonsense.
+you introduce yourself 3	Ana took one of the pills in front of the safety one, but took good care not to do the same with the rest of the pills, which she hid and pretended to swallow. The initial moments of the party began normally, until people began to get aggressive and fight if motive, when they took advantage to go to a safe place, just when the light went out.
+you introduce yourself 4	He dodged as he could various thrusts and attempts to be seized. In desperation, he searched for dark doors, until he found this open door through which he had just entered.
+about the boyfriend	This is the photo: Andrey, very handsome - he shows Ana the photo on his mobile. I'm afraid the worst has happened.
+Do you know anything about zombies?	ask about zombies
+zombies	Zombies? I call them, the rabid ones. If you have taken pills, like me, you will soon be like them. But my boyfriend and I were at least forced to take them, not like you who took them for fun.
+zombies2	Ana recognizes at that time that she has only taken one pill.
+zombies3	Mmm ... sooner or later it will work, but you may have time to help me before it happens to you ... or to myself. Keep the distances with me if I start behaving aggressively.
+forced_1	The organizers of the party. They always make us consume the product before taking it for granted. Me and my boyfriend are the cooks of the product.
+forced_2	Ana is enraged to learn that this woman is responsible for this horror: How have they been able to do this? —You are angry.
+forced_3	They tricked us. We would never have agreed to research on developing drugs. The businessman who hired us promised to finance the research on the brain that we had begun in our doctoral thesis, but when we encountered certain results during our brain research, they kidnapped us and forced us to move in a direction we had not anticipated.
+You give the note to Erika	Give Erika the note
+Ask who forced them to take the pills	Ask who forced them to take the pills.
+locked up	Locked in a gold cage. We have been traveling around the world for two years, visiting the most luxurious places, but with men with gun always a few steps away from us. From remittance to remittance, from party to party.
+entrepreneur	It's one, Dima, new rich in gas. Exquisite ways, but without regard if you get in their way.
+plan_0	The idea was to take advantage of the disorder during the party to escape after taking the antidote. We were very scared and in the middle of the manufacturing processes we have been testing toxic variants of the drug in guinea pigs. The excuse to the bosses was that we wanted to improve the formula and we needed the guinea pigs before trying the drug with tramps and then with clients.
+plan_1	We discovered a variant of the drug, which drove them crazy after taking it and made them extremely aggressive. At the same time, we found a blocker of that characteristic. It should be taken after ingesting the drug, before it took effect. The product is very unstable and needs to be manufactured shortly before consumption.
+plan_2	Ana, you must get the necessary ingredient to prepare the antidote. As you know, it's at the bar. If the rabid ones frighten you, take a couple of pills, that will make you lose your fear and then I will nullify the effects.
+pides_móvil_1	ask for mobile
+pides_móvil_2	He offers to look for Erika's boyfriend, borrowing her cell phone to look for him: trick or treat?
+note 1	"Honey, after separating, they took me to Dima at the bar, to tell me that they would kill you if the pills caused problems." In a moment of dismissal, I was able to hide some additional capsules with the main ingredient of the antidote in a special bottle, you can imagine which one. It's just a plan b because I have capsules with the antidote prepared in an office drawer.
+note_2	"After giving me a drug overdose, they beat me and left me in handcuffs, leaving the wives' keys morbidly a few meters away from me." I heard them joking with the combination of the lab door before leaving. Fuck, it's 1031, what a fucking grace.
+note_3	"It's been a while since the above." I feel the blood boil, I just want to kick and bite. The only possibility I see before there is no going back is to cut my hand and take the capsules with the antidote that I left in the drawer.
+note_4	—I love you.
+rugged scene 0	Upon leaving the room, a madman grabs Ana's foot and rips one of her witch shoes off. By not wearing socks, the foot is impregnated with a liquid whose origin you prefer not to ask.
+rugged scene 1	After moving quietly, Ana sees a shadow that looks like one of her Russian friends. He can't help but let out a groan and the shadow looks at her. Indeed, it is Yuri, or it was. She is still dressed as a vampire, but it is not her costume that scares. Now he is just a madman who runs after Ana and starts the lack of a witch. Fortunately Ana swings Yuri and escapes by the hair.
+rugged scene 2	to-do: rugged scene 2
+rugged scene 3	to-do: rugged scene 3
+rugged scene 4	to-do: rugged scene 4
+rugged scene 5	to-do: rugged scene 5
+rugged scene 6	to-do: rugged scene 6
+The game is over	On this occasion Ana failed to free herself from the attacks of the furious, who tear and devour her members as if they were ripe fruit.
+laboratory 0	Erika trembles and throws an angry look at Ana, who is also about to explode and throw herself on the first one because of what a bastard she has been. After all, Erika made the damn pills.
+lab 1	But still, Ana still trusts the Russian scientific value and they leave the room holding hands, trembling before the slightest noise. Erika illuminates the access key to the laboratory with the lowest possible brightness of the mobile and they enter a second.
+lab 2	Before realizing just what was happening Erika takes the bloody wives and their keys, which were visible on the table, opens them and ties Ana with her to the same place where Andrey was.
+laboratory 3	Ana screams and resists. It is not only because of frustration, but because of the effect that drugs cause on it and that they are about to leave it in an irreversible state of dumbness.
+lab 4	Then Erika starts cooking. Its expert hands take just five minutes to get the savior antidote.
+laboratory 5	Erika takes her dose and then she must almost force Ana to swallow his.
+laboratory 6	Erika falls asleep and falls to the ground. Open the windows and wait for the sun to rise.
+In that case I do lend you my mobile.	In that case I do lend you my mobile. That's how desperate I am. Anyway, it is not worth calling, we are in an isolated area on the mountain, as you well know. I leave it locked, you can only use it as a flashlight. We are on Halloween: we make a deal. Of terrifying tricks we are already left over.
+Ana lights it up with her cell phone	Ana lights it with her cell phone and sees an emaciated face of so much crying. Immediately turn off the light, but see that you saw a white lab coat.
+Ana lights the note with her cell phone	Ana lights up the note with her cell phone, all dotted with blood. While Erika reads it she interrupts herself in tears and translates to Ana:
+Please try to enter the laboratory	Please try to enter the laboratory that is a little further on this same floor, to see if you can find Andrey. However, if the door is closed, I'm sorry to tell you that I don't know the access code.
+Have fun at the party	Have fun at the party
+You don't find anything of importance	You wander in the dark and you don't find anything of importance.
+You return on your steps to the room	With great caution, Ana retraces her steps to the room.
+Ana discovers dead, note and labotatory_1	On the top floor of the mansion, not far from Erika's room, Ana scores a metal door with an access keypad. He sees a trail of blood that leads to a body that lacks the right hand. Many threads of blood and tissue hang from the stump, as if it had been brutally torn away, and a large pool of blood surrounds it.
+Ana discovers dead, note and labotatory_2	Ana recognizes Andrey in him. It has a note on it, which it does not understand because it is written in Cyrillic, but at least it clearly identifies a number, 1031. When you try it on the keyboard access to the laboratory Ana manages to enter it.
+Ana discovers dead, note and labotatory_3	In the laboratory everything is full of blood and there is a hand torn off next to some handcuffs chained to a metal anchored in the wall. Within walking distance are what appear to be the wives' keys. There are many cages with guinea pigs and all the usual chemical gadgets, such as specimens, pipettes and various chemicals. All with annotations in Russian.
+Ana returns to the lab and ends up watching video_1	Ana velve to the laboratory for the antibiotic capsules, but after registering everything does not find them.
+Ana returns to the laboratory and ends up watching video_2	Back to the room, a rabid tries to arrest her and Ana has no alternative but to return to the ground floor, where she has shelter in a security checkpoint, which has its own current.
+Ana returns to the laboratory and ends up watching video_3	Fiddling the controls of the security consoles, Ana manages to see the images of the laboratory while Andrey was still alive. It is all as he himself recounts in his note, except for the fateful final part: after freeing himself, he leaps over the drawer and eagerly takes a large number of pills. In his altered mental state, Andrey surely did not stop to think about his girlfriend and left no pills, so there is none in the drawer.
+Ana returns to the laboratory and ends up watching video_4	Before leaving the laboratory with a slam, the video shows Andrey writhing in pain. It is not that this antidote gives a lot of confidence applied to people, but perhaps it is the only allergy of not ending up like the rest of the rabid ones.
+Ana gets enraged and gets bottle_0	Ana arrives at the entrance to the bar, but there is a lot of rabid noise, and she does not dare to enter at first.
+Ana gets enraged and gets bottle_1	Then remember Erika's advice about taking the pill if you don't dare to face the rabid ones.
+Ana gets enraged and gets bottle_2	Ana follows the advice but does not notice anything strange after taking the pills she still had, at least not in the first few minutes. Then, Ana begins to sweat and feel a contempt against herself and all humanity: “Why the hell did I accept the invitation of those memos? What has been believed that Erika whore manipulating me in this way? I will get the ingredient, but as soon as I have the antidote I will throw it to the rabid ones to give a good account of it. ”
+Ana gets enraged and gets bottle_3	On their way to the drinks counter, they cross several rabid ones, but they are no longer afraid of it. In fact, they seem to be a little scared when Ana looks back at them and has no problem taking the bottle of the fucking lizard and returning to the room
+This is very hard	This is very hard. I do not dare to leave this room, I have seen the effect on guinea pigs and it is terrifying. Please go and bring the capsules Andrey speaks in his note, they are red with green stripes. I wish Andrey could take them and be well, but I fear the worst.
+he tells Erika the video he saw	he tells Erika the video he saw
+you take a pill	you take a pill
+Ana dances alone_0	Ana runs out of the room alone, leaving Erika behind. Do not trust that drug cook. Better rot herself there in her room alone. Surely the lizard bottle pills by themselves are the antidote.
+Ana dances alone_1	It is locked in the laboratory and breaks the bottle in a container. Then, swallow the capsules.
+Ana dances alone_2	At first they produce a calming effect. He sits in a chair and begins to breathe easy. Start smiling: I had succeeded! The world is wonderful, even the rabid are wonderful!
+Ana dances alone_3	He leaves the laboratory and gives himself up to the first rabid man he finds. He also hugs her, kisses her, bites her and tears off her viscera. But Ana does not regret anything, feels nothing, only universal love and thanks for being reciprocated in her last Halloween dance.
+Ana knocks on the door	Ana knocks on the door the three knocks Erika indicated. The door opens, is pushed in and hears the door close.
+The drug increases its effect on Ana	The drug increases its effect on Ana
+Effects drug_1	The effects of the drug begin to affect Ana, who feels that she loses her good mood and looks suspiciously at Erika.
+Effects drug_2	The drug causes Ana to lose concentration and patience. Stop seeing Erika as an ally and start seeing her more as a rival and guilty of everything.
+Effects drug_3	The tension between Ana and Erika is on the surface, as if looking for the minimum to jump on top of each other.
+Effects drug_4_1	Ana throws herself on Erika and they start fighting. Erika was also about to lose her temper and only lacked this.
+Effects drug_4_2	They pull their hair and bite. In the end, each one follows a different path through the mansion.
+Effects drug_4_3	Dismembered dead will appear the next morning when the police arrive at the horror mansion.
+search laboratory	search laboratory
+tell Erika that he found Andrey dead	tell Erika that he found Andrey dead
+ask who forced them to take the pills	ask who forced them to take the pills
+ask for the entrepreneur	ask for the entrepreneur
+ask how long they have been locked up	ask how long they have been locked up
+ask about pills	ask about pills
+Next-generation hallucinogenic pills	Hallucinogenic tablets of new generation. We found some innovative neuro-stimulators, whose behavior we managed to stabilize to provide pleasant experiences of short duration that will not permanently damage the brain. Unfortunately, the product was very unstable and had to be consumed within 24 hours of generating it. What could have been a weakness, was transformed by the rich businessman who hired us into a select experience for people of high standing. At that time the parties began.
+not so select experience	I've only seen people sticking and biting each other! But look at me !: if I am full it gives scratches and blood! How do you explain it to me?
+At first the pills did not cause that effect	At first the pills did not cause that effect. The fiests were very successful because they gave a feeling of happiness without appreciable side effects.
+ask plan details	ask plan details
+look for antidote in laboratory	look for antidote in laboratory
+Ana tells her video	Ana tells Erika the horrible video she saw in the checkpoint.
+I would have preferred not to know	I would have preferred not to know so many details- says Erika looking at Ana with some hate.
+Erika account plan b	Erika is resigned to the news that there is no antidote left in the laboratory and gives Ana details of plan b
+You must get antidote	I think there is no alternative and you will have to go to the bar in search of the lizard bottle, where Andrey hid a vital ingredient to make the antidote. I think that the antidote he took had been prepared for too long and that's why it didn't work, but if I do, I think it could be worth
+Go to the bar to get the lizard bottle	Go to the bar to get the lizard bottle
+Ana fears the rabid	Ana leaves for the bar but is full of rabid people and is not able to face them and gives up.
+don't take pills for no reason	But are you crazy? Keep the distances with me, you'll end up being one of them.
+show the bottle	show the bottle
+Great!	Great!
+First I have to tell you something	But before we go out to the lab there are a couple of things you should know. Ask me and then let's get out of here.
+Let's get out of here at once	Let's get out of here at once
+ask why the plan failed	ask why the plan failed
+Plan account failed	Once the pills were prepared, they took me out of the lab before I could take the antidote capsules for me. The lights went out and the screams and blows began. When they finally knocked on the door in a civil way I thought it was him and that's why I opened it; I didn't expect to see you.
