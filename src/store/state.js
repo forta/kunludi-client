@@ -24,6 +24,7 @@ export default {
   userId: '', // kune
   userSession: 'anonymous',
   history: [ ],
+
   choices: [],
   choice: {choiceId:'top', isLeafe:false, parent:''} ,
   lastAction: {},

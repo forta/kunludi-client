@@ -38,7 +38,7 @@ export default {
       }
       catch(error) {
         return "date?"
-      }      
+      }
   },
 
   kt: (state) => (kMsg) => {
@@ -127,6 +127,14 @@ export default {
   i8n_showText: (state) => (i8nMsg, isEcho) => {
     return i8n_showText_interno (i8nMsg, state.locale)
   },
+
+
+  i8n_showText_with_Filter: (state) => (i8nMsg, isEcho, choiceFilter) => {
+    var txt = i8n_showText_interno (i8nMsg, state.locale)
+    if (typeof choiceFilter == "undefined"  || choiceFilter == "" ) return txt
+    return (txt.indexOf(choiceFilter) !== -1)? txt: ""
+  },
+
 
   i8n_showPCStateLocation: (state) => () => {
     if (typeof state.PCState == 'undefined') return "(loc)"

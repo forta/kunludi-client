@@ -34,6 +34,7 @@ export default {
 	getPendingChoice:getPendingChoice,
 	getLastAction:getLastAction,
 	getGameIsOver:getGameIsOver,
+	//getChoiceFilter:getChoiceFilter,
 	getChoices:getChoices,
 	getReactionList:getReactionList,
 	getMenu:getMenu,
@@ -277,6 +278,17 @@ function getGameIsOver() {
 		return kunludiLocalClient.getGameIsOver()
 	}
 }
+
+/*
+function getChoiceFilter() {
+
+	if (connected)
+		return kunludiClient.getChoiceFilter()
+	else {
+		return kunludiLocalClient.getChoiceFilter()
+	}
+}
+*/
 
 function getChoices() {
 

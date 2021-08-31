@@ -55,6 +55,24 @@ export default {
 	   processChoice (state, choice)
   },
 
+  PROCESS_CHOICE_WITH_FILTER (state, choiceFilter) {
+    console.log("choiceFilter selected: " + choiceFilter )
+
+    var choices = state.runnerProxie.getChoices()
+    var choiceIndex = -1
+
+    for (var i= 0; i<choices.length; i++) {
+      if (choices[i].choiceId == "top") continue
+      if (choices[i].parent == "top") continue
+      if (choices[i].txt_final.indexOf(choiceFilter) !== -1) {choiceIndex = i; break;}
+    }
+
+    if (choiceIndex == -1) return
+    console.log("choice selected: " + choices[choiceIndex].txt_final )
+
+	  processChoice (state, choices[choiceIndex])
+  },
+
   afterRequesGameSlotList: afterRequesGameSlotList,
 
   SETGAME (state, gameId) {

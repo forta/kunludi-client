@@ -46,6 +46,10 @@ export default {
     commit('PROCESS_CHOICE', choice)
   },
 
+  doGameChoiceWithFilter: ({commit}, choiceFilter) => {
+    commit('PROCESS_CHOICE_WITH_FILTER', choiceFilter)
+  },
+
   menuOption: ({commit}, payload) => {
       //var choice = this.pendingChoice
       var choice = payload.pendingChoice

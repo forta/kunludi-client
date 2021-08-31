@@ -66,55 +66,80 @@
 
       <div class="mainChoices" >
           <h3> {{kt("Location")}}: {{i8n_showPCStateLocation()}}</h3>
+
           <span v-for="choice in choices">
               <span v-if ="choice.choiceId == 'itemGroup'"  v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()"> {{i8n_showText(choice, false)}} </span>
               <span v-if ="choice.choiceId == 'directActions' "  v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()"> {{i8n_showText(choice, false) }} </span>
               <span v-if ="choice.choiceId == 'directionGroup' "  v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()"> {{i8n_showText(choice, false)}} </span>
           </span>
       </div>
+      <div class="mainChoices" >
+          <!-- to-do: focus on filter REf: https://michaelnthiessen.com/set-focus-on-input-vue -->
+          <h3> Filtro: <input ref="filter" v-model="choiceFilter"  v-on:keyup.enter="doGameChoiceWithFilter(choiceFilter);choiceFilter=''"> </h3>
+      </div>
+
   	<hr/>
+
+    <!-- (almost) all the choices -->
+
+    <span v-for="choice in choices">
+        <button v-if = "(choice.parent!= 'top') && (choice.choiceId!= 'top') && (choice.parent != 'obj1') && i8n_showText_with_Filter(choice, false, choiceFilter) != ''" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText_with_Filter(choice, false, choiceFilter)}}</button>
+    </span>
 
   	 <!-- direct actions -->
       <div class="choices">
           <span v-for="choice in choices">
+            <!--
               <button v-if = "(choice.parent== 'directActions') && (choice.action.actionId != 'go')" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText(choice, false)}}</button>
+            -->
           </span>
       </div>
 
   	  <!-- directions -->
       <div class="choices">
           <span v-for="choice in choices">
+            <!--
               <button v-if = "(choice.parent== 'directActions') && (choice.action.actionId == 'go')" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText(choice, false)}}</button>
+          -->
           </span>
       </div>
 
   	  <!-- items Here -->
       <div class="choices">
           <span v-for="choice in choices">
+            <!--
               <button v-if = "(choice.parent== 'here')" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText(choice, false)}}</button>
+            -->
           </span>
       </div>
 
   	  <!-- items notHere -->
       <div class="choices">
           <span v-for="choice in choices">
+            <!--
               <button v-if = "(choice.parent== 'notHere')" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText(choice, false)}}</button>
+            -->
           </span>
       </div>
 
       <!-- items Carrying -->
         <div class="choices">
             <span v-for="choice in choices">
+              <!--
                 <button v-if = "(choice.parent== 'carrying')" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText(choice, false)}}</button>
+              -->
             </span>
         </div>
+
 
       <h3 v-if="currentChoice.choiceId=='obj1'"> {{i8n_showText(currentChoice)}}</h3>
 
   	  <!-- items inside -->
       <div class="choices">
           <span v-for="choice in choices">
+            <!--
               <button v-if = "(choice.parent== 'inside')" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText(choice, false)}}</button>
+          -->
           </span>
       </div>
 
@@ -130,7 +155,9 @@
   	<!-- actions2 on items inside -->
       <div class="choices">
           <span v-for="choice in choices">
+            <!--
               <button v-if = "(choice.parent== 'action2')" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText(choice, false)}}</button>
+          -->
           </span>
       </div>
 
@@ -214,9 +241,18 @@ export default {
        selectedUserToChat: '',
        chatMessage:'',
        numberOfKnownMessages:0,
-       gameEnded:false
+       gameEnded:false,
+       choiceFilter: ''
       }
   },
+  /*
+  watch: {
+      choiceFilter: function(val) {
+        console.log("choiceFilter has changed: " + val )
+
+      }
+  },
+  */
 
   computed: mapGetters([
 
@@ -228,6 +264,7 @@ export default {
     //'games',
     'kt',
     'i8n_showText',
+    'i8n_showText_with_Filter',
     'i8n_showReaction',
     'i8n_showPCStateLocation',
     'getChoiceClass',
@@ -260,6 +297,7 @@ export default {
   methods: Object.assign(mapActions([
     'setLocale',
     'doGameChoice',
+    'doGameChoiceWithFilter',
     'menuOption',
     'pressAnyKey',
     'sendMessage'
