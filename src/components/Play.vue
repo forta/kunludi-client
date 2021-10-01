@@ -22,23 +22,42 @@
               {{i8n_showText(hitem.action)}}
             </b></p>
 
-            <!-- to-do?: <reaction :hitem="hitem"></reaction> -->
+            <div :class = " (hitem.gameTurn < history.length - 1)? 'beforeTheLastReaction': 'lastReaction' " >
+              <span v-for="r in hitem.reactionList">
+                 <span v-if ="((r.visible) || (typeof r.visible == 'undefined'))">
+                    <span v-if= "(r.type != 'rt_link')" v-html="i8n_showReaction(r, hitem.gameTurn)"></span>
+                    <span v-if="(r.type == 'rt_link')">
+                      <span v-if="(hitem.gameTurn == history.length - 1)"><a v-on:click="execLink(r.param)">{{r.param.l1.txt}}</a></span>
+                      <span v-if="(hitem.gameTurn < history.length - 1)">{{r.param.l1.txt}}</span>
+                    </span>
+                 </span>
+              </span>
+            </div>
 
+            <span id="{ 'reactionLink-' + hitem.gameTurn }" class = "reactionLink">
+            <!-- to-do: render hidden pictures from links here?
             <span v-for="r in hitem.reactionList">
-                <div v-html="i8n_showReaction(r)"></div>
+              <span v-html="i8n_showReactionLink(r, hitem.gameTurn)"></span> // show only clicked links
+            </span>
+            -->
             </span>
 
         </div>
 
         <div class="reactionList" v-if = "lastAction != undefined">
-          <!-- <h2>{{kt("ReactionList")}}</h2> -->
-  		    <!-- echo -->
-          <!--
-  		    <p><b>{{actionToShow(lastAction, true)}}</b></p>
-          -->
+          <!-- echo of active reaction -->
+          <p><b>
+            <span v-if ="history.length > 0"> {{history.length-1}} &gt; {{actionToShow(lastAction, true)}} </span>
+          </b></p>
 
       		<span v-for="r in reactionList">
-            <div v-html="i8n_showReaction(r)"></div>
+            <span v-if ="((r.visible) || (typeof r.visible == 'undefined'))">
+
+<!--            <span v-if ="((r.visible) || (typeof r.visible == 'undefined'))" v-html="i8n_showReaction(r, history.length-1)"></span>-->
+              <span v-if= "(r.type != 'rt_link')" v-html="i8n_showReaction(r, history.length-1)"></span>
+              <span v-if="(r.type == 'rt_link')"> {{r.param.l1.txt}}</span>
+            </span>
+
       		</span>
         </div>
 
@@ -75,89 +94,27 @@
       </div>
       <div class="mainChoices" >
           <!-- to-do: focus on filter REf: https://michaelnthiessen.com/set-focus-on-input-vue -->
-          <h3> Filtro: <input ref="filter" v-model="choiceFilter"  v-on:keyup.enter="doGameChoiceWithFilter(choiceFilter);choiceFilter=''"> </h3>
+          <h3> Filtro: <input  v-model="choiceFilter"  v-on:keyup.enter="doGameChoiceWithFilter(choiceFilter);choiceFilter='';showEndOfText()"> </h3>
       </div>
 
   	<hr/>
 
-    <!-- (almost) all the choices -->
-
+    <!-- free-of-context choices -->
     <span v-for="choice in choices">
-        <button v-if = "(choice.parent!= 'top') && (choice.choiceId!= 'top') && (choice.parent != 'obj1') && i8n_showText_with_Filter(choice, false, choiceFilter) != ''" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText_with_Filter(choice, false, choiceFilter)}}</button>
+        <button v-if = "(choice.parent!= 'top') && (choice.choiceId!= 'top') && (choice.parent != 'obj1') && (choice.parent != 'inside') && (choice.parent != 'action2') && i8n_showText_with_Filter(choice, false, choiceFilter) != ''" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText_with_Filter(choice, false, choiceFilter)}}</button>
     </span>
-
-  	 <!-- direct actions -->
-      <div class="choices">
-          <span v-for="choice in choices">
-            <!--
-              <button v-if = "(choice.parent== 'directActions') && (choice.action.actionId != 'go')" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText(choice, false)}}</button>
-            -->
-          </span>
-      </div>
-
-  	  <!-- directions -->
-      <div class="choices">
-          <span v-for="choice in choices">
-            <!--
-              <button v-if = "(choice.parent== 'directActions') && (choice.action.actionId == 'go')" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText(choice, false)}}</button>
-          -->
-          </span>
-      </div>
-
-  	  <!-- items Here -->
-      <div class="choices">
-          <span v-for="choice in choices">
-            <!--
-              <button v-if = "(choice.parent== 'here')" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText(choice, false)}}</button>
-            -->
-          </span>
-      </div>
-
-  	  <!-- items notHere -->
-      <div class="choices">
-          <span v-for="choice in choices">
-            <!--
-              <button v-if = "(choice.parent== 'notHere')" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText(choice, false)}}</button>
-            -->
-          </span>
-      </div>
-
-      <!-- items Carrying -->
-        <div class="choices">
-            <span v-for="choice in choices">
-              <!--
-                <button v-if = "(choice.parent== 'carrying')" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText(choice, false)}}</button>
-              -->
-            </span>
-        </div>
-
 
       <h3 v-if="currentChoice.choiceId=='obj1'"> {{i8n_showText(currentChoice)}}</h3>
 
-  	  <!-- items inside -->
-      <div class="choices">
-          <span v-for="choice in choices">
-            <!--
-              <button v-if = "(choice.parent== 'inside')" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText(choice, false)}}</button>
-          -->
-          </span>
-      </div>
-
   	<!-- actions on selected item -->
-      <div class="choices">
-          <!-- show current item -->
+      <div class="choices" v-if= "currentParent() != ''">
+          <!-- show current item  -->
           <p><div v-html="currentParent()"></div></p>
           <span v-for="choice in choices">
-              <button v-if = "(choice.parent== 'obj1')" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText(choice, false)}}</button>
-          </span>
-      </div>
-
-  	<!-- actions2 on items inside -->
-      <div class="choices">
-          <span v-for="choice in choices">
-            <!--
-              <button v-if = "(choice.parent== 'action2')" v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText(choice, false)}}</button>
-          -->
+              <!-- use choiceFilter -->
+              <button v-if = "(choice.parent == 'obj1') && i8n_showText_with_Filter(choice, false, choiceFilter) != '' " v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText_with_Filter(choice, false)}}</button>
+              <button v-if = "(choice.parent == 'inside') && i8n_showText_with_Filter(choice, false, choiceFilter) != '' " v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText_with_Filter(choice, false)}}</button>
+              <button v-if = "(choice.parent == 'action2') && i8n_showText_with_Filter(choice, false, choiceFilter) != '' " v-bind:class="getChoiceClass(choice)" v-on:click="doGameChoice(choice); showEndOfText()">{{i8n_showText_with_Filter(choice, false)}}</button>
           </span>
       </div>
 
@@ -166,11 +123,10 @@
     <!-- menu but not presskey -->
     <div class="menu" v-if = "!pendingPressKey && menu.length > 0">
 
-      <!--<div class="menuPiece" v-html="i8n_showReaction (menuPiece)"></div>-->
-      <p>menu piece: [{{menuPiece}}]</p>
+      <div class="menuPiece" v-if = "typeof menuPiece != 'undefined'" v-html="i8n_showReaction (menuPiece, history.length-1)"></div>  <!-- history.length? -->
 
       <div class="menuChoices">
-        <h3> {{kt("Action")}}: {{i8n_showText(pendingChoice)}}</h3>
+        <!-- <h3> {{kt("Action")}}: {{i8n_showText(pendingChoice)}}</h3> -->
         <ul>
             <span v-for="(m, index) in menu">
             <li><button v-on:click="menuOption({pendingChoice:pendingChoice, menu:menu, m:m}); showEndOfText()">  {{ index + 1}} - {{i8n_showText(m)}}</button></li>
@@ -223,6 +179,7 @@
   </audio>
 
    -->
+     <div id="play_bottom_2"></div>
 
 </div>
 </div>
@@ -297,6 +254,7 @@ export default {
   methods: Object.assign(mapActions([
     'setLocale',
     'doGameChoice',
+    'execLink',
     'doGameChoiceWithFilter',
     'menuOption',
     'pressAnyKey',
@@ -307,12 +265,22 @@ export default {
       // do something with par
     },
 
+    actionToShow: function (choice, isEcho) {
+
+      if (typeof choice.i8n != 'undefined')
+        if (choice.i8n[this.locale] != 'undefined')
+          if (choice.i8n[this.locale].txt != '')
+            return choice.i8n[this.locale].txt // más adelante, que no sea txt, sino echo.txt, short.txt, long.txt, o inlcuso un objeto renderizable
+
+      return JSON.stringify(choice) + ". isEcho: " + isEcho
+    },
+
     showEndOfText: () => {
           //var elem = document.getElementById("play_bottom")
           // elem.scrollIntoView(true)
 
           setTimeout(function(){
-          var elem = document.getElementById("play_bottom")
+          var elem = document.getElementById("play_bottom_2")
           if (elem != null)
               //elem.scrollTop =  elem.scrollHeight
               elem.scrollIntoView(true)
@@ -374,14 +342,7 @@ let methods_old = {
       isMiddleChoice: function (choice) {
          return ((choice.choiceId == 'action0') ||(choice.choiceId == 'action') ||(choice.choiceId == 'action2') || (choice.choiceId == 'obj1') || (choice.choiceId == 'dir1'))
       },
-      actionToShow: function (choice, isEcho) {
-        if (typeof choice.i8n != 'undefined')
-          if (choice.i8n[this.locale] != 'undefined')
-            if (choice.i8n[this.locale].txt != '')
-              return choice.i8n[this.locale].txt // más adelante, que no sea txt, sino echo.txt, short.txt, long.txt, o inlcuso un objeto renderizable
 
-        return JSON.stringify(choice) + ". isEcho: " + isEcho
-      },
       decodeHtml: function (html) {
         var txt = document.createElement("textarea");
         txt.innerHTML = html;
@@ -472,7 +433,7 @@ li:last-child {
 
 div.play {
     overflow: hidden;
-    height:100%
+    height:100%;
 }
 
 div.play_top {
@@ -480,20 +441,32 @@ div.play_top {
   position: relative;
   top: 0;
   right: 0;
- 	overflow: scroll;
+ 	overflow: hidden; /* Hide both scrollbars */
   text-align: left;
 	background-color:#FFF;
+  /*overflow-x: hidden; /* /* Hide horizontal scrollbar */
+
 }
 
 div.reactionList {
-	background-color: #FFF;
+	/*background-color: #FFF;*/
   text-align: left;
+  background-color: #CFD;
 }
 
+/*
 div.play_bottom {
     position: relative;
     buttom: 0;
     right: 0;
+}
+*/
+
+div.play_bottom_2 {
+    position: relative;
+    buttom: 0;
+    right: 0;
+    background-color: #FE2E64;
 }
 
 
@@ -505,6 +478,18 @@ div.chatSecton {
   background-color: #EEE;
   text-align: left;
   /*font-size: 0.9vw;*/
+}
+
+div.beforeTheLastReaction {
+  /* background-color: #FFD; */
+}
+
+div.lastReaction {
+  background-color: #CFD;
+}
+
+span.reactionLink {
+  background-color: #FFD;
 }
 
 div.choices {

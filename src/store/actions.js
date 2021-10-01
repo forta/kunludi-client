@@ -42,6 +42,10 @@ export default {
     commit ('QUITGAME')
   },
 
+  execLink: ({commit}, param) => {
+    commit('EXEC_LINK', param)
+  },
+
   doGameChoice: ({commit}, choice) => {
     commit('PROCESS_CHOICE', choice)
   },

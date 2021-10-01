@@ -131,9 +131,6 @@
   "items.libro_magia.txt": {
     "message": "arcano libro"
   },
-  "items.manuscrito.desc": {
-    "message": "La manuskripto de via romano. Ĉio trezoron al vi kiel eraro de la komputilo dosiero perdis baldaŭ post presado fari korektojn al boli, per kiu vi volas korekti la unuan malneton. Pluvo aŭ brilas vi havas imposton elspezi almenaŭ ses horojn tage."
-  },
   "items.manuscrito.txt": {
     "message": "manuskripto"
   },
@@ -289,6 +286,9 @@
   },
   "messages.Introduction.txt": {
     "message": "Mia Kara Fratino. La perdo de via amato ĝemela fratino lasis vin agitita ekde via infanaĝo, sed ŝi estas tiel malproksimaj de ni, kiel vi pensas?"
+  },
+  "messages.manuscrito2.txt": {
+    "message": "La manuskripto de via romano. Ĉio trezoron al vi kiel eraro de la komputilo dosiero perdis baldaŭ post presado fari korektojn al boli, per kiu vi volas korekti la unuan malneton. Pluvo aŭ brilas vi havas imposton elspezi almenaŭ ses horojn tage."
   },
   "actions.móvil_llamar.txt": {
     "message": "alvoko"

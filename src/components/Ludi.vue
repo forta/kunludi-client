@@ -47,6 +47,7 @@ body {
   justify-content: left;
   height: 100%;
   font-size:20px;
+  overflow-x: hidden; /* Hide horizontal scrollbar */
 }
 
 /*

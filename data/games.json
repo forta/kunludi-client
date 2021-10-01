@@ -39,6 +39,11 @@
 			"name": "texel",
 			"type": "0",
 			"group": "1"
+		},
+		{
+			"name": "raritos",
+			"type": "0",
+			"group": "1"
 		}
 	]
 

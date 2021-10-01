@@ -398,6 +398,7 @@ let initItems =  function  (items, primitives) {
 		firstDesc: function (indexItem2) {
 			primitives.CA_ShowMsg ("Introduction");
 			primitives.CA_ShowMsgAsIs ("<p></p>");
+
 		}
 
 	});

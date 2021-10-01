@@ -1,0 +1,68 @@
+{
+    "items": [
+        {
+            "id": "prota",
+            "type": "pc",
+            "loc": "intro",
+            "att": {        "generalState": [ {"state":"0"}	]      }
+        },
+        {
+            "id": "limbo",
+            "type": "loc"
+        },
+        {
+          "id": "intro",
+            "type": "loc",
+            "address":[{  "dir":"in", 	"target":"fuera"	}],
+            "att": {
+        "generalState": [ {"state":"0"}	]
+            }
+        },
+        {
+			       "id": "fuera",
+            "type": "loc",
+			"address":[
+				{  "dir":"in", 	"target":"porche"	}
+			],
+            "att": {
+ 				"generalState": [ {"state":"0"}	]
+            }
+        },
+        {
+			"id": "porche",
+            "type": "loc",
+			"address":[
+				{   "dir":"out", "target":"fuera"  }
+			],
+            "att": {
+ 				"generalState": [ {"state":"0"}	]
+            }
+        },
+        {
+          "id": "móvil",
+                "type": "obj",
+                "loc": "prota",
+          "att": {
+            "apps": [  {"app_reloj":"450"}, {"app_linterna":"0"}, {"app_pilas":"1440"}	]
+            }
+        }
+
+    ],
+	"attributes":[
+ 	  {
+         "id":"generalState",
+		 "properties": [
+                { "id": "state", "value": "0", "use":"mandatory" }
+          ]
+      }
+   ],
+	"actions": [
+	],
+	"directions": [	],
+	"attExceptions":[
+	  {
+         "id":"isTakeAble",
+         "exceptionList": []
+	  }
+   ]
+}

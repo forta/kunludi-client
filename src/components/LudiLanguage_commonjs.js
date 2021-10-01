@@ -430,7 +430,8 @@ function reactionTranslation (reaction) {
 	let longMsg = {}
 
 	if (
-		(reaction.type == "rt_msg") || (reaction.type == "rt_graph") ||
+		(reaction.type == "rt_msg") ||
+		(reaction.type == "rt_graph") ||
 		(reaction.type == "rt_quote_begin") || (reaction.type == "rt_quote_continues") ||
 		(reaction.type == "rt_play_audio") ||
 		(reaction.type == "rt_end_game") ||

@@ -285,7 +285,7 @@ function CA_ShowMsg (txt, param) {
 
   // to-do: this is a temp trick
   if (param != undefined) {
-	console.log ("<KL>Param in CA_ShowMsg: " + JSON.stringify (param))
+	// console.log ("<KL>Param in CA_ShowMsg: " + JSON.stringify (param))
 	if (param.o1 != undefined) {
 		console.log ("<KL>Param.o1 in CA_ShowMsg: " + param.o1)
 		if  (!isNaN(parseFloat(param.o1)) && isFinite(param.o1)) {

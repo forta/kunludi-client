@@ -111,23 +111,31 @@ export default {
   },
 
   currentParent: (state, getters) => () => {
+    // to-do: not only obj1 on action1-type actions but also obj1 in action2-type actions
       for (var c in state.choices) {
         if (state.choices[c].parent == 'obj1') { // first action with obj1 parent
           for (var c2 in state.choices) {
             if (state.choices[c2].choiceId == 'obj1' &&
                 state.choices[c2].item1 == state.choices[c].action.item1) {
                   return "<p>" + i8n_showText_interno (state.choices[c2], state.locale) + "</p>"
-              }
+            }
           }
         }
       }
+
+      for (var c in state.choices) {
+        if (state.choices[c].parent == 'action2') { // first action with obj2 parent
+          // to-do:
+          return "<p>" + state.choices[c].action.item1Id + "</p>"
+        }
+      }
+
      return ""
   },
 
   i8n_showText: (state) => (i8nMsg, isEcho) => {
     return i8n_showText_interno (i8nMsg, state.locale)
   },
-
 
   i8n_showText_with_Filter: (state) => (i8nMsg, isEcho, choiceFilter) => {
     var txt = i8n_showText_interno (i8nMsg, state.locale)
@@ -144,9 +152,9 @@ export default {
     return i8n_showText_interno (state.PCState.profile.locMsg, state.locale)
   },
 
-  i8n_showReaction: (state, getters) => (reaction) => {
+  i8n_showReaction: (state, getters) => (reaction, gameTurn) => {
 
-    var txt = i8n_showText_interno (reaction, state.locale) + "<br/>"
+    var txt = i8n_showText_interno (reaction, state.locale)
 
     if (typeof reaction.type == 'undefined') {
       return JSON.stringify (reaction)
@@ -156,17 +164,41 @@ export default {
     if (reaction.type == "rt_dev_msg") return ""
 
     if ( (reaction.type == "rt_graph") ||
-         (reaction.type == "img") ) { //?? received a menuPiece
+         (reaction.type == "img") ) { // at the moment, inside of a menuPiece
+
       var imgText = ""
-      if (reaction.isLink) {
+      if (reaction.isLink) { // show the graphic on click
+        /*
+          to-do: onclick, show the graphic in the game zone, instead of on an external web tab
+        */
+        var graphics_counter = 0 // in fact, it should be a stack
+        imgText = "<div id = 'img_reaction_" + graphics_counter + "'></div>"
+
+        // if link in a previous reaction, do not see the link but just text
+        if (gameTurn < state.gameTurn - 1) {
+          console.log ("link inactive")
+          return ""
+        }
+
+        // to-do: instead of showing the picture on a new tab, it must be to make an external action which change visibility of the graph
+
         if (reaction.isLocal) {
-          imgText += "<a href='" + require("./../../data/games/" + state.gameId + "/images/" + reaction.url) + "' target='_blank'>" + txt + "</a><br/>"
+          try {
+            imgText += "<a href='" + require("./../../data/games/" + state.gameId + "/images/" + reaction.url) + "' target='_blank'>" + txt + "</a><br/>"
+          }
+          catch(error) {
+            //console.error(error);
+            console.log("Error: broken link to " + "./images/" + reaction.url);
+            imgText +=  txt + " (error: broken link to " + "./images/" + reaction.url + ")</br>"
+          }
         }	else {
           imgText += "<a href='" + reaction.url + "' target='_blank'>" + txt + "</a><br/>"
         }
-      } else {
+
+      } else {  // show the graphic directly
+
         // patch
-        var url_src = (reaction.type == "rt_graph")? reaction.url : reaction.src
+        var url_src = (reaction.type == "rt_graph")? reaction.url : reaction.src // "rt_graph" or a "img" from a menuPiece
         try {
           if (reaction.isLocal) {
             url_src = "/images/" + url_src

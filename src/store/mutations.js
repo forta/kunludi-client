@@ -51,7 +51,63 @@ export default {
 
   LOAD_GAME_ABOUT: LOAD_GAME_ABOUT,
 
+  EXEC_LINK (state, param) {
+     console.log("execute link: " + JSON.stringify(param))
+
+     if (typeof param.l1.subReactions == "undefined") {
+       console.log("error executing link: missing subReactions")
+       return
+     }
+
+     for (var i=0; i<param.l1.subReactions.length;i++) {
+       //internal reaction
+       var ir = param.l1.subReactions[i]
+       if (ir == null) {
+         continue
+       }
+       if (ir.type == "visible") {
+         // params: ir.rid, ir.visible
+         for (var j=0; j<state.history[state.gameTurn-1].reactionList.length;j++) {
+           if (typeof state.history[state.gameTurn-1].reactionList[j].id != "undefined" ) {
+             if (state.history[state.gameTurn-1].reactionList[j].id == ir.rid ) {
+               state.history[state.gameTurn-1].reactionList[j].visible = ir.visible
+             }
+           }
+         }
+       } else if (ir.type == "item") {
+         // params: ir.o1
+         var choice = {choiceId:'obj1', item1: ir.o1, item1Id: ir.o1Id, parent:ir.parent}
+         processChoice (state, choice)
+       } else if (ir.type == "action") {
+         // params: ir.o1, ir.action
+         console.log("to-do: internal reaction/action" )
+         // to-do
+         // just demo
+         var choice = {	choiceId:"dir1",
+             isLeafe:true,
+             parent:"directActions",
+             action:	{
+               actionId:"go",
+               d1:8,
+               d1Id:"in",
+               target:3,
+               targetId:"fuera",
+               isKnown:false
+             },
+             txt_final:"dentro"
+           }
+         processChoice (state, choice)
+       } else if (ir.type == "url") {
+         // params: ir.url
+         console.log("to-do: internal reaction/url: [" + ir.url + "]")
+       }
+     }
+
+  },
+
   PROCESS_CHOICE (state, choice) {
+     console.log("Debug choice: " + JSON.stringify(choice))
+
 	   processChoice (state, choice)
   },
 
@@ -120,8 +176,15 @@ export default {
     // cleaning previous game data
     cleanHistory(state)
 
+    // to-do: wait for a condition instead of just time
     if (state.userId == '') { // local engine
       state.runnerProxie.join ( gameId, slotId)
+
+      // wait for several seconds till the game were loaded
+      setTimeout(function () {
+        afterGameLoaded(state, slotId)
+      }, 500);
+
       afterGameLoaded(state, slotId)
     } else {
       state.choice = {choiceId:'top', isLeafe:false, parent:''}

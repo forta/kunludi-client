@@ -54,7 +54,7 @@ function getLongMsgId   (type, id, attribute) {
 
 function expandParams (textIn, param) {
 
-	let availableParams = ["a1", "o1", "o2", "d1", "s1", "s2", "s3", "s4", "s5", "s6"] // yeah, clearly improvable
+	let availableParams = ["a1", "o1", "o2", "d1", "s1", "s2", "s3", "s4", "s5", "s6", "m1", "l1"] // to-do: yes, it's a botch
 	let expandedParams = [], numParms = 0
 
 	for (let i=0; i<availableParams.length;i++) {
@@ -69,9 +69,13 @@ function expandParams (textIn, param) {
 			else if (availableParams[i][0] == "d") type = "directions"
 			else if (availableParams[i][0] == "a") type = "actions"
 			else if (availableParams[i][0] == "s") type = "string"
+			else if (availableParams[i][0] == "l") type = "link"
+			else type = "messages"
 
 			if (type == "string") {
 				expandedParams[numParms].text = param[availableParams[i]] // text as is
+			} else if (type == "link") {
+				expandedParams[numParms].link = param[availableParams[i]]
 			} else {
 				expandedParams[numParms].longMsgId = this.getLongMsgId (type, param[availableParams[i]], "txt")
 				expandedParams[numParms].base = this.getBaseFromLongMsgId (expandedParams[numParms].longMsgId)
@@ -211,7 +215,7 @@ lang_modules.es.process = function (langModule, param) {
 	if (param.text != undefined) return param.text
 	else textOut = langModule.msgResolution (param.longMsgId)
 
-	if (param.code.indexOf("o") >= 0) {
+	if (param.code.indexOf("o") >= 0) { // item
 		var articulo = ""
 
 		if (param.properties.articulo) {
@@ -220,6 +224,9 @@ lang_modules.es.process = function (langModule, param) {
 				textOut = articulo + " " + textOut
 			}
 		}
+	} else if (param.code.indexOf("l") >= 0) { // link
+		// textOut += "%l" + JSON.stringify (param.link) + "%l" // tricky
+		textOut += "%l_" + param.link.txt + "_" + param.link.id + "_%l"
 	}
 
 	return textOut
@@ -418,7 +425,13 @@ function reactionTranslation (reaction) {
   if (reaction.type == "rt_refresh") return   // do nothing
 
   if (reaction.type == "rt_kernel_msg") {
-    reaction.i8n[this.locale].txt = this.kTranslator (reaction.txt)
+		if (typeof reaction.param == "undefined") {
+				reaction.i8n[this.locale].txt = this.kTranslator (reaction.txt)
+				return
+		}
+		// if params:
+		reaction.i8n[this.locale].txt = this.kTranslator (reaction.txt, reaction.param)
+
     return
   } else if (reaction.type == "rt_asis") {
     reaction.i8n[this.locale].txt = reaction.txt
@@ -430,8 +443,11 @@ function reactionTranslation (reaction) {
 	let longMsg = {}
 
 	if (
-		(reaction.type == "rt_msg") || (reaction.type == "rt_graph") ||
-		(reaction.type == "rt_quote_begin") || (reaction.type == "rt_quote_continues") ||
+		(reaction.type == "rt_msg") ||
+		(reaction.type == "rt_link") ||
+		(reaction.type == "rt_graph") ||
+		(reaction.type == "rt_quote_begin") ||
+		(reaction.type == "rt_quote_continues") ||
 		(reaction.type == "rt_play_audio") ||
 		(reaction.type == "rt_end_game") ||
 		(reaction.type == "rt_dev_msg") ||
@@ -623,12 +639,21 @@ function translateAll (locale, history, runner, translatedStuff) {
 
 }
 
-function kTranslator (kMsg) {
+function kTranslator (kMsg, param) {
 
 	if (this.locale != "") {
 		if (typeof this.kernelMessages != 'undefined') {
 			if (typeof this.kernelMessages[kMsg] != 'undefined') {
-				return this.kernelMessages[kMsg].message
+				var textIn = this.kernelMessages[kMsg].message
+
+				if (typeof param == "undefined") {
+					return textIn
+				} else {
+					var textOut = this.expandParams (textIn, param)
+					return textOut
+				}
+
+
 			}
 		}
 	}

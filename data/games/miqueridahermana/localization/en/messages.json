@@ -131,9 +131,6 @@
   "items.libro_magia.txt": {
     "message": "arcane book"
   },
-  "items.manuscrito.desc": {
-    "message": "The manuscript of your novel. It's all a treasure to you as an error by the computer file lost shortly after printing to make corrections to boli, which is how you like to correct the first draft. Rain or shine you have tax spend at least six hours a day."
-  },
   "items.manuscrito.txt": {
     "message": "manuscript"
   },
@@ -289,6 +286,9 @@
   },
   "messages.Introduction.txt": {
     "message": "My dear sister. The loss of your beloved twin sister has left you upset since your childhood, but she is so far from you how you think?"
+  },
+  "messages.manuscrito2.txt": {
+    "message": "The manuscript of your novel. It's all a treasure to you as an error by the computer file lost shortly after printing to make corrections to boli, which is how you like to correct the first draft. Rain or shine you have tax spend at least six hours a day."
   },
   "actions.móvil_llamar.txt": {
     "message": "to call"

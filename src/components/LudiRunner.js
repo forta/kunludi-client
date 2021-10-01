@@ -443,20 +443,16 @@ function afterProcessChoice (choice, optionMsg) {
 
 	// copy expandedReactionList into state.reactionList
 	this.reactionList.splice(0,this.reactionList.length)
+
 	for (var i=0;i<expandedReactionList.length;i++) {
 	  this.reactionList.push (expandedReactionList[i])
 	}
 
-	// show chosen option
-	// to-do: send parameters to kernel messages
+	// show the chosen option (echo)
 	if (optionMsg != undefined) {
-
-		// option echo
-		this.reactionList.unshift ({type:"rt_asis", txt: "<br/>"} )
-		this.reactionList.unshift ({type:"rt_msg", txt:  optionMsg } )
-		this.reactionList.unshift ({type:"rt_asis", txt: ":" } )
-		this.reactionList.unshift ({type:"rt_kernel_msg", txt: "Chosen option"} )
-
+    // in reverse order (before the current reaction List)
+		this.reactionList.unshift ({type:"rt_asis", txt: "<br/><br/>"} )
+		this.reactionList.unshift ({type:"rt_kernel_msg", txt: "Chosen option m1", param: {m1: optionMsg} } )
 	}
 
   this.processingRemainingReactions ()

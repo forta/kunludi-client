@@ -131,9 +131,6 @@
     "items.libro_magia.txt": {
         "message": "libro arcano"
     },
-    "items.manuscrito.desc": {
-        "message": "El manuscrito de tu novela. Es todo un tesoro para ti, ya que por un error perdiste el archivo de ordenador, poco después de imprimirla para hacer correcciones a boli, que es como te gusta corregir el primer borrador. Llueva o truene te has impuesto dedicarle como mínimo seis horas al día."
-    },
     "items.manuscrito.txt": {
         "message": "manuscrito"
     },
@@ -289,6 +286,9 @@
     },
     "messages.Introduction.txt": {
         "message": "Mi Querida Hermana. La pérdida de tu querida hermana gemela te ha dejado trastornado desde tu infancia, pero ¿está ella tan lejos de ti cómo crees?"
+    },
+    "messages.manuscrito2.txt": {
+        "message": "El manuscrito de tu novela. Es todo un tesoro para ti, ya que por un error perdiste el archivo de ordenador, poco después de imprimirla para hacer correcciones a boli, que es como te gusta corregir el primer borrador. Llueva o truene te has impuesto dedicarle como mínimo seis horas al día."
     },
     "actions.móvil_llamar.txt": {
         "message": "llamar"

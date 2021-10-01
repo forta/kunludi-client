@@ -461,7 +461,7 @@ let initReactions =  function  (reactions, primitives) {
 			if (par_c.item1Id == "cuenco") fichero = "cuenco.jpg";
 			else if (par_c.item1Id == "camisa") fichero = "camisa.jpg";
 			else if (par_c.item1Id == "diamante") fichero = "diamante.jpg";
-			else if (par_c.item1Id == "pájaros") fichero = "pájaros.jpg";
+			else if (par_c.item1Id == "pájaros") fichero = "pajaros.jpg";
 			else if (par_c.item1Id == "vieja") fichero = "vieja.gif";
 			// else if (par_c.item1Id == "fuente_roja") fichero = "fuente_roja.jpg";
 			// else if (par_c.item1Id == "fuente_dorada") fichero = "fuente_dorada.jpg";
@@ -791,6 +791,7 @@ let initReactions =  function  (reactions, primitives) {
 					if (typeof par_c.option == 'undefined') { // phase 1: asking dialog
 
 						primitives.CA_ShowMsg ("bienvenida_juego");
+
 						primitives.CA_ShowMsg ("chooseversion");
 
 						var menu = [{id:"simple",msg:"chooseversion_simple"}, {id:"long", msg:"chooseversion_long"}];
@@ -1294,6 +1295,11 @@ let initReactions =  function  (reactions, primitives) {
 			return false;
 		}
 
+	});
+
+	reactions.push ({ //lo capamos
+		id: 'sing',
+		enabled: function (indexItem,indexItem2) { 	return false; }
 	});
 
 

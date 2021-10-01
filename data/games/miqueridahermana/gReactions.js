@@ -347,12 +347,11 @@ let initReactions =  function  (reactions, primitives) {
 			if (par_c.loc == primitives.IT_X("estudio")) {
 
 				if (primitives.IT_GetAttPropValue (par_c.loc, "generalState", "state") == "0") {
-
 					primitives.GD_CreateMsg ("es", "sueño1", "No puedes respirar, estás encerrado en la cueva de la playa y no puedes escapar. De repente, un corrimiento de arena de la playa entra en la cueva y te cubre hasta la cintura y no puedes moverte. En tus manos tienes el collar de conchas marinas que has hecho para regalárselas a tu querido hermano...<br/>")
 					primitives.CA_ShowMsg ("sueño1");
 
 					primitives.GD_CreateMsg ("es", "pulsa_avanzar", "Continuar") // se reutilizará en más sitios
-   				    primitives.CA_PressKey ("pulsa_avanzar");
+   				primitives.CA_PressKey ("pulsa_avanzar");
 
 					primitives.GD_CreateMsg ("es", "después_sueño1", "Pero no, no puede ser, estos no son recuerdos tuyos, sólo pueden ser los últimos recuerdos de ella, del día en que...<br/>Despiertas, mojado en sudor.<br/><br/>Te levantas, no crees que vayas a poder reconciliar el sueño. De hecho, temes volver a dormir y volver a vivir esa horrible experiencia.<br/><br/>");
 					primitives.CA_ShowMsg ("después_sueño1");
@@ -1000,7 +999,8 @@ let initReactions =  function  (reactions, primitives) {
 					  primitives.GD_CreateMsg ("es", "pulsa_para_entrar", "Pulsa para entrar");
 					  primitives.CA_PressKey ("pulsa_para_entrar");
 
-					primitives.GD_CreateMsg ("es", "primera_vez_salón_comedor", "<b>Entras.</b><br/><br/>El salón comedor está casi igual que hace quince años, si exceptuamos el polvo acumulado. Retiras las sábanas y las sacudes fuera. Ahora sí, el salón luce casi como antes. Entre diversos planfletos bajo la puerta, te llama la atención uno de comida a domicilio, TelePapeo, que no te vendrá mal estos días.<br/>");
+					  primitives.GD_CreateMsg ("es", "primera_vez_salón_comedor", "<b>Entras.</b><br/><br/>El salón comedor está casi igual que hace quince años, si exceptuamos el polvo acumulado. Retiras las sábanas y las sacudes fuera. Ahora sí, el salón luce casi como antes. Entre diversos planfletos bajo la puerta, te llama la atención uno de comida a domicilio, TelePapeo, que no te vendrá mal estos días.<br/>");
+
 					primitives.CA_ShowMsg ("primera_vez_salón_comedor");
 					primitives.IT_SetAttPropValue (par_c.target, "generalState", "state", "1")
 				}
@@ -1482,7 +1482,8 @@ let initItems =  function  (items, primitives) {
 		id: 'manuscrito',
 
 		desc: function () {
-			primitives.CA_ShowDesc (this.index); // to-do? desc estática
+
+			primitives.CA_ShowMsg ("manuscrito2")
 
 			primitives.GD_CreateMsg ("es", "tiempo_dedicado_s1", "Hoy le has dedicado %s1 horas de las 6 mínimas diarias que te marcaste.");
 
