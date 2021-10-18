@@ -360,7 +360,7 @@ function CA_PressKey (txt) {
 
 function CA_EndGame (txt, state, data) {
  this.reactionList.push ({type:this.caMapping("END_GAME"), txt:txt, state:state, data:data});
-}
+ }
 
 function CA_PlayAudio (fileName, autoStart, txt, param) {
 
@@ -695,7 +695,7 @@ function GD_DefAllLinks (linkArray) {
 			if (typeof reactionList[k].id != "undefined" ) {
 				if ((reactionList[k].id == reactionListId) && (reactionList[k].type == "rt_link")){
 					if (typeof reactionList[k].param.l1.subReactions == "undefined") {reactionList[k].param.l1.subReactions = []}
-					var subReaction2=JSON.parse(JSON.stringify(subReaction)); // to avoid strange behaviour
+					var subReaction2=JSON.parse(JSON.stringify(subReaction)); // to avoid strange behaviour (because of "var")
 					reactionList[k].param.l1.subReactions.push (subReaction2)
 				}
 			}
@@ -716,6 +716,7 @@ function GD_DefAllLinks (linkArray) {
 	for (var i=0; i<linkArray.length;i++) {
 		var reactionListId = linkArray[i].id
 		var subReaction
+
 		if (typeof linkArray[i].visibleToFalse  != "undefined") {
 			subReaction = {type: "visible"}
 			for (var j=0; j<linkArray[i].visibleToFalse.length; j++) {
@@ -724,6 +725,7 @@ function GD_DefAllLinks (linkArray) {
 					setLinkDefinition (this.reactionList, reactionListId, subReaction)
 			}
 		}
+
 		if (typeof linkArray[i].visibleToTrue != "undefined") {
 			subReaction = {type: "visible"}
 			for (var j=0; j<linkArray[i].visibleToTrue.length;j++) {
@@ -732,20 +734,56 @@ function GD_DefAllLinks (linkArray) {
 					setLinkDefinition (this.reactionList, reactionListId, subReaction)
 			}
 		}
-		if (typeof linkArray[i].item != "undefined") {
-			subReaction = {type: "item"}
-			subReaction.o1Id = linkArray[i].item.o1Id
-			// to-do: get subReaction.o1 and subReaction.parent from subReaction.o1Id
-			subReaction.o1 = IT_X (subReaction.o1Id)
-			subReaction.parent = "here" // to-do
-			setLinkDefinition (this.reactionList, reactionListId, subReaction)
-		}
+
 		if (typeof linkArray[i].action != "undefined") {
-			subReaction = {type: "action"}
-			subReaction.actionId = linkArray[i].action.actionId
-			// to-do: get mor params and construct the choice
-			setLinkDefinition (this.reactionList, reactionListId, subReaction)
-		}
+			console.log ("link def (action): " + JSON.stringify(linkArray[i].action))
+			subReaction = {type: "action", choiceId: linkArray[i].action.choiceId}
+
+			// parm validation
+			let validation = true
+			if (subReaction.choiceId == "dir1") {
+				// param: d1Id
+				if (typeof linkArray[i].action.d1Id == "undefined") {validation = false}
+				else {subReaction.d1Id = linkArray[i].action.d1Id}
+				// param: targetId
+				if (typeof linkArray[i].action.targetId == "undefined") {validation = false}
+				else {subReaction.targetId = linkArray[i].action.targetId}
+				// to-do: target
+				setLinkDefinition (this.reactionList, reactionListId, subReaction)
+		  } else if ((subReaction.choiceId == "obj1") || (subReaction.choiceId == "action0") ||  (subReaction.choiceId == "action") ||  (subReaction.choiceId == "action2") ) {
+				// param: actionId
+				if ((subReaction.choiceId == "action0") ||  (subReaction.choiceId == "action") ||  (subReaction.choiceId == "action2") ) {
+				  if (typeof linkArray[i].action.actionId == "undefined") {validation = false}
+				  else subReaction.actionId = linkArray[i].action.actionId
+			  }
+
+				// param o1Id
+				if ((subReaction.choiceId == "obj1") ||  (subReaction.choiceId == "action") ||  (subReaction.choiceId == "action2") ) {
+				  if (typeof linkArray[i].action.o1Id == "undefined") {validation = false}
+					else {
+						subReaction.o1Id = linkArray[i].action.o1Id
+	 				  subReaction.o1 = this.IT_X (subReaction.o1Id)
+					}
+					//param parent
+					if (subReaction.choiceId == "obj1") {subReaction.parent = "here"} // to-do
+				}
+				// param o2Id
+				if (subReaction.choiceId == "action2") {
+				  if (typeof linkArray[i].action.o2Id == "undefined") {validation = false}
+					else {
+						subReaction.o2Id = linkArray[i].action.o21Id
+	 				  subReaction.o2 = this.IT_X (subReaction.o2Id)
+					}
+				}
+			} else { validation = false	}
+
+			if (validation) {
+				setLinkDefinition (this.reactionList, reactionListId, subReaction)
+			} else  {
+				console.log ("error on param of link def")
+			}
+		} // choiceId == action
+
 		if (typeof linkArray[i].url != "undefined") {
 			subReaction = {type: "url"}
 			subReaction.url = linkArray[i].url

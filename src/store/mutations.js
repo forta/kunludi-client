@@ -74,32 +74,60 @@ export default {
              }
            }
          }
-       } else if (ir.type == "item") {
-         // params: ir.o1
-         var choice = {choiceId:'obj1', item1: ir.o1, item1Id: ir.o1Id, parent:ir.parent}
-         processChoice (state, choice)
        } else if (ir.type == "action") {
-         // params: ir.o1, ir.action
-         console.log("to-do: internal reaction/action" )
-         // to-do
-         // just demo
-         var choice = {	choiceId:"dir1",
-             isLeafe:true,
-             parent:"directActions",
-             action:	{
-               actionId:"go",
-               d1:8,
-               d1Id:"in",
-               target:3,
-               targetId:"fuera",
-               isKnown:false
-             },
-             txt_final:"dentro"
+         console.log("to-do: internal reaction/action: " + JSON.stringify(ir) )
+
+         let choice = {choiceId: ir.choiceId}
+         if (choice.choiceId == 'obj1') {
+           choice.item1 = ir.o1
+           choice.itemId1 = ir.o1Id
+           choice.parent = ir. parent
+           processChoice (state, choice)
+         } else if (choice.choiceId == 'dir1') {
+           choice.isLeafe = true
+           choice.parent = "directActions"
+           choice.action = {
+             actionId:"go",
+             d1:8, // to-do
+             d1Id: ir.d1Id,
+             target:3, // to-do
+             targetId: ir.d1Id,
+             isKnown:false
            }
-         processChoice (state, choice)
+           processChoice (state, choice)
+         } else if (choice.choiceId == 'action0') {
+           choice.isLeafe = true
+           choice.parent = "directActions"
+           choice.action = {
+             actionId: ir.actionId,
+             parent:"top"
+           }
+           processChoice (state, choice)
+         }  else if (choice.choiceId == 'action') {
+           choice.isLeafe = true
+           choice.parent = "obj1"
+           choice.action = {
+             item1: ir.o1,
+             item1Id: ir.o1Id,
+             actionId :ir.actionId
+           }
+           processChoice (state, choice)
+         } else if (choice.choiceId == 'action2') {
+           choice.isLeafe = true
+           choice.parent = "action2"
+           choice.action = {
+             item1: ir.o1,
+             item1Id: ir.o1Id,
+             actionId: ir.actionId,
+             item2: ir.o2,
+             item2Id: ir.o2Id
+           }
+           processChoice (state, choice)
+         }
+
        } else if (ir.type == "url") {
-         // params: ir.url
-         console.log("to-do: internal reaction/url: [" + ir.url + "]")
+         // params: .url
+         console.log("to-do: internal reaction/url: " + JSON.stringify(ir) )
        }
      }
 

@@ -11,7 +11,7 @@
         <span v-show="locale=='fr'"> fiction interactive textuelle avec des fonctionnalités multilingues et coopératives.</span>
       <br/>
     -->
-        <router-link to="/kune"> {{kt("Together")}} </router-link> | 
+        <router-link to="/kune"> {{kt("Together")}} </router-link> |
         <span v-show="slotId==''"> <router-link to="/ludi/games"> {{kt("Games")}} </router-link> </span>
         <span v-show="slotId!='' ">  | <router-link to="/ludi/play"> {{kt("Play")}} </router-link> </span>
         | <router-link to="/lingvo"> {{kt("Language")}} </router-link>
@@ -64,7 +64,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 60px;  
 }
 
 div.ludi_top1 {
@@ -75,7 +75,7 @@ div.ludi_top1 {
    position: fixed;
 
    /*border-bottom:1px solid #eb7429; */
-   background:#fc9400;
+   background:#0c0f00;
    padding:10px 20px;
    z-index:100;
 

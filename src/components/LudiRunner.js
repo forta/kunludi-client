@@ -598,6 +598,9 @@ function processingRemainingReactions () {
 			 this.pendingChoice = this.lastAction
 			 // actions after a rt_show_menu will be ommited
 		 } else {
+			 if (this.reactionList[this.reactionListCounter].type == "rt_end_game") {
+		 	 	  this.gameIsOver = true
+			 }
 			 this.processedReactionList.push (this.reactionList[this.reactionListCounter])
 		 }
 	}
@@ -737,7 +740,11 @@ function updateChoices(showAll) {
 
 		var link = this.getTargetAndLocked (this.PCState.profile.loc, d)
 		if (link.target >= 0) {
-			this.internalChoices.directionGroup.push ({choiceId:'dir1', isLeafe:true, parent:"directionGroup", parent:"directActions", action: {actionId:'go', d1: d, d1Id: this.world.directions[d].id, target:link.target, targetId: this.world.items[link.target].id, isKnown:link.isKnown}})
+			// bug: actionIsEnabled not used
+			console.log ("debug actionIsEnabled on directions")
+			//if (this.actionIsEnabled  (actionId, d, link.target)) {
+				this.internalChoices.directionGroup.push ({choiceId:'dir1', isLeafe:true, parent:"directionGroup", parent:"directActions", action: {actionId:'go', d1: d, d1Id: this.world.directions[d].id, target:link.target, targetId: this.world.items[link.target].id, isKnown:link.isKnown}})
+			//}
 		}
 	}
 

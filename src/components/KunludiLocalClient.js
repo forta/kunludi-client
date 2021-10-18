@@ -487,7 +487,7 @@ function getLastAction() {
 }
 
 function getGameIsOver() {
-  return this.gameIsOver
+  return this.runner.gameIsOver
 }
 
 function getReactionList() {
@@ -606,13 +606,6 @@ function refreshCache () {
 
 	this.translation.menu = translatedStuff.menu
 	this.translation.menuPiece = this.runner.menuPiece
-
-	this.gameIsOver = false
-	for (var re in this.processedReactionList) {
-		if (this.processedReactionList[re].type == "rt_end_game") {
-			this.gameIsOver = true
-		}
-	}
 
 }
 

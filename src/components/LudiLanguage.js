@@ -521,7 +521,7 @@ function reactionTranslation (reaction) {
 
 		if (expanded == "") expanded = "End of game"
 		// in case of a subgame, save returned state
-		if (this.subgameId != "") expanded  += " (State: " + reaction.state + ")"
+		if ((typeof this.subgameId != 'undefined') && (this.subgameId != "")) expanded  += " (State: " + reaction.state + ")"
 		if (this.connectionState == 0) {
 			// save data
 			this.runner.metaState.subgames[this.runner.metaState.subgameId].push ({state:reaction.state, data: reaction.data} )
@@ -537,6 +537,7 @@ function reactionTranslation (reaction) {
 
 		// it was: state.choice = {choiceId:'quit', action:{actionId:''}, isLeafe:true}
 		this.choice = {choiceId:'quit', action:{actionId:''}, isLeafe:true}
+		console.log ("end of game")
 
     reaction.i8n[this.locale].txt = expanded
     return
@@ -554,8 +555,11 @@ function reactionTranslation (reaction) {
 			state.pressKeyMessage = expanded
 			*/
 		}
+
 		// to-do: make it language-dependent
-		expanded = "<br/>[...]<br/><br/>"
+		expanded = "<br/>"
+		//expanded = "<br/>[...]<br/><br/>"
+		
 
     reaction.i8n[this.locale].txt = expanded
     return

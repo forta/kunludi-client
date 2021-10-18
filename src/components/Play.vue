@@ -17,18 +17,20 @@
         <div v-for="hitem in history">
             <!-- echo -->
             <p><b>
-              <span v-if ="hitem.gameTurn > 0"> {{hitem.gameTurn}} &gt; </span>
-              <!-- {{hitem.gameTurn}} &gt; -->
+              <!-- <span v-if ="hitem.gameTurn > 0"> {{hitem.gameTurn}} &gt; </span> -->
               {{i8n_showText(hitem.action)}}
             </b></p>
 
             <div :class = " (hitem.gameTurn < history.length - 1)? 'beforeTheLastReaction': 'lastReaction' " >
               <span v-for="r in hitem.reactionList">
                  <span v-if ="((r.visible) || (typeof r.visible == 'undefined'))">
+				    <!-- to-do: if choicesDisable do not show choice bottons at all! -->
                     <span v-if= "(r.type != 'rt_link')" v-html="i8n_showReaction(r, hitem.gameTurn)"></span>
                     <span v-if="(r.type == 'rt_link')">
-                      <span v-if="(hitem.gameTurn == history.length - 1)"><a v-on:click="execLink(r.param)">{{r.param.l1.txt}}</a></span>
-                      <span v-if="(hitem.gameTurn < history.length - 1)">{{r.param.l1.txt}}</span>
+
+                      <span v-if="((hitem.gameTurn < history.length - 1) || gameIsOver)">{{r.param.l1.txt}}</span>
+                      <span v-if="((hitem.gameTurn == history.length - 1) && !gameIsOver)"><a v-on:click="execLink(r.param)">{{r.param.l1.txt}}</a></span>
+
                     </span>
                  </span>
               </span>
@@ -47,15 +49,15 @@
         <div class="reactionList" v-if = "lastAction != undefined">
           <!-- echo of active reaction -->
           <p><b>
-            <span v-if ="history.length > 0"> {{history.length-1}} &gt; {{actionToShow(lastAction, true)}} </span>
+            <span v-if ="history.length > 0"><!-- {{history.length-1}} &gt; -->{{actionToShow(lastAction, true)}} </span>
           </b></p>
 
       		<span v-for="r in reactionList">
             <span v-if ="((r.visible) || (typeof r.visible == 'undefined'))">
 
-<!--            <span v-if ="((r.visible) || (typeof r.visible == 'undefined'))" v-html="i8n_showReaction(r, history.length-1)"></span>-->
-              <span v-if= "(r.type != 'rt_link')" v-html="i8n_showReaction(r, history.length-1)"></span>
-              <span v-if="(r.type == 'rt_link')"> {{r.param.l1.txt}}</span>
+              <span v-if="((r.type == 'rt_link') || gameIsOver)">{{r.param.l1.txt}}</span>
+              <span v-if= "((r.type != 'rt_link') && !gameIsOver)" v-html="i8n_showReaction(r, history.length-1)"></span>
+
             </span>
 
       		</span>
@@ -69,7 +71,7 @@
 
     <!-- press key -->
     <div v-if = "pendingPressKey">
-       <button v-on:click="pressAnyKey()" > {{i8n_showText(pressKeyMessage)}}  </button>
+       <button v-on:click="pressAnyKey();showEndOfText()" > {{i8n_showText(pressKeyMessage)}}  </button>
     </div>
 
     <!--
@@ -272,7 +274,8 @@ export default {
           if (choice.i8n[this.locale].txt != '')
             return choice.i8n[this.locale].txt // más adelante, que no sea txt, sino echo.txt, short.txt, long.txt, o inlcuso un objeto renderizable
 
-      return JSON.stringify(choice) + ". isEcho: " + isEcho
+      console.log ("warning (missing echo): " + JSON.stringify(choice) + " . isEcho: " + isEcho)
+      return ""
     },
 
     showEndOfText: () => {
@@ -434,6 +437,7 @@ li:last-child {
 div.play {
     overflow: hidden;
     height:100%;
+    line-height: 1.5;
 }
 
 div.play_top {

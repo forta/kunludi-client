@@ -1,0 +1,17 @@
+{
+	"ludi_id": "8",
+	"name": "intruso",
+	"translation": [
+		{
+			"language": "es",
+			"title": "Intruso",
+			"desc": "Juego participante en la ectocomp 2021",
+			"introduction": "Es sólo entrar y salir con el trofeo de la casa de Los Raritos, parece fácil...",
+			"author": {
+				"name": "fortas",
+				"ludi_account": "fortas",
+				"email": "ludi.ludon@gmail.com"
+			}
+		}
+	]
+}

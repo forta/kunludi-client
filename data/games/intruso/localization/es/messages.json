@@ -1,0 +1,41 @@
+﻿{
+    "items.prota.desc": {
+        "message": "El protagonista de esta historia"
+    },
+    "items.prota.txt": {
+        "message": "prota"
+    },
+    "items.intro1.txt": {
+        "message": "intro1"
+    },
+    "items.intro2.txt": {
+        "message": "intro2"
+    },
+    "items.porche.txt": {
+        "message": "porche"
+    },
+    "items.hall.txt": {
+        "message": "hall"
+    },
+    "items.cocina.txt": {
+        "message": "cocina"
+    },
+    "items.pasillo.txt": {
+        "message": "pasillo"
+    },
+    "items.hab-padres.txt": {
+        "message": "hab-padres"
+    },
+    "items.hab-hijos.txt": {
+        "message": "hab-hijos"
+    },
+    "items.hab-abuelos.txt": {
+        "message": "hab-abuelos"
+    },
+    "items.móvil.txt": {
+        "message": "móvil"
+    },
+    "items.móvil.desc": {
+        "message": "sí, el móvil"
+    }
+}

@@ -91,6 +91,7 @@ ludi_lib.reactionById = function (actionId) {
 
 	look
 	go
+  goto
 	ex
 	take
 	drop
@@ -246,6 +247,25 @@ let initReactions =  function  (reactions, primitives) {
 		},
 
 	});
+
+  reactions.push ({
+    id: 'goto',
+
+    enabled: function (indexItem, indexItem2) {
+      return false; // internal usage
+    },
+
+    reaction: function (par_c) {
+
+      // reaction kernel: change of location
+      console.log("debug: goto!")
+      primitives.PC_SetCurrentLoc(par_c.item1);
+      primitives.CA_ShowDesc(par_c.item1);
+      return true;
+
+    }
+
+  });
 
 	reactions.push ({
 		id: 'ex',
