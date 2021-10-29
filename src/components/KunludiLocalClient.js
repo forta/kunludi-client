@@ -56,16 +56,19 @@ export default {
 
   getHistory:getHistory,
 
+  getEnableChoices:getEnableChoices,
   getPendingPressKey:getPendingPressKey,
   getPressKeyMessage:getPressKeyMessage,
   getLastAction:getLastAction,
   getReactionList:getReactionList,
 
+  sendUserCode:sendUserCode,
   sendChoice:sendChoice,
   gameAction:gameAction,
   getGameIsOver:getGameIsOver,
   gameChoice:gameChoice,
   keyPressed:keyPressed,
+  setEnableChoices:setEnableChoices,
 
 
   loadGame:loadGame, // internal
@@ -465,6 +468,11 @@ function getHistory() {
   return this.history
 }
 
+function getEnableChoices() {
+  if (this.slotId=='') return
+  return this.runner.enableChoices
+}
+
 function getPendingPressKey() {
   if (this.slotId=='') return
   return this.runner.pendingPressKey
@@ -520,6 +528,13 @@ function getReactionList() {
   		return this.processedReactionList.slice()
 }
 
+function sendUserCode(functionId, par) {
+  if (this.slotId=='') return
+  let status = this.runner.processUserCode (functionId, par)
+  this.refreshCache ()
+  return status
+}
+
 function sendChoice(choice, optionMsg) {
   if (this.slotId=='') return
   this.runner.processChoice (choice, optionMsg)
@@ -553,15 +568,17 @@ function sendChoice(choice, optionMsg) {
 
 function gameAction(choice, optionMsg) {
 
-
-
 }
 
 function gameChoice (choice, optionMsg) {
 
-
-
 }
+
+function setEnableChoices (value) {
+  this.runner.setEnableChoices(value)
+  this.refreshCache ()
+}
+
 
 function keyPressed () {
   this.runner.keyPressed()

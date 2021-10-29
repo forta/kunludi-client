@@ -11,6 +11,7 @@ let choice = {choiceId:'top', isLeafe:false, parent:''}
 export default {
 	dependsOn:dependsOn,
 	createWorld:createWorld,
+	processUserCode:processUserCode,
 	processChoice:processChoice,
 	processAction:processAction,
 	actionIsEnabled:actionIsEnabled,
@@ -18,6 +19,8 @@ export default {
 	updateChoices:updateChoices,
 	getCurrentChoice:getCurrentChoice,
 	getGameTurn:getGameTurn,
+	getEnableChoices:getEnableChoices,
+	setEnableChoices:setEnableChoices,
 	keyPressed:keyPressed,
 
   processingRemainingReactions:processingRemainingReactions,
@@ -47,6 +50,7 @@ function dependsOn (libPrimitives, libReactions, gameReactions, reactionList, me
   this.history = []
 	this.lastAction = undefined
 	this.reactionListCounter = 0
+	this.enableChoices = true
 	this.pendingPressKey = false
 	this.pressKeyMessage = ""
 	this.processedReactionList = []
@@ -162,6 +166,12 @@ function getGameTurn () {
 	return this.gameTurn
 }
 
+
+function getEnableChoices () {
+	return this.enableChoices
+}
+
+
 // to-do: pending to check
 function itemWithAttException (context, indexItem, attId_def) {
 
@@ -261,6 +271,24 @@ function reactionListContains_Type (reactionList, type) {
 	return false
 
 }
+
+function processUserCode (functionId, par) {
+
+	var status = undefined
+
+	if (typeof this.gameReactions.executeUserCode == "function")
+		status = this.gameReactions.executeUserCode (functionId, par)
+
+	/*
+	if (status == undefined)
+		status = this.libReactions.executeUserCode (actionId, item1, item2)
+	*/
+
+	return status
+
+
+}
+
 
 function processChoice (newChoice, optionMsg) {
 
@@ -556,8 +584,22 @@ function expandDynReactions (reactionList) {
 			expandedReactionList = this.expandDynReactions (expandedReactionList2)
 	}
 
+  // set selfIndex
+	/*
+	for (let selfIndex = 0; selfIndex < expandedReactionList.length; selfIndex++) {
+		expandedReactionList[selfIndex].selfIndex = selfIndex
+	}
+	*/
+
+
 	return expandedReactionList.slice()
 }
+
+function setEnableChoices (value) {
+	this.enableChoices = value
+
+}
+
 
 function keyPressed () {
 
@@ -586,23 +628,26 @@ function keyPressed () {
 function processingRemainingReactions () {
 
 	for (;this.reactionListCounter<this.reactionList.length; this.reactionListCounter++) {
-		if (this.reactionList[this.reactionListCounter].type == "rt_press_key")  {
+		if (this.reactionList[this.reactionListCounter].type == "rt_enable_choices")  {
+			// set flag and go on
+			this.enableChoices = this.reactionList[this.reactionListCounter].value
+		} else if (this.reactionList[this.reactionListCounter].type == "rt_press_key")  {
 			 if (!this.reactionList[this.reactionListCounter].alreadyPressed) {
 				 this.pendingPressKey = true
 				 this.pressKeyMessage = this.reactionList[this.reactionListCounter].txt
 				 return
 			 }
-		 } else if (this.reactionList[this.reactionListCounter].type == 'rt_show_menu') {
+		} else if (this.reactionList[this.reactionListCounter].type == 'rt_show_menu') {
  			 this.menu = this.reactionList[this.reactionListCounter].menu
  			 this.menuPiece = this.reactionList[this.reactionListCounter].menuPiece
 			 this.pendingChoice = this.lastAction
 			 // actions after a rt_show_menu will be ommited
-		 } else {
+		} else {
 			 if (this.reactionList[this.reactionListCounter].type == "rt_end_game") {
 		 	 	  this.gameIsOver = true
-			 }
+		   }
 			 this.processedReactionList.push (this.reactionList[this.reactionListCounter])
-		 }
+		}
 	}
 
 	// add reaction entry to history

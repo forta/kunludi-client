@@ -51,18 +51,21 @@ export default {
 
   getHistory:getHistory,
 
+  getEnableChoices:getEnableChoices,
   getPendingPressKey:getPendingPressKey,
   getPressKeyMessage:getPressKeyMessage,
   getLastAction:getLastAction,
   getGameIsOver:getGameIsOver,
   getReactionList:getReactionList,
 
+  sendUserCode:sendUserCode,
   sendChoice:sendChoice,
   sendChatMessage:sendChatMessage,
 
   gameAction:gameAction,
   gameChoice:gameChoice,
   keyPressed:keyPressed,
+  setEnableChoices:setEnableChoices,
 
   getToken:getToken,
 
@@ -404,6 +407,10 @@ function getHistory() {
   return data.history
 }
 
+function getEnableChoices() {
+  return data.EnableChoices
+}
+
 function getPendingPressKey() {
   return data.pendingPressKey
 }
@@ -423,6 +430,10 @@ function getGameIsOver() {
 
 function getReactionList() {
   return data.processedReactionList // to-do!
+}
+
+function sendUserCode(functionId, par) {
+  console.log ("sendUserCode NOT IMPLEMENTED YET!!!!")
 }
 
 function sendChoice(choice, optionMsg) {
@@ -521,6 +532,10 @@ function gameChoice (choice, optionMsg) {
   })
 
 
+}
+
+function setEnableChoices () {
+  console.log ("setEnableChoices: NOT IMPLEMENTED YET!!!!")
 }
 
 function keyPressed () {

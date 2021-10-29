@@ -18,6 +18,7 @@ export default {
   history: state => state.history,
   lastAction: state => state.lastAction,
   gameIsOver: state => state.gameIsOver,
+  enableChoices: state => state.enableChoices,
   pendingPressKey: state => state.pendingPressKey,
   choices: state => state.choices,
   menu: state => state.menu,

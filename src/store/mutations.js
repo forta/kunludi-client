@@ -75,7 +75,7 @@ export default {
            }
          }
        } else if (ir.type == "action") {
-         console.log("to-do: internal reaction/action: " + JSON.stringify(ir) )
+         //console.log("internal reaction/action: " + JSON.stringify(ir) )
 
          let choice = {choiceId: ir.choiceId}
          if (choice.choiceId == 'obj1') {
@@ -86,12 +86,13 @@ export default {
          } else if (choice.choiceId == 'dir1') {
            choice.isLeafe = true
            choice.parent = "directActions"
+           console.log ("exec go: to-do, d1Id -> d1")
            choice.action = {
              actionId:"go",
-             d1:8, // to-do
+             d1: ir.d1,
              d1Id: ir.d1Id,
-             target:3, // to-do
-             targetId: ir.d1Id,
+             target:ir.target,
+             targetId: ir.targetId,
              isKnown:false
            }
            processChoice (state, choice)
@@ -127,7 +128,29 @@ export default {
 
        } else if (ir.type == "url") {
          // params: .url
-         console.log("to-do: internal reaction/url: " + JSON.stringify(ir) )
+         window.open(ir.url);
+       }  else if (ir.type == "userCode") {
+         console.log("userCode: " + JSON.stringify(ir) )
+         // params: .functionId, .par
+         let status = processUserCode (state, {functionId: ir.functionId, par:ir.par} )
+         if (typeof status == 'object') {
+           if (status.enableChoices == true) {
+             state.runnerProxie.setEnableChoices(true)
+           }
+
+           if (state.runnerProxie.getUserId() == '')  {
+              refreshFromProxie (state)
+           }
+         }
+
+       }
+     }
+
+     // link already chosen
+     for (let index=0;index<state.history[state.gameTurn-1].reactionList.length;index++) {
+       let r = state.history[state.gameTurn-1].reactionList[index]
+       if ((r.type == "rt_link") && (r.param.l1.id == param.l1.id)) {
+         r.active = false
        }
      }
 
@@ -394,6 +417,7 @@ function refreshFromProxie (state) {
     state.reactionList = state.runnerProxie.getReactionList ()
     state.pendingChoice = state.runnerProxie.getPendingChoice()
     state.choices = state.runnerProxie.getChoices ()
+    state.enableChoices = state.runnerProxie.getEnableChoices ()
     state.gameTurn = state.runnerProxie.getGameTurn ()
     state.PCState = state.runnerProxie.getPCState()
     state.history = state.runnerProxie.getHistory()
@@ -460,6 +484,10 @@ function afterGameLoaded(state, slotId) {
 
 	state.gameSlots = state.runnerProxie.getGameSlotList (state.gameId)
 
+}
+
+function processUserCode (state, code) {
+  return state.runnerProxie.processUserCode (code.functionId, code.par)
 }
 
 function processChoice (state, choice) {

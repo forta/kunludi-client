@@ -28,8 +28,8 @@
                     <span v-if= "(r.type != 'rt_link')" v-html="i8n_showReaction(r, hitem.gameTurn)"></span>
                     <span v-if="(r.type == 'rt_link')">
 
-                      <span v-if="((hitem.gameTurn < history.length - 1) || gameIsOver)">{{r.param.l1.txt}}</span>
-                      <span v-if="((hitem.gameTurn == history.length - 1) && !gameIsOver)"><a v-on:click="execLink(r.param)">{{r.param.l1.txt}}</a></span>
+                      <span v-if="((hitem.gameTurn < history.length - 1) || gameIsOver || (r.active == false))">{{r.param.l1.txt}}</span>
+                      <span v-if="((hitem.gameTurn == history.length - 1) && !gameIsOver  && ((typeof r.active == 'undefined') || (r.active == true)) )"><a v-on:click="execLink(r.param)">{{r.param.l1.txt}}</a></span>
 
                     </span>
                  </span>
@@ -83,7 +83,7 @@
     -->
 
     <!-- choices (not menu nor presskey) -->
-    <div v-if = "!pendingPressKey && menu.length == 0  && currentChoice.choiceId != 'quit'" >
+    <div v-if = "!pendingPressKey && menu.length == 0  && currentChoice.choiceId != 'quit' && enableChoices">
 
       <div class="mainChoices" >
           <h3> {{kt("Location")}}: {{i8n_showPCStateLocation()}}</h3>
@@ -96,7 +96,7 @@
       </div>
       <div class="mainChoices" >
           <!-- to-do: focus on filter REf: https://michaelnthiessen.com/set-focus-on-input-vue -->
-          <h3> Filtro: <input  v-model="choiceFilter"  v-on:keyup.enter="doGameChoiceWithFilter(choiceFilter);choiceFilter='';showEndOfText()"> </h3>
+          <h3 v-if="enableChoices"> Filtro: <input  v-model="choiceFilter"  v-on:keyup.enter="doGameChoiceWithFilter(choiceFilter);choiceFilter='';showEndOfText()"></h3>
       </div>
 
   	<hr/>
@@ -232,6 +232,7 @@ export default {
     'history',
     'lastAction',
     'gameIsOver',
+    'enableChoices',
     'pendingPressKey',
     'choices',
     'menu',

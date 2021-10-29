@@ -33,6 +33,7 @@ export default {
 	CA_ShowItem:CA_ShowItem,
 	CA_ShowMenu:CA_ShowMenu,
 	CA_ShowImg:CA_ShowImg,
+	CA_EnableChoices:CA_EnableChoices,
 	CA_PressKey:CA_PressKey,
 	CA_EndGame:CA_EndGame,
 	CA_PlayAudio:CA_PlayAudio,
@@ -104,6 +105,7 @@ function caMapping (type) {
  		"GRAPH",
  		"GRAPH_POPUP",
  		"MSG_POPUP",
+		"ENABLE_CHOICES",
  		"PRESS_KEY",
  		"SHOW_MENU",
  		"SOUND",
@@ -175,6 +177,7 @@ Categories:
   CA_ShowItem (o1)
   CA_ShowMenu ( menu, piece)
   CA_ShowImg (url)
+	CA_EnableChoices (value)
   CA_PressKey (txt)
   CA_EndGame ()
   CA_RestartGame ()
@@ -352,6 +355,10 @@ function CA_ShowImg (url, isLocal, isLink, txt, param) {
 	});
 
 	return id
+}
+
+function CA_EnableChoices (value) {
+	this.reactionList.push ({type:this.caMapping("ENABLE_CHOICES"), value:value});
 }
 
 function CA_PressKey (txt) {
@@ -687,13 +694,14 @@ function GD_CreateMsg (lang, idMsg, txtMsg) {
 
 function GD_DefAllLinks (linkArray) {
 
-	// console.log ("Definition of links: " + JSON.stringify(linkArray))
+	//console.log ("Definition of links: " + JSON.stringify(linkArray))
 
 	function setLinkDefinition (reactionList, reactionListId, subReaction) {
 
 		for (var k=0; k<reactionList.length;k++) {
 			if (typeof reactionList[k].id != "undefined" ) {
 				if ((reactionList[k].id == reactionListId) && (reactionList[k].type == "rt_link")){
+					reactionList[k].active = true
 					if (typeof reactionList[k].param.l1.subReactions == "undefined") {reactionList[k].param.l1.subReactions = []}
 					var subReaction2=JSON.parse(JSON.stringify(subReaction)); // to avoid strange behaviour (because of "var")
 					reactionList[k].param.l1.subReactions.push (subReaction2)
@@ -702,20 +710,33 @@ function GD_DefAllLinks (linkArray) {
 		}
 
 	}
-	/*
-	linkArray sample:
-	{ id:intro0, url: "htmls://ectocomp.com"},
-	{ id:intro1, visibleToFalse: [intro1, intro2], visibleToTrue: [consi0]},
-	{ id:intro2, visibleToFalse: [intro1, intro2], visibleToTrue: [intro3], action: {actionId: "go", dId :"fuera"}},
-	{ id:consi0, visibleToFalse: [consi0], visibleToTrue: [consi1]},
-	{ id:consi1, visibleToFalse: [consi1], visibleToTrue: [consi2]},
-	{ id:consi2, visibleToFalse: [consi2], visibleToTrue: [intro3], action: {actionId: "go", dId :"fuera"}}
 
-	*/
+	// clear data
+	for (var k=0; k<this.reactionList.length;k++) {
+		if (typeof this.reactionList[k].id != "undefined" ) {
+			if (this.reactionList[k].type == "rt_link"){
+				this.reactionList[k].active = false
+				this.reactionList[k].param.l1.subReactions = []
+			}
+		}
+	}
+
 
 	for (var i=0; i<linkArray.length;i++) {
 		var reactionListId = linkArray[i].id
-		var subReaction
+		let subReaction
+
+		if (typeof linkArray[i].changeTo  != "undefined") {
+			subReaction = {type: "visible"}
+			subReaction.rid = linkArray[i].changeTo
+			subReaction.visible = true
+			setLinkDefinition (this.reactionList, reactionListId, subReaction)
+			// self hidden
+			subReaction = {type: "visible"}
+			subReaction.rid = reactionListId
+			subReaction.visible = false
+			setLinkDefinition (this.reactionList, reactionListId, subReaction)
+		}
 
 		if (typeof linkArray[i].visibleToFalse  != "undefined") {
 			subReaction = {type: "visible"}
@@ -742,14 +763,18 @@ function GD_DefAllLinks (linkArray) {
 			// parm validation
 			let validation = true
 			if (subReaction.choiceId == "dir1") {
-				// param: d1Id
+				// params: d1, d1Id, target, targetId
+				if (typeof linkArray[i].action.d1 == "undefined") {validation = false}
+				else {subReaction.d1 = linkArray[i].action.d1}
 				if (typeof linkArray[i].action.d1Id == "undefined") {validation = false}
 				else {subReaction.d1Id = linkArray[i].action.d1Id}
+				if (typeof linkArray[i].action.target == "undefined") {validation = false}
+				else {subReaction.target = linkArray[i].action.target}
+				if (typeof linkArray[i].action.targetId == "undefined") {validation = false}
+				else {subReaction.targetId = linkArray[i].action.targetId}
 				// param: targetId
 				if (typeof linkArray[i].action.targetId == "undefined") {validation = false}
 				else {subReaction.targetId = linkArray[i].action.targetId}
-				// to-do: target
-				setLinkDefinition (this.reactionList, reactionListId, subReaction)
 		  } else if ((subReaction.choiceId == "obj1") || (subReaction.choiceId == "action0") ||  (subReaction.choiceId == "action") ||  (subReaction.choiceId == "action2") ) {
 				// param: actionId
 				if ((subReaction.choiceId == "action0") ||  (subReaction.choiceId == "action") ||  (subReaction.choiceId == "action2") ) {
@@ -783,6 +808,12 @@ function GD_DefAllLinks (linkArray) {
 				console.log ("error on param of link def")
 			}
 		} // choiceId == action
+
+		if (typeof linkArray[i].userCode != "undefined") {
+		  //console.log ("link def (userCode): " + JSON.stringify(linkArray[i].userCode))
+			subReaction = {type: "userCode", functionId: linkArray[i].userCode.functionId, par: linkArray[i].userCode.par}
+		  setLinkDefinition (this.reactionList, reactionListId, subReaction)
+		}
 
 		if (typeof linkArray[i].url != "undefined") {
 			subReaction = {type: "url"}

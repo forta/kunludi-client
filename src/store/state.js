@@ -30,6 +30,7 @@ export default {
   lastAction: {},
   pendingChoice: {},
   gameIsOver:false,
+  enableChoices: true,
   pendingPressKey: false,
   pressKeyMessage: {},
   menu: [],

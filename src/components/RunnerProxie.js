@@ -29,6 +29,7 @@ export default {
 	quitGame:quitGame,
 	resetGame:resetGame,
 	resetGameSlot:resetGameSlot,
+	processUserCode:processUserCode,
 	processChoice:processChoice,
 	getCurrentChoice:getCurrentChoice,
 	getPendingChoice:getPendingChoice,
@@ -60,6 +61,8 @@ export default {
   getGames:getGames,
 	loadGames:loadGames,
 	keyPressed:keyPressed,
+	setEnableChoices: setEnableChoices,
+	getEnableChoices: getEnableChoices,
 	getPendingPressKey: getPendingPressKey,
 	getPressKeyMessage: getPressKeyMessage,
 
@@ -199,6 +202,15 @@ function resetGameSlot (gameId, slotId, newLocal) {
 	}
 }
 
+function processUserCode (functionId, par) {
+	if (connected) {
+		return kunludiClient.sendUserCode(functionId, par)
+	} else {
+		return kunludiLocalClient.sendUserCode (functionId, par)
+	}
+
+}
+
 function processChoice (choice, optionMsg) {
 
 	if (connected) {
@@ -208,6 +220,16 @@ function processChoice (choice, optionMsg) {
 		kunludiClient.sendChoice(choiceWithUser, optionMsg)
 	} else {
 		kunludiLocalClient.sendChoice (choice, optionMsg)
+	}
+
+}
+
+function getEnableChoices() {
+
+	if (connected)
+		return kunludiClient.getEnableChoices()
+	else {
+		return kunludiLocalClient.getEnableChoices()
 	}
 
 }
@@ -230,6 +252,15 @@ function getPressKeyMessage () {
 		return kunludiLocalClient.getPressKeyMessage()
 	}
 
+}
+
+function setEnableChoices (value) {
+
+	if (connected) {
+		kunludiClient.setEnableChoices()
+	} else {
+		return kunludiLocalClient.setEnableChoices(value)
+	}
 }
 
 function keyPressed () {
