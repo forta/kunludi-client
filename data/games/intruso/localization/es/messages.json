@@ -29,8 +29,10 @@
     "items.póster.txt": { "message": "póster" },
     "items.ratón.txt": { "message": "ratón" },
     "items.gato.txt": { "message": "gato" },
-    "items.gato.txt": { "message": "jaula" },
-    "items.gato.txt": { "message": "huesos" },
+    "items.jaula.txt": { "message": "jaula" },
+    "items.huesos.txt": { "message": "huesos" },
+    "items.cuadro2.txt": { "message": "cuadro de los abuelos" },
+    "items.ataúd.txt": { "message": "ataúd de mármol" },
 
     "actions.sacar_foto.txt": { "message": "sacar foto" }
 }

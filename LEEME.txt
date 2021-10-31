@@ -1,0 +1,15 @@
+0) Tienes que tener instalado npm y node.js para jugar en tu equipo (https://www.cursosgis.com/como-instalar-node-js-y-npm-en-4-pasos/)
+   También podrás jugar en http://kunludi.com
+1) Compilar las librerías necesarias: npm install
+2) Por dejfecto se usa el puerto 8101, si quieres cambiarlo, edita .\config\index.js, busca por "port:"
+3) Ejecutar demonio: npm run dev
+4) Lanzar entorno del juego: http://localhost:8101/
+5) A partir de aquí funciona como si estuvieras en kunludi.com, eliges el juego (menú superior "Jugar") y lanzas la partida ("intruso")
+
+
+
+
+
+
+
+
