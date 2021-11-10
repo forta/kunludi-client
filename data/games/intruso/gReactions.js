@@ -609,7 +609,7 @@ items.push ({
 		primitives.GD_CreateMsg ("es", "flashback_23", "Tú: ¿¡Qué...!? La muy de Bela, gafe no, gafona, pájaro de mal agüero.<br/>")
 		primitives.GD_CreateMsg ("es", "flashback_24", "Todos (voces solapadas): ¡No jodas! ¡Bien! ¡Ya era hora de que te tocara! ¡Somos ricos!<br/>")
 		primitives.GD_CreateMsg ("es", "flashback_25", "Tú: Un momento. aún tengo una oportunidad.<br/>")
-		primitives.GD_CreateMsg ("es", "flashback_26", "Truda: Tú sueñas. Vamos equipo, a deliverar. Tú, por favor, sale de la habitación un momento.<br/>")
+		primitives.GD_CreateMsg ("es", "flashback_26", "Truda: Tú sueñas. Vamos equipo, a deliberar. Tú, por favor, sale de la habitación un momento.<br/>")
 		primitives.GD_CreateMsg ("es", "flashback_31", "Por mucho que pegaste el oído a la puerta sólo oíste sus risas. Luego, cuando volviste a entrar:<br/>")
 		primitives.GD_CreateMsg ("es", "flashback_32", "Fiulo: Hemos decidido que si quieres retener tu mazo de cartas deberás superar este reto:<br/>")
 		primitives.GD_CreateMsg ("es", "flashback_4", "Tienes que entrar en la casa de Los Raritos y salir con una foto de la mascota del menor de La Familia Rarita.<br/>")
@@ -724,7 +724,7 @@ items.push ({
 				{ id: desc_hall_1, action: { choiceId: "action", actionId:"ex", o1Id: "chimenea"} } ,
 				{ id: desc_hall_a_cocina, action: { choiceId: "dir1", actionId:"go", target: primitives.IT_X("cocina"), targetId: "cocina", d1Id:"d270", d1: primitives.DIR_GetIndex("d270")}},
 				{ id: desc_hall_2, visibleToTrue: [desc_hall_2_plus]},
-				{ id: msg_interruptores_1, visibleToTrue: [msg_interruptores_2]},
+				{ id: msg_interruptores_1, visibleToTrue: [msg_interruptores_2], activatedBy: "interruptores" },
 				{id: desc_hall_3, action: { choiceId: "dir1", actionId:"go", target: primitives.IT_X("pasillo"), targetId: "pasillo", d1Id:"up", d1: primitives.DIR_GetIndex("up")}}
 			])
 

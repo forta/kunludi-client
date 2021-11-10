@@ -3,7 +3,7 @@
     {
       "id": "prota",
       "type": "pc",
-      "loc": "intro1",
+      "loc": "hall",
       "att": { "generalState": [ { "state": "0" } ] }
     },
     {
@@ -186,6 +186,12 @@
       "id": "ataúd",
       "type": "obj",
       "loc": "hab-abuelos",
+      "att": { "generalState": [ { "state": "0" } ] }
+    },
+    {
+      "id": "interruptores",
+      "type": "obj",
+      "loc": "limbo",
       "att": { "generalState": [ { "state": "0" } ] }
     }
   ],

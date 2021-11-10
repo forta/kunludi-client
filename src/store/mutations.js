@@ -65,6 +65,7 @@ export default {
        if (ir == null) {
          continue
        }
+
        if (ir.type == "visible") {
          // params: ir.rid, ir.visible
          for (var j=0; j<state.history[state.gameTurn-1].reactionList.length;j++) {
@@ -74,6 +75,15 @@ export default {
              }
            }
          }
+
+       } else if (ir.type == "activatedBy") {
+
+         console.log("internal reaction/activatedBy: " + JSON.stringify(ir) )
+         // to-do: here? set activatedBy state to "1"
+         // here! in the initial design , internal variables cannot be changed out of the games
+
+
+
        } else if (ir.type == "action") {
          //console.log("internal reaction/action: " + JSON.stringify(ir) )
 

@@ -696,12 +696,23 @@ function GD_DefAllLinks (linkArray) {
 
 	//console.log ("Definition of links: " + JSON.stringify(linkArray))
 
+	function getReactionListIndex (reactionList, reactionListId) {
+
+		for (let k=0; k<reactionList.length;k++) {
+			if (typeof reactionList[k].id != "undefined" ) {
+				if ((reactionList[k].id == reactionListId) && (reactionList[k].type == "rt_link")) {
+					return k
+				}
+			}
+		}
+	}
+
 	function setLinkDefinition (reactionList, reactionListId, subReaction) {
 
 		for (var k=0; k<reactionList.length;k++) {
 			if (typeof reactionList[k].id != "undefined" ) {
 				if ((reactionList[k].id == reactionListId) && (reactionList[k].type == "rt_link")){
-					reactionList[k].active = true
+					// reactionList[k].active = true
 					if (typeof reactionList[k].param.l1.subReactions == "undefined") {reactionList[k].param.l1.subReactions = []}
 					var subReaction2=JSON.parse(JSON.stringify(subReaction)); // to avoid strange behaviour (because of "var")
 					reactionList[k].param.l1.subReactions.push (subReaction2)
@@ -721,10 +732,28 @@ function GD_DefAllLinks (linkArray) {
 		}
 	}
 
-
 	for (var i=0; i<linkArray.length;i++) {
 		var reactionListId = linkArray[i].id
 		let subReaction
+
+		// link activation
+		let rIndex = getReactionListIndex (this.reactionList, reactionListId)
+		this.reactionList[rIndex].active = true
+		// to-do: if activatedBy exists, the pointed variable should be used to set whether it's active or not
+		if (typeof linkArray[i].activatedBy != "undefined") {
+			console.log ("ActivatedBy?: " + JSON.stringify (linkArray[i]))
+			let item = this.IT_X (linkArray[i].activatedBy)
+			let value = this.IT_GetAttPropValue (item, "generalState", "state")
+			console.log ("Value: " + value)
+			if (value > 0) {
+				this.reactionList[rIndex].active = false
+			}
+			// to-do: ??
+			subReaction = {type: "activatedBy"}
+			subReaction.activatedBy = linkArray[i].activatedBy
+			setLinkDefinition (this.reactionList, reactionListId, subReaction)
+
+		}
 
 		if (typeof linkArray[i].changeTo  != "undefined") {
 			subReaction = {type: "visible"}
@@ -757,7 +786,7 @@ function GD_DefAllLinks (linkArray) {
 		}
 
 		if (typeof linkArray[i].action != "undefined") {
-			console.log ("link def (action): " + JSON.stringify(linkArray[i].action))
+			// console.log ("link def (action): " + JSON.stringify(linkArray[i].action))
 			subReaction = {type: "action", choiceId: linkArray[i].action.choiceId}
 
 			// parm validation

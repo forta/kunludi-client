@@ -646,6 +646,13 @@ function processingRemainingReactions () {
 			 if (this.reactionList[this.reactionListCounter].type == "rt_end_game") {
 		 	 	  this.gameIsOver = true
 		   }
+
+			 /*
+			 if (this.reactionList[this.reactionListCounter].type == "rt_link") {
+				 console.log ("Pre of rt_link: " + JSON.stringify(this.reactionList[this.reactionListCounter]))
+		   }
+			 */
+
 			 this.processedReactionList.push (this.reactionList[this.reactionListCounter])
 		}
 	}
