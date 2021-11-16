@@ -31,6 +31,7 @@ export default {
 	resetGameSlot:resetGameSlot,
 	processUserCode:processUserCode,
 	processChoice:processChoice,
+	execLink:execLink,
 	getCurrentChoice:getCurrentChoice,
 	getPendingChoice:getPendingChoice,
 	getLastAction:getLastAction,
@@ -223,6 +224,21 @@ function processChoice (choice, optionMsg) {
 	}
 
 }
+
+function execLink (choice, optionMsg) {
+
+	if (connected) {
+		let choiceWithUser = choice // adding who makes the action
+		choiceWithUser.userId = kunludiClient.getUserId()
+	  this.currentChoice = choiceWithUser
+		//kunludiClient.execLink(choiceWithUser, optionMsg)
+		console.log ("execLink: not implemented yet")
+	} else {
+		kunludiLocalClient.execLink (choice, optionMsg)
+	}
+
+}
+
 
 function getEnableChoices() {
 

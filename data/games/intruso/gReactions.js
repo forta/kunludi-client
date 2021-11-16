@@ -413,6 +413,11 @@ let initReactions =  function  (reactions, primitives) {
 			primitives.GD_CreateMsg ("es","escuchas_1", "Una voz lejana y amable te susurra:<br/>")
 			primitives.CA_ShowMsg ("escuchas_1")
 			primitives.CA_ShowMsgAsIs (escena)
+
+			if (escena == "done") {
+				usr.escenaFinal()
+			}
+
 			return true
 		}
 
@@ -1135,61 +1140,7 @@ function turn (indexItem) {
 
 	if (usr.escenas_pendientes() != "done") return
 
-	primitives.GD_CreateMsg ("es","escena_final_1", "Suena el móvil! Los Raritos, ya están de vuelta! No sabes ni donde esconderte y acabas en el hall, debajo de una mesa, justo a tiempo cuando oyes abrir la puerta se abre en silencio dejando pasar las risas de la famila. Un click y la luz se enciende.<br/>")
-  primitives.GD_CreateMsg ("es","escena_final_2", "Todo es brillo y pulcritud.")
-	primitives.GD_CreateMsg ("es","escena_final_3", "El niño sin dejar de comer golosinas sin parar, se te acerca, te lanza un ingenuo bú! y se va entre risas mientras le intenta poner la zancadilla a su hermana, que lo esquiva sin mayor esfuerzo y subes las escaleras a su habitación mientras escucha música de sus casos y sin prestarte la más mínima atención.")
-	primitives.GD_CreateMsg ("es","escena_final_4", "Los padres te ofrecen la mano y te hacen salir de tu escondite.<br/>")
-	primitives.GD_CreateMsg ("es","escena_final_5", "El: Parece que has tenido un memorable Halloween! Auuuuuuuuuuuu!<br/>")
-	primitives.GD_CreateMsg ("es","escena_final_6", "Ella: No te dejezzzzzzz confundir, nada ezzzzzzz lo que parece zer.<br/>")
-	primitives.GD_CreateMsg ("es","escena_final_7", "El abuelo se acerca a ti y sale contigo al porche, rodeados de plantas hermosas y sanas, echándote un amigable brazo al hombro.<br/>")
-	primitives.GD_CreateMsg ("es","escena_abuelo_1", "Abuelo: Creo que después de esta noche no volverás a entrar en casas ajenas sin persono, ¿verdad?<br/>")
-	primitives.GD_CreateMsg ("es","escena_abuelo_2", "Asientes")
-	primitives.GD_CreateMsg ("es","escena_abuelo_3", "Abuelo: Tengo esto para ti, pero no lo abras todavía.<br/>" )
-	primitives.GD_CreateMsg ("es","escena_abuelo_4", "Te entrega un sobre y te coge el móvil.")
-	primitives.GD_CreateMsg ("es","escena_abuelo_5", "Abuelo: Está claro que este momento hay que retratarlo!<br/>")
-	primitives.GD_CreateMsg ("es","escena_abuelo_6", "Se saca un selfie contigo y entra en la casa, dejándote a solas en el mismo porche de hojas muertas al que saltaste hace ahora un rato.<br/>")
-	primitives.GD_CreateMsg ("es","escena_abuelo_7", "Un sobre y una foto. Truco y trato, lo tienes todo esta noche. Te sientas en el bordillo del porche y los observas con detenimiento:<br/>")
-
-	primitives.GD_CreateMsg ("es","sobre", "No puede ser! Dentro está la carta que te salió mientras jugabas con tus amigos, ¿pero qué diablos...?, ¿cómo es que...?<br/>")
-	primitives.GD_CreateMsg ("es","foto", "Tus desvelos no podían quedar en saco roto: en la foto que sacó el Abuelo sales tú sonriendo, con un murciélago apoyado en tu hombro.<br/>")
-
-	primitives.GD_CreateMsg ("es","caray", "Caray, qué noche. Sales de la finca de Los Raritos, caminando entre zombies y brujas.")
-
-	primitives.CA_ShowMsg ("escena_final_1" )
-	primitives.CA_PressKey ("tecla");
-	primitives.CA_ShowMsg ("escena_final_2" )
-	primitives.CA_ShowMsg ("escena_final_3" )
-	primitives.CA_ShowMsg ("escena_final_4" )
-	primitives.CA_PressKey ("tecla");
-	primitives.CA_ShowMsg ("escena_final_5" )
-	primitives.CA_ShowMsg ("escena_final_6" )
-
-	primitives.CA_PressKey ("tecla");
-
-	primitives.CA_ShowMsg ("escena_final_7" )
-
-	primitives.CA_PressKey ("tecla");
-
-	primitives.CA_ShowMsg ("escena_abuelo_1" )
-	primitives.CA_ShowMsg ("escena_abuelo_2" )
-	primitives.CA_PressKey ("tecla");
-	primitives.CA_ShowMsg ("escena_abuelo_3" )
-	primitives.CA_ShowMsg ("escena_abuelo_4" )
-	primitives.CA_PressKey ("tecla");
-	primitives.CA_ShowMsg ("escena_abuelo_5" )
-	primitives.CA_ShowMsg ("escena_abuelo_6" )
-	primitives.CA_ShowMsg ("escena_abuelo_7" )
-
-  // to-do: interactivo
-	primitives.GD_CreateMsg ("es","tecla-sobre", "Ver el contenido del sobre")
-	primitives.CA_PressKey ("tecla-sobre");
-	primitives.CA_ShowMsg ("sobre" )
-	primitives.GD_CreateMsg ("es","tecla-foto", "Ver el selfie con el Abuelo Rarito")
-	primitives.CA_PressKey ("tecla-foto");
-	primitives.CA_ShowMsg ("foto" )
-	primitives.CA_PressKey ("tecla");
-  primitives.CA_EndGame("caray")
-	usr.setValue({id:"intro2", value:"1"})
+	usr.escenaFinal()
 
 }
 
@@ -1300,11 +1251,11 @@ usr.escena_espejo= function () {
 
 usr.escenas_pendientes = function () {
 
-	var suma = 0
-	var escenas = ["dinamita", "ratón", "espejo", "ataúd", "cuadro", "huesos", "gusanos"]
-	var estado_escena = [false,false,false,false,false,false,false]
+	let suma = 0
+	let escenas = ["sangre", "hambre", "espejo", "ataúd", "cuadro", "huesos", "gusanos"]
+	let estado_escena = [false,false,false,false,false,false,false]
 
-	var primitives = this.primitives // tricky
+	let primitives = this.primitives // tricky
 
 	estado_escena[0] = (primitives.IT_GetLoc(primitives.IT_X("botella-vacía")) == primitives.IT_X("limbo"))
 	estado_escena[1] = (primitives.IT_GetLoc(primitives.IT_X("ratón")) != primitives.IT_X("limbo"))
@@ -1314,22 +1265,84 @@ usr.escenas_pendientes = function () {
 	estado_escena[5] = (usr.getValue({id:"huesos"}) == "0")
 	estado_escena[6] = (usr.getValue({id:"taper"}) != "2")
 
-	var pendientes = 0
-	for (var i=0; i<estado_escena.length;i++) if (estado_escena[i]) pendientes++
+	let pendientes = 0
+	for (let i=0; i<estado_escena.length;i++) if (estado_escena[i]) pendientes++
 
-	console.log("Debug: quedan " + pendientes + " cosas por hacer")
+	console.log("Debug: quedan " + pendientes + " cosas por hacer: " + JSON.stringify (pendientes))
 
 	var elegido = primitives.MISC_Random(pendientes)
 
-	for (var i=0, j=0; i<estado_escena.length;i++) {
+	for (let i=0, j=0; i<estado_escena.length;i++) {
 		if (estado_escena[i]) {
 			if (j==elegido) {
-				return escenas[j]
+				return escenas[i]
 			}
 			j++;
 		}
 	}
 
 	return "done"
+
+}
+
+usr.escenaFinal = function () {
+
+	var primitives = this.primitives // tricky
+
+	primitives.GD_CreateMsg ("es","escena_final_1", "Suena el móvil! Los Raritos, ya están de vuelta! No sabes ni donde esconderte y acabas en el hall, debajo de una mesa, justo a tiempo cuando oyes abrir la puerta se abre en silencio dejando pasar las risas de la famila. Un click y la luz se enciende.<br/>")
+  primitives.GD_CreateMsg ("es","escena_final_2", "Todo es brillo y pulcritud.")
+	primitives.GD_CreateMsg ("es","escena_final_3", "El niño sin dejar de comer golosinas sin parar, se te acerca, te lanza un ingenuo bú! y se va entre risas mientras le intenta poner la zancadilla a su hermana, que lo esquiva sin mayor esfuerzo y subes las escaleras a su habitación mientras escucha música de sus casos y sin prestarte la más mínima atención.")
+	primitives.GD_CreateMsg ("es","escena_final_4", "Los padres te ofrecen la mano y te hacen salir de tu escondite.<br/>")
+	primitives.GD_CreateMsg ("es","escena_final_5", "El: Parece que has tenido un memorable Halloween! Auuuuuuuuuuuu!<br/>")
+	primitives.GD_CreateMsg ("es","escena_final_6", "Ella: No te dejezzzzzzz confundir, nada ezzzzzzz lo que parece zer.<br/>")
+	primitives.GD_CreateMsg ("es","escena_final_7", "El abuelo se acerca a ti y sale contigo al porche, rodeados de plantas hermosas y sanas, echándote un amigable brazo al hombro.<br/>")
+	primitives.GD_CreateMsg ("es","escena_abuelo_1", "Abuelo: Creo que después de esta noche no volverás a entrar en casas ajenas sin persono, ¿verdad?<br/>")
+	primitives.GD_CreateMsg ("es","escena_abuelo_2", "Asientes")
+	primitives.GD_CreateMsg ("es","escena_abuelo_3", "Abuelo: Tengo esto para ti, pero no lo abras todavía.<br/>" )
+	primitives.GD_CreateMsg ("es","escena_abuelo_4", "Te entrega un sobre y te coge el móvil.")
+	primitives.GD_CreateMsg ("es","escena_abuelo_5", "Abuelo: Está claro que este momento hay que retratarlo!<br/>")
+	primitives.GD_CreateMsg ("es","escena_abuelo_6", "Se saca un selfie contigo y entra en la casa, dejándote a solas en el mismo porche de hojas muertas al que saltaste hace ahora un rato.<br/>")
+	primitives.GD_CreateMsg ("es","escena_abuelo_7", "Un sobre y una foto. Truco y trato, lo tienes todo esta noche. Te sientas en el bordillo del porche y los observas con detenimiento:<br/>")
+
+	primitives.GD_CreateMsg ("es","sobre", "No puede ser! Dentro está la carta que te salió mientras jugabas con tus amigos, ¿pero qué diablos...?, ¿cómo es que...?<br/>")
+	primitives.GD_CreateMsg ("es","foto", "Tus desvelos no podían quedar en saco roto: en la foto que sacó el Abuelo sales tú sonriendo, con un murciélago apoyado en tu hombro.<br/>")
+
+	primitives.GD_CreateMsg ("es","caray", "Caray, qué noche. Sales de la finca de Los Raritos, caminando entre zombies y brujas.")
+
+	primitives.CA_ShowMsg ("escena_final_1" )
+	primitives.CA_PressKey ("tecla");
+	primitives.CA_ShowMsg ("escena_final_2" )
+	primitives.CA_ShowMsg ("escena_final_3" )
+	primitives.CA_ShowMsg ("escena_final_4" )
+	primitives.CA_PressKey ("tecla");
+	primitives.CA_ShowMsg ("escena_final_5" )
+	primitives.CA_ShowMsg ("escena_final_6" )
+
+	primitives.CA_PressKey ("tecla");
+
+	primitives.CA_ShowMsg ("escena_final_7" )
+
+	primitives.CA_PressKey ("tecla");
+
+	primitives.CA_ShowMsg ("escena_abuelo_1" )
+	primitives.CA_ShowMsg ("escena_abuelo_2" )
+	primitives.CA_PressKey ("tecla");
+	primitives.CA_ShowMsg ("escena_abuelo_3" )
+	primitives.CA_ShowMsg ("escena_abuelo_4" )
+	primitives.CA_PressKey ("tecla");
+	primitives.CA_ShowMsg ("escena_abuelo_5" )
+	primitives.CA_ShowMsg ("escena_abuelo_6" )
+	primitives.CA_ShowMsg ("escena_abuelo_7" )
+
+  // to-do: interactivo
+	primitives.GD_CreateMsg ("es","tecla-sobre", "Ver el contenido del sobre")
+	primitives.CA_PressKey ("tecla-sobre");
+	primitives.CA_ShowMsg ("sobre" )
+	primitives.GD_CreateMsg ("es","tecla-foto", "Ver el selfie con el Abuelo Rarito")
+	primitives.CA_PressKey ("tecla-foto");
+	primitives.CA_ShowMsg ("foto" )
+	primitives.CA_PressKey ("tecla");
+  primitives.CA_EndGame("caray")
+	usr.setValue({id:"intro2", value:"1"})
 
 }

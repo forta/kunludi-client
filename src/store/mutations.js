@@ -53,12 +53,35 @@ export default {
 
   EXEC_LINK (state, param) {
      console.log("execute link: " + JSON.stringify(param))
+     let varModifications = []
+
+     /*
+
+     to-do:
+      - url as %u1, no more as %l1
+      - runner.proxie.execLink:
+        * turn++
+        * var modifications
+        * reactionList modifications
+        * no echo generated
+        * history (t-1).hidden = true
+      -  link= {txt:"blabla", activatedBy: "item.generalState.state"}
+
+      to-do2: variables in JSON
+      - defAtt = {state:"0", state2: [], state3: {...}}
+      - use: item[x].att = ["state", "state3"]
+
+      to-do3:
+      - disabledActions: ["jump","sing"]
+
+     */
 
      if (typeof param.l1.subReactions == "undefined") {
        console.log("error executing link: missing subReactions")
        return
      }
 
+     // first, local actions (all but games actions and userCode)
      for (var i=0; i<param.l1.subReactions.length;i++) {
        //internal reaction
        var ir = param.l1.subReactions[i]
@@ -82,9 +105,26 @@ export default {
          // to-do: here? set activatedBy state to "1"
          // here! in the initial design , internal variables cannot be changed out of the games
 
+         varModifications.push ({ir:ir})
 
 
-       } else if (ir.type == "action") {
+       }  else if (ir.type == "url") {
+         // params: .url
+         window.open(ir.url);
+       }
+
+     }
+
+     // second, external actions (new turns. they can generate a new reactionList or not)
+
+     for (var i=0; i<param.l1.subReactions.length;i++) {
+       //internal reaction
+       var ir = param.l1.subReactions[i]
+       if (ir == null) {
+         continue
+       }
+
+     if (ir.type == "action") {
          //console.log("internal reaction/action: " + JSON.stringify(ir) )
 
          let choice = {choiceId: ir.choiceId}
@@ -136,10 +176,7 @@ export default {
            processChoice (state, choice)
          }
 
-       } else if (ir.type == "url") {
-         // params: .url
-         window.open(ir.url);
-       }  else if (ir.type == "userCode") {
+       } else if (ir.type == "userCode") {
          console.log("userCode: " + JSON.stringify(ir) )
          // params: .functionId, .par
          let status = processUserCode (state, {functionId: ir.functionId, par:ir.par} )
@@ -163,6 +200,15 @@ export default {
          r.active = false
        }
      }
+
+     // in case of necesity:
+     	//state.runnerProxie.execLink (param)
+
+       /*
+     	if (state.runnerProxie.getUserId() == '') {
+           refreshFromProxie (state)
+       }
+      */
 
   },
 
