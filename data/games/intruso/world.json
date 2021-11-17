@@ -3,7 +3,7 @@
     {
       "id": "prota",
       "type": "pc",
-      "loc": "hall",
+      "loc": "intro1",
       "att": { "generalState": [ { "state": "0" } ] }
     },
     {

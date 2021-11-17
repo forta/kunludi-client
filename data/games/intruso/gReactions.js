@@ -558,7 +558,7 @@ items.push ({
 
 		primitives.GD_CreateMsg ("es","tecla","avanza")
 
-		primitives.GD_CreateMsg ("es","Intro0", "Bienvenido al juego Intruso, participante en la %l1.<br/>");
+		primitives.GD_CreateMsg ("es","Intro0", "Bienvenido al juego Intruso, participante en la %l1.<br/>Correcciones hechas a fecha de 17 de noviembre, disculpen los bugs previos y gracias por los comentarios!<br/>");
 		primitives.GD_CreateMsg ("es","Intro1", "Antes de comenzar el juego, hay algunas %l1 que deberías conocer previamente.<br/>");
 		primitives.GD_CreateMsg ("es","Intro2", "Pero si ya las conoces, puedes empezar a %l1 directamente.<br/>");
 		primitives.GD_CreateMsg ("es","Intro3", "Disfruta de la partida.<br/>");
@@ -1120,6 +1120,7 @@ items.push ({
 				primitives.CA_ShowMsg ("ataúd_3" )
 				primitives.GD_CreateMsg ("es","tecla-ataúd-2", "Vuelves al presente")
 				primitives.CA_PressKey ("tecla-ataúd-2");
+				primitives.CA_ShowMsg ("ataúd_4" )
 
 				usr.setValue({id:"ataúd"}, "1")
 				primitives.PC_SetCurrentLoc(primitives.IT_X("hall"))
@@ -1341,7 +1342,10 @@ usr.escenaFinal = function () {
 	primitives.GD_CreateMsg ("es","tecla-foto", "Ver el selfie con el Abuelo Rarito")
 	primitives.CA_PressKey ("tecla-foto");
 	primitives.CA_ShowMsg ("foto" )
-	primitives.CA_PressKey ("tecla");
+
+	primitives.GD_CreateMsg ("es","tecla-caray", "Sales a la calle")
+	primitives.CA_PressKey ("tecla-caray");
+
   primitives.CA_EndGame("caray")
 	usr.setValue({id:"intro2", value:"1"})
 
