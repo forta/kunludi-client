@@ -69,7 +69,7 @@ export default {
 	itemMethod:itemMethod,
 	actionIsEnabled:actionIsEnabled,
 	turn:turn,
-	executeUserCode:executeUserCode
+	executeCode:executeCode
 }
 
 function dependsOn (primitives, libReactions, reactionList) {
@@ -140,7 +140,7 @@ function actionIsEnabled (actionId, item1, item2) {
 
 }
 
-function executeUserCode (functionName, par) {
+function executeCode (functionName, par) {
 
 	if (typeof usr[functionName] == 'function') {
   	return usr[functionName](par)
@@ -722,8 +722,9 @@ items.push ({
 			primitives.GD_CreateMsg ("es","interruptores_1", "Está todo bastante oscuro pero ves %l1 ");
 			primitives.GD_CreateMsg ("es","interruptores_2", "que están cubiertos de mugre pegajosa y no funcionan.<br/>");
 
-			var msg_interruptores_1 = primitives.CA_ShowMsg ("interruptores_1", {l1:{id: "interruptores_1", txt: "algunos interruptores."}})
-			var msg_interruptores_2 = primitives.CA_ShowMsg ("interruptores_2", undefined, false)
+			var interruptoresVisto = (usr.getValue({id:"interruptores"}) != "0")
+			var msg_interruptores_1 = primitives.CA_ShowMsg ("interruptores_1", {l1:{id: "interruptores_1", txt: "algunos interruptores"}})
+			var msg_interruptores_2 = primitives.CA_ShowMsg ("interruptores_2", undefined, interruptoresVisto)
 
 			primitives.GD_DefAllLinks ([
 				{ id: desc_hall_1, action: { choiceId: "action", actionId:"ex", o1Id: "chimenea"} } ,
@@ -879,15 +880,25 @@ items.push ({
 
 		desc: function () {
 
-			// to-do: que sea sólo visible si se tiene la linterna del móvil encendida
-			// to-do: si se han visto ya todos, sólo mostrar la versión _bis
 
-			var bis_active = (primitives.IT_GetAttPropValue (primitives.IT_X("cuadro1"), "generalState", "state") > 4)
+			let familiaActivation = [
+				(primitives.IT_GetAttPropValue (primitives.IT_X("cuadro1"), "familiaState", "padre") == "0"),
+				(primitives.IT_GetAttPropValue (primitives.IT_X("cuadro1"), "familiaState", "madre") == "0"),
+				(primitives.IT_GetAttPropValue (primitives.IT_X("cuadro1"), "familiaState", "hija") == "0"),
+				(primitives.IT_GetAttPropValue (primitives.IT_X("cuadro1"), "familiaState", "hijo") == "0"),
+				(primitives.IT_GetAttPropValue (primitives.IT_X("cuadro1"), "familiaState", "abuelo") == "0") ]
+
+			let bis_active = !(familiaActivation[0] || familiaActivation[1] || familiaActivation[2] || familiaActivation[3] || familiaActivation[4])
+
+
+			// si no se han visto ya todos, no mostrar opciones habituales sino sólo los enlaces
 			if (!bis_active) {primitives.CA_EnableChoices(false)}
 
 			primitives.GD_CreateMsg ("es","el_cuadro_1", "La familia Rarita al completo: ");
+
 			primitives.GD_CreateMsg ("es","el_cuadro_2", "el %l1, ");
 			primitives.GD_CreateMsg ("es","el_cuadro_2_bis", "el Papá Rarito, con un lobo a sus pies; ");
+
 			primitives.GD_CreateMsg ("es","el_cuadro_3", "la %l1, ");
 			primitives.GD_CreateMsg ("es","el_cuadro_3_bis", "la Mamá Rarita, con una serpiente inmensa como bufanda; ");
 			primitives.GD_CreateMsg ("es","el_cuadro_4", "la %l1, ");
@@ -900,8 +911,10 @@ items.push ({
 			primitives.GD_CreateMsg ("es","el_cuadro_7_bis", "y una figura borrada a cuchilladas, que deja entrever a una señora mayor también con un murciélago sobre su hombro. Si existió una Abuela Rarita en la familia es algo que desconocías hasta ahora. ¿Por qué habrán querido destrozar su recuerdo de manera tan cruel?<br/>");
 
 			primitives.CA_ShowMsg ("el_cuadro_1")
+
 			var msg_cuadro_2 = primitives.CA_ShowMsg ("el_cuadro_2", {l1: {id: "cuadro_2", txt: "Papá Rarito"}}, !bis_active)
 			var msg_cuadro_2_bis = primitives.CA_ShowMsg ("el_cuadro_2_bis", undefined, bis_active)
+
 			var msg_cuadro_3 = primitives.CA_ShowMsg ("el_cuadro_3", {l1: {id: "cuadro_3", txt: "Mamá Rarita"}}, !bis_active)
 			var msg_cuadro_3_bis = primitives.CA_ShowMsg ("el_cuadro_3_bis", undefined, bis_active)
 			var msg_cuadro_4 = primitives.CA_ShowMsg ("el_cuadro_4", {l1: {id: "cuadro_4", txt: "Chica Rarita"}}, !bis_active)
@@ -913,13 +926,24 @@ items.push ({
 			var msg_cuadro_7 = primitives.CA_ShowMsg ("el_cuadro_7", {l1: {id: "cuadro_7", txt: "una figura borrada a cuchilladas"}}, !bis_active)
 			var msg_cuadro_7_bis = primitives.CA_ShowMsg ("el_cuadro_7_bis", undefined, bis_active)
 
+			/*
+			here!
+			error:
+			actualmente, es setFrame el que devuelve  (status.enableChoices == true)
+			lo que produce el  this.setEnableChoices(true)
+	     Pero al pasar a setValue de libCode, ahora no hay nadie que lo haga
+
+			*/
+
 			primitives.GD_DefAllLinks ([
-				{ id: msg_cuadro_2, changeTo: msg_cuadro_2_bis, userCode: {functionId: "setFrame", par: {pnj:"padre"} } },
-				{ id: msg_cuadro_3, changeTo: msg_cuadro_3_bis, userCode: {functionId: "setFrame", par: {pnj:"madre"} } },
-				{ id: msg_cuadro_4, changeTo: msg_cuadro_4_bis, userCode: {functionId: "setFrame", par: {pnj:"chica"} }	},
-				{ id: msg_cuadro_5, changeTo: msg_cuadro_5_bis, userCode: {functionId: "setFrame", par: {pnj:"niño"} } 	},
-				{ id: msg_cuadro_6, changeTo: msg_cuadro_6_bis, userCode: {functionId: "setFrame", par: {pnj:"abuelo"} } },
-				{ id: msg_cuadro_7, changeTo: msg_cuadro_7_bis, userCode: {functionId: "setFrame", par: {pnj:"abuela"} } }
+				// activatedBy: cuadro1.familiaState.X
+
+				{ id: msg_cuadro_2, changeTo: msg_cuadro_2_bis, userCode: {functionId: "setFrame", par: {pnj:"padre"} }, activatedBy: "cuadro1.familiaState.padre" },
+				{ id: msg_cuadro_3, changeTo: msg_cuadro_3_bis, userCode: {functionId: "setFrame", par: {pnj:"madre"} }, activatedBy: "cuadro1.familiaState.madre" },
+				{ id: msg_cuadro_4, changeTo: msg_cuadro_4_bis, userCode: {functionId: "setFrame", par: {pnj:"chica"} }, activatedBy: "cuadro1.familiaState.chica"	},
+				{ id: msg_cuadro_5, changeTo: msg_cuadro_5_bis, userCode: {functionId: "setFrame", par: {pnj:"niño"} }, activatedBy: "cuadro1.familiaState.niño" 	},
+				{ id: msg_cuadro_6, changeTo: msg_cuadro_6_bis, userCode: {functionId: "setFrame", par: {pnj:"abuelo"} }, activatedBy: "cuadro1.familiaState.abuelo" },
+				{ id: msg_cuadro_7, changeTo: msg_cuadro_7_bis, userCode: {functionId: "setFrame", par: {pnj:"abuela"} }, activatedBy: "cuadro1.familiaState.abuela" }
 			])
 
 		}
@@ -954,8 +978,8 @@ items.push ({
 			var msg_huesos_1_bis = primitives.CA_ShowMsg ("huesos_1_bis", undefined, jaulaVisto & !huesosVisto)
 
 			primitives.GD_DefAllLinks ([
-				{ id: msg_chimenea_1, changeTo: msg_chimenea_1_bis, visibleToTrue: [msg_jaula_1], userCode: {functionId:'setValue', par: {id:"jaula", value:"1"}} },
-				{ id: msg_jaula_1, changeTo: msg_jaula_1_bis, visibleToTrue: [msg_huesos_1] , userCode: {functionId:'setValue', par: {id:"huesos", value:"1"}} },
+				{ id: msg_chimenea_1, changeTo: msg_chimenea_1_bis, visibleToTrue: [msg_jaula_1], libCode: {functionId:'setValue', par: {id:"jaula", value:"1"}} },
+				{ id: msg_jaula_1, changeTo: msg_jaula_1_bis, visibleToTrue: [msg_huesos_1] , libCode: {functionId:'setValue', par: {id:"huesos", value:"1"}} },
 				{ id: msg_huesos_1, changeTo: msg_huesos_1_bis, action: { choiceId: "action", actionId:"sacar_foto", o1Id: "móvil"} }
 			])
 		}
@@ -1020,16 +1044,16 @@ items.push ({
 
 			primitives.GD_DefAllLinks ([
 				{ id: msg_desc_botella_1, changeTo: msg_desc_botella_1_bis,
-					userCode: {functionId: "setValue", par: {id:"botella", value:"1"}}
+					libCode: {functionId: "setValue", par: {id:"botella", value:"1"}}
 				},
 				{ id: msg_desc_taper_1, changeTo: msg_desc_taper_1_bis,
-					userCode: {functionId: "setValue", par: {id:"taper", value:"1"}}
+					libCode: {functionId: "setValue", par: {id:"taper", value:"1"}}
 				},
 				{ id: msg_desc_dinamita_1, changeTo: msg_desc_dinamita_1_bis,
-					userCode: {functionId: "setValue", par: {id:"dinamita", value:"1"}}
+					libCode: {functionId: "setValue", par: {id:"dinamita", value:"1"}}
 				},
 				{ id: msg_desc_queso_1, changeTo: msg_desc_queso_1_bis,
-					userCode: {functionId: "setValue", par: {id:"queso", value:"1"}}
+					libCode: {functionId: "setValue", par: {id:"queso", value:"1"}}
 				}
 			])
 
@@ -1184,19 +1208,26 @@ usr.goto = function (par) { // par.target
 
 usr.setFrame = function (par) { // par.pnj
 
-	var primitives = this.primitives // tricky
-	var status = {}
+	let primitives = this.primitives // tricky
+	let status = {}
 
 	primitives.CA_EnableChoices(true)
 
   console.log ("usr.setFrame: " + JSON.stringify (par))
 
-  var value = primitives.IT_GetAttPropValue (primitives.IT_X("cuadro1"), "generalState", "state")
-	console.log ("value: " + value)
-	value++
-	// incrementa valor
-	primitives.IT_SetAttPropValue (primitives.IT_X("cuadro1"), "generalState", "state", value)
-	if (value > 5) {
+
+	let familiaActivation = [
+		(primitives.IT_GetAttPropValue (primitives.IT_X("cuadro1"), "familiaState", "padre") == "0"),
+		(primitives.IT_GetAttPropValue (primitives.IT_X("cuadro1"), "familiaState", "madre") == "0"),
+		(primitives.IT_GetAttPropValue (primitives.IT_X("cuadro1"), "familiaState", "hija") == "0"),
+		(primitives.IT_GetAttPropValue (primitives.IT_X("cuadro1"), "familiaState", "hijo") == "0"),
+		(primitives.IT_GetAttPropValue (primitives.IT_X("cuadro1"), "familiaState", "abuelo") == "0") ]
+
+		let bis_active = !(familiaActivation[0] || familiaActivation[1] || familiaActivation[2] || familiaActivation[3] || familiaActivation[4])
+
+		// si se han visto ya todos, mostrar opciones habituales
+		if (bis_active) {
+			//primitives.CA_EnableChoices(false)
 			status.enableChoices = true
 	}
 

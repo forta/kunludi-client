@@ -20,6 +20,7 @@ export default {
 	caMapping:caMapping,
 	executeGameAction:executeGameAction,
 	dependsOn:dependsOn,
+	executeCode:executeCode,
 
 	CA_ShowDesc:CA_ShowDesc,
 	CA_ShowStaticDesc:CA_ShowStaticDesc,
@@ -76,6 +77,7 @@ export default {
 	IT_NumberOfAtts:IT_NumberOfAtts,
 	IT_ATT:IT_ATT,
 	IT_AttPropExists:IT_AttPropExists,
+	IT_GetAttPropValueUsingId:IT_GetAttPropValueUsingId,
 	IT_GetAttPropValue:IT_GetAttPropValue,
 	IT_SetAttPropValue:IT_SetAttPropValue,
 	IT_IncrAttPropValue:IT_IncrAttPropValue,
@@ -156,6 +158,24 @@ function executeGameAction (type, parameters) {
   //break;
  }
 };
+
+function executeCode (functionName, par) {
+
+	// here!!
+
+	// shorcut
+	if (functionName == "setValue") {
+		let item = this.IT_X(par.id)
+		this.IT_SetAttPropValue (item, "generalState", "state", par.value)
+		return
+	}
+
+	// direct mapping
+	if (typeof primitives[functionName] == 'function') {
+		return primitives[functionName](par)
+	}
+
+}
 
 
 // -----------------------------------
@@ -439,7 +459,8 @@ function DIR_GetId  (index) {
 
 function IT_X (id){
 
- return arrayObjectIndexOf(this.world.items, "id", id);
+  let parts = id.split(".")
+  return arrayObjectIndexOf(this.world.items, "id", parts[0]);
 }
 
 function IT_NumberOfItems  () {
@@ -582,6 +603,24 @@ function IT_AttPropExists (indexItem, attId, propId) {
  var j = arrayObjectIndexOf(this.world.items[indexItem].att[attId], "id", propId);
  return (j>=0);
 }
+
+function IT_GetAttPropValueUsingId (id) {  // id: item.att.state, or item[.generalState.state]
+	let parts = id.split(".")
+	let item = this.IT_X(parts[0])
+	let attId, propId
+
+	if (parts.length == 3) {
+		attId = parts[1]
+		propId = parts[2]
+	} else {
+		attId = "generalState"
+		propId = "state"
+	}
+
+	return this.IT_GetAttPropValue(item, attId, propId)
+
+}
+
 
 function IT_GetAttPropValue (indexItem, attId, propId) {
 
@@ -742,8 +781,14 @@ function GD_DefAllLinks (linkArray) {
 		// to-do: if activatedBy exists, the pointed variable should be used to set whether it's active or not
 		if (typeof linkArray[i].activatedBy != "undefined") {
 			console.log ("ActivatedBy?: " + JSON.stringify (linkArray[i]))
+
+			/*
 			let item = this.IT_X (linkArray[i].activatedBy)
 			let value = this.IT_GetAttPropValue (item, "generalState", "state")
+			*/
+
+			let value = this.IT_GetAttPropValueUsingId (linkArray[i].activatedBy)
+
 			console.log ("Value: " + value)
 			if (value > 0) {
 				this.reactionList[rIndex].active = false
@@ -841,6 +886,12 @@ function GD_DefAllLinks (linkArray) {
 		if (typeof linkArray[i].userCode != "undefined") {
 		  //console.log ("link def (userCode): " + JSON.stringify(linkArray[i].userCode))
 			subReaction = {type: "userCode", functionId: linkArray[i].userCode.functionId, par: linkArray[i].userCode.par}
+		  setLinkDefinition (this.reactionList, reactionListId, subReaction)
+		}
+
+		if (typeof linkArray[i].libCode != "undefined") {
+		  //console.log ("link def (libCode): " + JSON.stringify(linkArray[i].libCode))
+			subReaction = {type: "libCode", functionId: linkArray[i].libCode.functionId, par: linkArray[i].libCode.par}
 		  setLinkDefinition (this.reactionList, reactionListId, subReaction)
 		}
 

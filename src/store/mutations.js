@@ -52,163 +52,25 @@ export default {
   LOAD_GAME_ABOUT: LOAD_GAME_ABOUT,
 
   EXEC_LINK (state, param) {
-     console.log("execute link: " + JSON.stringify(param))
-     let varModifications = []
 
-     /*
+    if (typeof param.l1.subReactions == "undefined") {
+      console.log("error executing link: missing subReactions")
+      return
+    }
 
-     to-do:
-      - url as %u1, no more as %l1
-      - runner.proxie.execLink:
-        * turn++
-        * var modifications
-        * reactionList modifications
-        * no echo generated
-        * history (t-1).hidden = true
-      -  link= {txt:"blabla", activatedBy: "item.generalState.state"}
+    // to-do: pending to use %u1 instead of %l1
+    let ir = param.l1.subReactions[0]
+    if (ir.type == "url") {
+      console.log("execute URL link: " + JSON.stringify(param))
+      window.open(ir.url);
+      return
+    }
 
-      to-do2: variables in JSON
-      - defAtt = {state:"0", state2: [], state3: {...}}
-      - use: item[x].att = ["state", "state3"]
+    state.runnerProxie.execLink (param)
 
-      to-do3:
-      - disabledActions: ["jump","sing"]
-
-     */
-
-     if (typeof param.l1.subReactions == "undefined") {
-       console.log("error executing link: missing subReactions")
-       return
+   	if (state.runnerProxie.getUserId() == '') {
+         refreshFromProxie (state)
      }
-
-     // first, local actions (all but games actions and userCode)
-     for (var i=0; i<param.l1.subReactions.length;i++) {
-       //internal reaction
-       var ir = param.l1.subReactions[i]
-       if (ir == null) {
-         continue
-       }
-
-       if (ir.type == "visible") {
-         // params: ir.rid, ir.visible
-         for (var j=0; j<state.history[state.gameTurn-1].reactionList.length;j++) {
-           if (typeof state.history[state.gameTurn-1].reactionList[j].id != "undefined" ) {
-             if (state.history[state.gameTurn-1].reactionList[j].id == ir.rid ) {
-               state.history[state.gameTurn-1].reactionList[j].visible = ir.visible
-             }
-           }
-         }
-
-       } else if (ir.type == "activatedBy") {
-
-         console.log("internal reaction/activatedBy: " + JSON.stringify(ir) )
-         // to-do: here? set activatedBy state to "1"
-         // here! in the initial design , internal variables cannot be changed out of the games
-
-         varModifications.push ({ir:ir})
-
-
-       }  else if (ir.type == "url") {
-         // params: .url
-         window.open(ir.url);
-       }
-
-     }
-
-     // second, external actions (new turns. they can generate a new reactionList or not)
-
-     for (var i=0; i<param.l1.subReactions.length;i++) {
-       //internal reaction
-       var ir = param.l1.subReactions[i]
-       if (ir == null) {
-         continue
-       }
-
-     if (ir.type == "action") {
-         //console.log("internal reaction/action: " + JSON.stringify(ir) )
-
-         let choice = {choiceId: ir.choiceId}
-         if (choice.choiceId == 'obj1') {
-           choice.item1 = ir.o1
-           choice.itemId1 = ir.o1Id
-           choice.parent = ir. parent
-           processChoice (state, choice)
-         } else if (choice.choiceId == 'dir1') {
-           choice.isLeafe = true
-           choice.parent = "directActions"
-           console.log ("exec go: to-do, d1Id -> d1")
-           choice.action = {
-             actionId:"go",
-             d1: ir.d1,
-             d1Id: ir.d1Id,
-             target:ir.target,
-             targetId: ir.targetId,
-             isKnown:false
-           }
-           processChoice (state, choice)
-         } else if (choice.choiceId == 'action0') {
-           choice.isLeafe = true
-           choice.parent = "directActions"
-           choice.action = {
-             actionId: ir.actionId,
-             parent:"top"
-           }
-           processChoice (state, choice)
-         }  else if (choice.choiceId == 'action') {
-           choice.isLeafe = true
-           choice.parent = "obj1"
-           choice.action = {
-             item1: ir.o1,
-             item1Id: ir.o1Id,
-             actionId :ir.actionId
-           }
-           processChoice (state, choice)
-         } else if (choice.choiceId == 'action2') {
-           choice.isLeafe = true
-           choice.parent = "action2"
-           choice.action = {
-             item1: ir.o1,
-             item1Id: ir.o1Id,
-             actionId: ir.actionId,
-             item2: ir.o2,
-             item2Id: ir.o2Id
-           }
-           processChoice (state, choice)
-         }
-
-       } else if (ir.type == "userCode") {
-         console.log("userCode: " + JSON.stringify(ir) )
-         // params: .functionId, .par
-         let status = processUserCode (state, {functionId: ir.functionId, par:ir.par} )
-         if (typeof status == 'object') {
-           if (status.enableChoices == true) {
-             state.runnerProxie.setEnableChoices(true)
-           }
-
-           if (state.runnerProxie.getUserId() == '')  {
-              refreshFromProxie (state)
-           }
-         }
-
-       }
-     }
-
-     // link already chosen
-     for (let index=0;index<state.history[state.gameTurn-1].reactionList.length;index++) {
-       let r = state.history[state.gameTurn-1].reactionList[index]
-       if ((r.type == "rt_link") && (r.param.l1.id == param.l1.id)) {
-         r.active = false
-       }
-     }
-
-     // in case of necesity:
-     	//state.runnerProxie.execLink (param)
-
-       /*
-     	if (state.runnerProxie.getUserId() == '') {
-           refreshFromProxie (state)
-       }
-      */
 
   },
 

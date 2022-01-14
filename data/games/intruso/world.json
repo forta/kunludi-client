@@ -3,7 +3,7 @@
     {
       "id": "prota",
       "type": "pc",
-      "loc": "intro1",
+      "loc": "hall",
       "att": { "generalState": [ { "state": "0" } ] }
     },
     {
@@ -13,12 +13,7 @@
     {
       "id": "intro1",
       "type": "loc",
-      "address": [
-        {
-          "dir": "in",
-          "target": "intro2"
-        }
-      ],
+      "address": [ { "dir": "in", "target": "intro2" } ],
       "att": { "generalState": [ { "state": "0" } ] }
     },
     {
@@ -88,7 +83,10 @@
       "id": "cuadro1",
       "type": "obj",
       "loc": "pasillo",
-      "att": { "generalState": [ { "state": "0" } ] }
+      "att": {
+        "generalState": [ { "state": "0" } ] ,
+        "familiaState": [ { "padre": "0" }, { "madre": "0" }, { "chica": "0" }, { "niño": "0" }, { "abuelo": "0" }, { "abuela": "0" } ]
+       }
     },
     {
       "id": "chimenea",
@@ -199,11 +197,17 @@
     {
       "id": "generalState",
       "properties": [
-        {
-          "id": "state",
-          "value": "0",
-          "use": "mandatory"
-        }
+        { "id": "state", "value": "0", "use": "mandatory"   }
+      ]
+    }, {
+      "id": "familiaState",
+      "properties": [
+        { "id": "padre", "value": "0", "use": "mandatory"   },
+        { "id": "madre", "value": "0", "use": "mandatory"   },
+        { "id": "chica", "value": "0", "use": "mandatory"   },
+        { "id": "niño", "value": "0", "use": "mandatory"   },
+        { "id": "abuelo", "value": "0", "use": "mandatory" },
+        { "id": "abuela", "value": "0", "use": "mandatory"   }
       ]
     }
   ],

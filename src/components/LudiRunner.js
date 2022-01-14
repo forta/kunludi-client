@@ -11,7 +11,8 @@ let choice = {choiceId:'top', isLeafe:false, parent:''}
 export default {
 	dependsOn:dependsOn,
 	createWorld:createWorld,
-	processUserCode:processUserCode,
+	processCode:processCode,
+	execLink:execLink,
 	processChoice:processChoice,
 	processAction:processAction,
 	actionIsEnabled:actionIsEnabled,
@@ -272,23 +273,141 @@ function reactionListContains_Type (reactionList, type) {
 
 }
 
-function processUserCode (functionId, par) {
+function processCode (state, level, functionId, par) {
 
-	var status = undefined
-
-	if (typeof this.gameReactions.executeUserCode == "function")
-		status = this.gameReactions.executeUserCode (functionId, par)
-
-	/*
-	if (status == undefined)
-		status = this.libReactions.executeUserCode (actionId, item1, item2)
-	*/
-
+  let status
+	if (level == "userCode") {
+		if (typeof state.gameReactions.executeCode == "function") {
+			status = state.gameReactions.executeCode (functionId, par)
+		}
+	}
+	if (level == "libCode") {
+		if (typeof state.libReactions.executeCode == "function") {
+			status =  state.libReactions.executeCode (functionId, par)
+		}
+	}
 	return status
-
 
 }
 
+function setValueToItem (state, ir) {
+
+	let variableElement = ir.activatedBy.split (".")
+	let	item = state.libReactions.primitives.IT_X(variableElement[0])
+
+	if (variableElement.length == 1) { // item.generalState.state
+		state.libReactions.primitives.IT_SetAttPropValue(item, "generalState", "state", "1")
+	} else if (variableElement.length == 2) { // item.X.state
+			state.libReactions.primitives.IT_SetAttPropValue(item, variableElement[1], "state", "1")
+	} else if (variableElement.length == 3) { // item.X.Y
+			state.libReactions.primitives.IT_SetAttPropValue(item, variableElement[1], variableElement[2], "1")
+	} else {
+		console.log ("Erro: bad attribute sppecification")
+	}
+
+}
+
+
+function execLink (param) {
+
+	  for (var i=0; i<param.l1.subReactions.length;i++) {
+	    //internal reaction
+	    var ir = param.l1.subReactions[i]
+	    if (ir == null) {
+	      continue
+	    }
+
+	    if (ir.type == "visible") {
+	      // params: ir.rid, ir.visible
+	      for (var j=0; j<this.history[this.gameTurn-1].reactionList.length;j++) {
+	        if (typeof this.history[this.gameTurn-1].reactionList[j].id != "undefined" ) {
+	          if (this.history[this.gameTurn-1].reactionList[j].id == ir.rid ) {
+	            this.history[this.gameTurn-1].reactionList[j].visible = ir.visible
+	          }
+	        }
+	      }
+
+	    } else if (ir.type == "activatedBy") {
+
+	      console.log("internal reaction/activatedBy: " + JSON.stringify(ir) )
+				setValueToItem(this, ir)
+
+	    } else if (ir.type == "action") {
+	      //console.log("internal reaction/action: " + JSON.stringify(ir) )
+
+	      let choice = {choiceId: ir.choiceId}
+	      if (choice.choiceId == 'obj1') {
+	        choice.item1 = ir.o1
+	        choice.itemId1 = ir.o1Id
+	        choice.parent = ir. parent
+	        this.processChoice (choice)
+	      } else if (choice.choiceId == 'dir1') {
+	        choice.isLeafe = true
+	        choice.parent = "directActions"
+	        console.log ("exec go: to-do, d1Id -> d1")
+	        choice.action = {
+	          actionId:"go",
+	          d1: ir.d1,
+	          d1Id: ir.d1Id,
+	          target:ir.target,
+	          targetId: ir.targetId,
+	          isKnown:false
+	        }
+	        this.processChoice (choice)
+	      } else if (choice.choiceId == 'action0') {
+	        choice.isLeafe = true
+	        choice.parent = "directActions"
+	        choice.action = {
+	          actionId: ir.actionId,
+	          parent:"top"
+	        }
+	        this.processChoice (choice)
+	      }  else if (choice.choiceId == 'action') {
+	        choice.isLeafe = true
+	        choice.parent = "obj1"
+	        choice.action = {
+	          item1: ir.o1,
+	          item1Id: ir.o1Id,
+	          actionId :ir.actionId
+	        }
+	        this.processChoice (choice)
+	      } else if (choice.choiceId == 'action2') {
+	        choice.isLeafe = true
+	        choice.parent = "action2"
+	        choice.action = {
+	          item1: ir.o1,
+	          item1Id: ir.o1Id,
+	          actionId: ir.actionId,
+	          item2: ir.o2,
+	          item2Id: ir.o2Id
+	        }
+	        this.processChoice (choice)
+	      }
+
+	    }  else if ((ir.type == "userCode") || (ir.type == "libCode")) {
+	      console.log(ir.type + ": " + JSON.stringify(ir) )
+	      // params: .functionId, .par
+	      let status = processCode (this, ir.type, ir.functionId, ir.par )
+	      if (typeof status == 'object') {
+	        if (status.enableChoices == true) {
+	          this.setEnableChoices(true)
+	        }
+
+	      }
+
+	    }
+	  }
+
+
+	  // link already chosen
+	  for (let index=0;index<this.history[this.gameTurn-1].reactionList.length;index++) {
+	    let r = this.history[this.gameTurn-1].reactionList[index]
+	    if ((r.type == "rt_link") && (r.param.l1.id == param.l1.id)) {
+	      r.active = false
+	    }
+	  }
+
+}
 
 function processChoice (newChoice, optionMsg) {
 

@@ -29,7 +29,7 @@ export default {
 	quitGame:quitGame,
 	resetGame:resetGame,
 	resetGameSlot:resetGameSlot,
-	processUserCode:processUserCode,
+	//processUserCode:processUserCode,
 	processChoice:processChoice,
 	execLink:execLink,
 	getCurrentChoice:getCurrentChoice,
@@ -203,6 +203,7 @@ function resetGameSlot (gameId, slotId, newLocal) {
 	}
 }
 
+/*
 function processUserCode (functionId, par) {
 	if (connected) {
 		return kunludiClient.sendUserCode(functionId, par)
@@ -211,6 +212,7 @@ function processUserCode (functionId, par) {
 	}
 
 }
+*/
 
 function processChoice (choice, optionMsg) {
 
@@ -225,7 +227,7 @@ function processChoice (choice, optionMsg) {
 
 }
 
-function execLink (choice, optionMsg) {
+function execLink (param) {
 
 	if (connected) {
 		let choiceWithUser = choice // adding who makes the action
@@ -234,7 +236,7 @@ function execLink (choice, optionMsg) {
 		//kunludiClient.execLink(choiceWithUser, optionMsg)
 		console.log ("execLink: not implemented yet")
 	} else {
-		kunludiLocalClient.execLink (choice, optionMsg)
+		kunludiLocalClient.execLink (param)
 	}
 
 }

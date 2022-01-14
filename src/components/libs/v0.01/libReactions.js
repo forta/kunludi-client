@@ -23,9 +23,10 @@ let attributes = []
 
 //module.exports = exports = {
 export default {
-  	dependsOn:dependsOn,
-	processAction:processAction,
+  dependsOn:dependsOn,
+  processAction:processAction,
 	actionIsEnabled:actionIsEnabled,
+  executeCode:executeCode
 }
 
 function dependsOn (primitives, reactionList) {
@@ -75,6 +76,9 @@ function actionIsEnabled (actionId, item1, item2) {
 
 }
 
+function executeCode (functionName, par) {
+	this.primitives.executeCode(functionName, par)
+}
 
 // ============================
 
