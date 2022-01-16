@@ -1,5 +1,3 @@
-const libVersion = 'v0.01'
-
 let games = []
 let gameSlotList = []
 let gameId = ''
@@ -175,9 +173,21 @@ function join (gameId, slotId) {
 
   }
 
+  // get libVersion
+  var gameIndex = arrayObjectIndexOf (this.games, "name", gameId)
+  var libVersion = (typeof this.games[gameIndex].about.lib == "undefined")? 'v0.01': this.games[gameIndex].about.lib
+
   var primitives = require ('../components/libs/' + libVersion + '/primitives.js').default;
 	var libReactions = require ('../components/libs/' + libVersion + '/libReactions.js').default;
-	var gameReactions = require ('../../data/games/' + gameId + ((subgameId != "")? '/' + subgameId  : "") + '/gReactions.js').default;
+
+  var gameReactions
+  if (libVersion == 'v0.01') {
+    gameReactions = require ('../../data/games/' + gameId + ((subgameId != "")? '/' + subgameId  : "") + '/gReactions.js').default;
+  } else {
+    gameReactions = require ('../components/libs/' + libVersion + '/userTemplate.js').default;
+    gameReactions.usr = require ('../../data/games/' + gameId + ((subgameId != "")? '/' + subgameId  : "") + '/gReactionsUsr.js').default;
+
+  }
 	var langHandel = require ('../components/libs/' + libVersion + '/localization/' + this.locale + '/handler.js').default;
 
 	// world
@@ -278,7 +288,6 @@ function setLocale (state) {
 	this.language = require ('../components/LudiLanguage.js').default;
 
   this.language.setLocale (state.locale)
-	this.langHandler = require ('../components/libs/' + libVersion + '/localization/' + this.locale + '/handler.js');
 
 	// console.log ("this.gameId: " + this.gameId)
 
@@ -286,6 +295,13 @@ function setLocale (state) {
   state.kernelMessages [state.locale] = this.kernelMessages
 
 	if ((this.gameId == "") || (this.gameId == undefined)) return
+
+  // to-do: get libVersion for this game instead from golbal variable
+  var gameIndex = arrayObjectIndexOf (state.games, "name", this.gameId)
+  state.gameAbout = state.games[gameIndex].about
+  var libVersion = (typeof state.gameAbout.lib == "undefined")? 'v0.01': state.gameAbout.lib
+
+	this.langHandler = require ('../components/libs/' + libVersion + '/localization/' + this.locale + '/handler.js');
 
 	this.libMessages = require ('../components/libs/' + libVersion + '/localization/' + this.locale + '/messages.json');
 	this.gameMessages = require ('../../data/games/' + this.gameId + ((this.subgameId != "")? '/' + this.subgameId  : "") + '/localization/' + this.locale + '/messages.json')

@@ -12,6 +12,12 @@
             ]
         },
         {
+            "id": "goto",
+            "numpar": "1",
+            "on": [
+                "loc"
+            ]
+        },        {
             "id": "ex",
             "numpar": "1",
             "on": [
@@ -172,147 +178,147 @@
                 "loc"
             ]
         },
-		{  
+		{
 			 "id":"investigate",
 			 "numpar":"0"
 		},
-		{  
+		{
 			 "id":"dig_with",
 			 "numpar":"2",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		},
-		{  
+		{
 			 "id":"climb",
 			 "numpar":"0"
 		},
-		{  
+		{
 			 "id":"swim",
 			 "numpar":"0"
 		},
-		{  
+		{
 			 "id":"jump",
 			 "numpar":"0"
 		},
-		{  
+		{
 			 "id":"tie",
 			 "numpar":"2",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		},
-		{  
+		{
 			 "id":"untie",
 			 "numpar":"1",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		},
-		{  
+		{
 			 "id":"drink",
 			 "numpar":"1",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		},
-		{  
+		{
 			 "id":"eat",
 			 "numpar":"1",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		},
-		{  
+		{
 			 "id":"listen",
 			 "numpar":"1",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		},
-		{  
+		{
 			 "id":"smell",
 			 "numpar":"1",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		},
-		{  
+		{
 			 "id":"wakeup",
 			 "numpar":"1",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		},
-		{  
+		{
 			 "id":"attack",
 			 "numpar":"1",
 			 "on":[  "pc",	"npc" ]
 		},
-		{  
+		{
 			 "id":"strike",
 			 "numpar":"1",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		},
-		{  
+		{
 			 "id":"stop",
 			 "numpar":"1",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		},
-		{  
+		{
 			 "id":"burn",
 			 "numpar":"1",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		},
-		{  
+		{
 			 "id":"throwAction",
 			 "numpar":"2",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		},
-		{  
+		{
 			 "id":"push",
 			 "numpar":"1",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
-		},  
-		{  
+		},
+		{
 			 "id":"pull",
 			 "numpar":"1",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		},
-		{  
+		{
 			 "id":"raise",
 			 "numpar":"1",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		},
-		{  
+		{
 			 "id":"wait",
 			 "numpar":"0"
 		},
-		{  
+		{
 			 "id":"attack-with",
 			 "numpar":"2",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		},
-		{  
+		{
 			 "id":"break",
 			 "numpar":"1",
-			 "on":[  
+			 "on":[
 				"obj"
 			 ]
 		}
@@ -469,4 +475,4 @@
         }
     ],
     "items": []
-}	
+}

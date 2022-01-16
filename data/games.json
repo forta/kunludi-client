@@ -44,6 +44,11 @@
 			"name": "intruso",
 			"type": "0",
 			"group": "1"
+		},
+		{
+			"name": "intruso_v2",
+			"type": "0",
+			"group": "1"
 		}
 	]
 

@@ -18,35 +18,40 @@ let hidenMessages = false;
 //module.exports = exports = {
 export default {
 	caMapping:caMapping,
-	CA_ShowDesc:CA_ShowDesc,
-	CA_ShowStaticDesc:CA_ShowStaticDesc,
 	executeGameAction:executeGameAction,
 	dependsOn:dependsOn,
+	executeCode:executeCode,
+
+	CA_ShowDesc:CA_ShowDesc,
+	CA_ShowStaticDesc:CA_ShowStaticDesc,
+
 	CA_QuoteBegin:CA_QuoteBegin,
 	CA_QuoteContinues:CA_QuoteContinues,
 	CA_Refresh:CA_Refresh,
-	CA_URL:CA_URL,
 	CA_ShowMsg:CA_ShowMsg,
 	CA_ShowMsgAsIs:CA_ShowMsgAsIs,
-	CA_ATT:CA_ATT,
 	CA_ShowDir:CA_ShowDir,
 	CA_ShowItem:CA_ShowItem,
 	CA_ShowMenu:CA_ShowMenu,
 	CA_ShowImg:CA_ShowImg,
+	CA_EnableChoices:CA_EnableChoices,
 	CA_PressKey:CA_PressKey,
 	CA_EndGame:CA_EndGame,
 	CA_PlayAudio:CA_PlayAudio,
+
   PC_X:PC_X,
 	PC_SetIndex:PC_SetIndex,
 	PC_GetCurrentLoc:PC_GetCurrentLoc,
 	PC_GetCurrentLocId:PC_GetCurrentLocId,
 	PC_SetCurrentLoc:PC_SetCurrentLoc,
-	PC_CheckCurrentLocId,PC_CheckCurrentLocId,
+	PC_CheckCurrentLocId:PC_CheckCurrentLocId,
 	PC_Points:PC_Points,
 	PC_GetTurn:PC_GetTurn,
 	PC_IsAt:PC_IsAt,
+
 	DIR_GetIndex:DIR_GetIndex,
 	DIR_GetId:DIR_GetId,
+
 	IT_X:IT_X,
 	IT_NumberOfItems:IT_NumberOfItems,
 	IT_GetId:IT_GetId,
@@ -66,22 +71,26 @@ export default {
 	IT_SetWhereItemWas:IT_SetWhereItemWas,
 	IT_SetLastTime:IT_SetLastTime,
 	IT_IsAt:IT_IsAt,
-	IT_IsHere,IT_IsHere,
+	IT_IsHere:IT_IsHere,
 	IT_IsCarried:IT_IsCarried,
 	IT_IsCarriedOrHere:IT_IsCarriedOrHere,
 	IT_NumberOfAtts:IT_NumberOfAtts,
 	IT_ATT:IT_ATT,
 	IT_AttPropExists:IT_AttPropExists,
+	IT_GetAttPropValueUsingId:IT_GetAttPropValueUsingId,
 	IT_GetAttPropValue:IT_GetAttPropValue,
 	IT_SetAttPropValue:IT_SetAttPropValue,
 	IT_IncrAttPropValue:IT_IncrAttPropValue,
 	IT_GetRandomDirectionFromLoc:IT_GetRandomDirectionFromLoc,
 	IT_SameLocThan:IT_SameLocThan,
 	IT_FirstTimeDesc:IT_FirstTimeDesc,
+
 	W_GetAttIndex:W_GetAttIndex,
+
 	GD_CreateMsg:GD_CreateMsg,
-	MISC_Random:MISC_Random,
-  MISC_HideMessages:MISC_HideMessages
+	GD_DefAllLinks:GD_DefAllLinks,
+
+	MISC_Random:MISC_Random
 
 }
 
@@ -98,6 +107,7 @@ function caMapping (type) {
  		"GRAPH",
  		"GRAPH_POPUP",
  		"MSG_POPUP",
+		"ENABLE_CHOICES",
  		"PRESS_KEY",
  		"SHOW_MENU",
  		"SOUND",
@@ -149,6 +159,24 @@ function executeGameAction (type, parameters) {
  }
 };
 
+function executeCode (functionName, par) {
+
+	// here!!
+
+	// shorcut
+	if (functionName == "setValue") {
+		let item = this.IT_X(par.id)
+		this.IT_SetAttPropValue (item, "generalState", "state", par.value)
+		return
+	}
+
+	// direct mapping
+	if (typeof primitives[functionName] == 'function') {
+		return primitives[functionName](par)
+	}
+
+}
+
 
 // -----------------------------------
 
@@ -166,10 +194,10 @@ Categories:
   CA_Refresh ()
   CA_ShowMsg (txt[,o1[,o2]])
   CA_ShowMsgAsIs (txt)
-  CA_ATT (o1, o2)
   CA_ShowItem (o1)
   CA_ShowMenu ( menu, piece)
   CA_ShowImg (url)
+	CA_EnableChoices (value)
   CA_PressKey (txt)
   CA_EndGame ()
   CA_RestartGame ()
@@ -237,7 +265,9 @@ Categories:
 
   GD_CreateMsg (indexLang, idMsg, txtMsg)
 
- MISC:
+	GD_DefAllLinks (linkArray)
+
+	MISC:
 
   MISC_Random (num)
 	MISC_HideMessages (boolean)
@@ -276,34 +306,39 @@ function CA_Refresh () {
  this.reactionList.push ({type:this.caMapping("REFRESH")});
 }
 
-function CA_URL (url, txt, param) {
- this.reactionList.push ({type:this.caMapping("URL"), url:url, txt:txt, param:param});
-}
+function CA_ShowMsg (txt, param, visibleIn) {
 
-function CA_ShowMsg (txt, param) {
+  var visible = (typeof visibleIn == "undefined") ? true : visibleIn
 
-  if (this.hidenMessages) return
-
+  var id = this.reactionList.length
   // to-do: this is a temp trick
   if (param != undefined) {
-	console.log ("<KL>Param in CA_ShowMsg: " + JSON.stringify (param))
-	if (param.o1 != undefined) {
-		console.log ("<KL>Param.o1 in CA_ShowMsg: " + param.o1)
-		if  (!isNaN(parseFloat(param.o1)) && isFinite(param.o1)) {
-			param.o1 = this.world.items[param.o1].id
+		// console.log ("<KL>Param in CA_ShowMsg: " + JSON.stringify (param))
+		if (param.o1 != undefined) {
+				console.log ("<KL>Param.o1 in CA_ShowMsg: " + param.o1)
+				if  (!isNaN(parseFloat(param.o1)) && isFinite(param.o1)) {
+					param.o1 = this.world.items[param.o1].id
+				}
+		} else if (param.l1 != undefined) {
+			//console.log ("link defined: " + JSON.stringify(param) )
+
+
+			this.reactionList.push ({type:this.caMapping("MSG"), txt:txt + "_pre", visible:visible, id:id});
+			this.reactionList.push ({type:this.caMapping("LINK"), txt:param.txt, param:param, visible:visible, id:id});
+			this.reactionList.push ({type:this.caMapping("MSG"), txt:txt + "_post", visible:visible, id:id});
+
+		  return id
 		}
-	}
   }
 
- this.reactionList.push ({type:this.caMapping("MSG"), txt:txt, param:param});
+ this.reactionList.push ({type:this.caMapping("MSG"), txt:txt, param:param, visible:visible, id: this.reactionList.length, id:id});
+ return id
 }
 
 function CA_ShowMsgAsIs (txt) {
- this.reactionList.push ({type:this.caMapping("ASIS"), txt:txt});
-}
-
-function CA_ATT ( o1, o2) {
- this.reactionList.push ({type:this.caMapping("ATT"), o1:o1, o2:o2});
+	var id = this.reactionList.length
+  this.reactionList.push ({type:this.caMapping("ASIS"), txt:txt, visible:true, id:id});
+  return id
 }
 
 function CA_ShowDir ( dir) {
@@ -318,7 +353,7 @@ function CA_ShowItem ( o1) {
 function CA_ShowMenu ( menu, menuPiece) {
 
  if (menuPiece != undefined) {
-	  console .log ("MenuPiece: " + JSON.stringify (menuPiece))
+	  console.log ("MenuPiece: " + JSON.stringify (menuPiece))
  }
 
   this.reactionList.push ({type:this.caMapping("SHOW_MENU"), menu:menu, menuPiece:menuPiece});
@@ -326,14 +361,24 @@ function CA_ShowMenu ( menu, menuPiece) {
 
 function CA_ShowImg (url, isLocal, isLink, txt, param) {
 
+	var id = this.reactionList.length
+
 	this.reactionList.push ({
 		type:this.caMapping("GRAPH"),
 		url:url,
 		isLocal: (typeof isLocal == "undefined")? false : isLocal,
 		isLink: (typeof isLink == "undefined")? false: isLink,
 		txt:(typeof txt == "undefined")? "": txt,
-		param:param
+		param: param,
+		visible: true,
+		id: id
 	});
+
+	return id
+}
+
+function CA_EnableChoices (value) {
+	this.reactionList.push ({type:this.caMapping("ENABLE_CHOICES"), value:value});
 }
 
 function CA_PressKey (txt) {
@@ -342,7 +387,7 @@ function CA_PressKey (txt) {
 
 function CA_EndGame (txt, state, data) {
  this.reactionList.push ({type:this.caMapping("END_GAME"), txt:txt, state:state, data:data});
-}
+ }
 
 function CA_PlayAudio (fileName, autoStart, txt, param) {
 
@@ -414,7 +459,8 @@ function DIR_GetId  (index) {
 
 function IT_X (id){
 
- return arrayObjectIndexOf(this.world.items, "id", id);
+  let parts = id.split(".")
+  return arrayObjectIndexOf(this.world.items, "id", parts[0]);
 }
 
 function IT_NumberOfItems  () {
@@ -558,6 +604,24 @@ function IT_AttPropExists (indexItem, attId, propId) {
  return (j>=0);
 }
 
+function IT_GetAttPropValueUsingId (id) {  // id: item.att.state, or item[.generalState.state]
+	let parts = id.split(".")
+	let item = this.IT_X(parts[0])
+	let attId, propId
+
+	if (parts.length == 3) {
+		attId = parts[1]
+		propId = parts[2]
+	} else {
+		attId = "generalState"
+		propId = "state"
+	}
+
+	return this.IT_GetAttPropValue(item, attId, propId)
+
+}
+
+
 function IT_GetAttPropValue (indexItem, attId, propId) {
 
  // find j in this.world.items[indexItem].att[attId][i][propId]
@@ -657,24 +721,196 @@ function W_GetAttIndex (id) {
 
 // note: for use during game development
 function GD_CreateMsg (lang, idMsg, txtMsg) {
-
-	this.reactionList.push ({type:this.caMapping("DEV_MSG"), lang:lang, txt:idMsg, detail:txtMsg});
+	if (txtMsg.indexOf ("%l1") == -1) {
+			this.reactionList.push ({type:this.caMapping("DEV_MSG"), lang:lang, txt:idMsg, detail:txtMsg});
+	} else {
+		var substring = txtMsg.split ("%l1")
+		this.reactionList.push ({type:this.caMapping("DEV_MSG"), lang:lang, txt:idMsg + "_pre", detail:substring[0]});
+		this.reactionList.push ({type:this.caMapping("DEV_MSG"), lang:lang, txt:idMsg + "_post", detail:substring[1]});
+	}
 
 }
+
+function GD_DefAllLinks (linkArray) {
+
+	//console.log ("Definition of links: " + JSON.stringify(linkArray))
+
+	function getReactionListIndex (reactionList, reactionListId) {
+
+		for (let k=0; k<reactionList.length;k++) {
+			if (typeof reactionList[k].id != "undefined" ) {
+				if ((reactionList[k].id == reactionListId) && (reactionList[k].type == "rt_link")) {
+					return k
+				}
+			}
+		}
+	}
+
+	function setLinkDefinition (reactionList, reactionListId, subReaction) {
+
+		for (var k=0; k<reactionList.length;k++) {
+			if (typeof reactionList[k].id != "undefined" ) {
+				if ((reactionList[k].id == reactionListId) && (reactionList[k].type == "rt_link")){
+					// reactionList[k].active = true
+					if (typeof reactionList[k].param.l1.subReactions == "undefined") {reactionList[k].param.l1.subReactions = []}
+					var subReaction2=JSON.parse(JSON.stringify(subReaction)); // to avoid strange behaviour (because of "var")
+					reactionList[k].param.l1.subReactions.push (subReaction2)
+				}
+			}
+		}
+
+	}
+
+	// clear data
+	for (var k=0; k<this.reactionList.length;k++) {
+		if (typeof this.reactionList[k].id != "undefined" ) {
+			if (this.reactionList[k].type == "rt_link"){
+				this.reactionList[k].active = false
+				this.reactionList[k].param.l1.subReactions = []
+			}
+		}
+	}
+
+	for (var i=0; i<linkArray.length;i++) {
+		var reactionListId = linkArray[i].id
+		let subReaction
+
+		// link activation
+		let rIndex = getReactionListIndex (this.reactionList, reactionListId)
+		this.reactionList[rIndex].active = true
+		// to-do: if activatedBy exists, the pointed variable should be used to set whether it's active or not
+		if (typeof linkArray[i].activatedBy != "undefined") {
+			console.log ("ActivatedBy?: " + JSON.stringify (linkArray[i]))
+
+			/*
+			let item = this.IT_X (linkArray[i].activatedBy)
+			let value = this.IT_GetAttPropValue (item, "generalState", "state")
+			*/
+
+			let value = this.IT_GetAttPropValueUsingId (linkArray[i].activatedBy)
+
+			console.log ("Value: " + value)
+			if (value > 0) {
+				this.reactionList[rIndex].active = false
+			}
+			// to-do: ??
+			subReaction = {type: "activatedBy"}
+			subReaction.activatedBy = linkArray[i].activatedBy
+			setLinkDefinition (this.reactionList, reactionListId, subReaction)
+
+		}
+
+		if (typeof linkArray[i].changeTo  != "undefined") {
+			subReaction = {type: "visible"}
+			subReaction.rid = linkArray[i].changeTo
+			subReaction.visible = true
+			setLinkDefinition (this.reactionList, reactionListId, subReaction)
+			// self hidden
+			subReaction = {type: "visible"}
+			subReaction.rid = reactionListId
+			subReaction.visible = false
+			setLinkDefinition (this.reactionList, reactionListId, subReaction)
+		}
+
+		if (typeof linkArray[i].visibleToFalse  != "undefined") {
+			subReaction = {type: "visible"}
+			for (var j=0; j<linkArray[i].visibleToFalse.length; j++) {
+					subReaction.rid = linkArray[i].visibleToFalse[j]
+					subReaction.visible = false
+					setLinkDefinition (this.reactionList, reactionListId, subReaction)
+			}
+		}
+
+		if (typeof linkArray[i].visibleToTrue != "undefined") {
+			subReaction = {type: "visible"}
+			for (var j=0; j<linkArray[i].visibleToTrue.length;j++) {
+					subReaction.rid = linkArray[i].visibleToTrue[j]
+					subReaction.visible = true
+					setLinkDefinition (this.reactionList, reactionListId, subReaction)
+			}
+		}
+
+		if (typeof linkArray[i].action != "undefined") {
+			// console.log ("link def (action): " + JSON.stringify(linkArray[i].action))
+			subReaction = {type: "action", choiceId: linkArray[i].action.choiceId}
+
+			// parm validation
+			let validation = true
+			if (subReaction.choiceId == "dir1") {
+				// params: d1, d1Id, target, targetId
+				if (typeof linkArray[i].action.d1 == "undefined") {validation = false}
+				else {subReaction.d1 = linkArray[i].action.d1}
+				if (typeof linkArray[i].action.d1Id == "undefined") {validation = false}
+				else {subReaction.d1Id = linkArray[i].action.d1Id}
+				if (typeof linkArray[i].action.target == "undefined") {validation = false}
+				else {subReaction.target = linkArray[i].action.target}
+				if (typeof linkArray[i].action.targetId == "undefined") {validation = false}
+				else {subReaction.targetId = linkArray[i].action.targetId}
+				// param: targetId
+				if (typeof linkArray[i].action.targetId == "undefined") {validation = false}
+				else {subReaction.targetId = linkArray[i].action.targetId}
+		  } else if ((subReaction.choiceId == "obj1") || (subReaction.choiceId == "action0") ||  (subReaction.choiceId == "action") ||  (subReaction.choiceId == "action2") ) {
+				// param: actionId
+				if ((subReaction.choiceId == "action0") ||  (subReaction.choiceId == "action") ||  (subReaction.choiceId == "action2") ) {
+				  if (typeof linkArray[i].action.actionId == "undefined") {validation = false}
+				  else subReaction.actionId = linkArray[i].action.actionId
+			  }
+
+				// param o1Id
+				if ((subReaction.choiceId == "obj1") ||  (subReaction.choiceId == "action") ||  (subReaction.choiceId == "action2") ) {
+				  if (typeof linkArray[i].action.o1Id == "undefined") {validation = false}
+					else {
+						subReaction.o1Id = linkArray[i].action.o1Id
+	 				  subReaction.o1 = this.IT_X (subReaction.o1Id)
+					}
+					//param parent
+					if (subReaction.choiceId == "obj1") {subReaction.parent = "here"} // to-do
+				}
+				// param o2Id
+				if (subReaction.choiceId == "action2") {
+				  if (typeof linkArray[i].action.o2Id == "undefined") {validation = false}
+					else {
+						subReaction.o2Id = linkArray[i].action.o21Id
+	 				  subReaction.o2 = this.IT_X (subReaction.o2Id)
+					}
+				}
+			} else { validation = false	}
+
+			if (validation) {
+				setLinkDefinition (this.reactionList, reactionListId, subReaction)
+			} else  {
+				console.log ("error on param of link def")
+			}
+		} // choiceId == action
+
+		if (typeof linkArray[i].userCode != "undefined") {
+		  //console.log ("link def (userCode): " + JSON.stringify(linkArray[i].userCode))
+			subReaction = {type: "userCode", functionId: linkArray[i].userCode.functionId, par: linkArray[i].userCode.par}
+		  setLinkDefinition (this.reactionList, reactionListId, subReaction)
+		}
+
+		if (typeof linkArray[i].libCode != "undefined") {
+		  //console.log ("link def (libCode): " + JSON.stringify(linkArray[i].libCode))
+			subReaction = {type: "libCode", functionId: linkArray[i].libCode.functionId, par: linkArray[i].libCode.par}
+		  setLinkDefinition (this.reactionList, reactionListId, subReaction)
+		}
+
+		if (typeof linkArray[i].url != "undefined") {
+			subReaction = {type: "url"}
+			subReaction.url = linkArray[i].url
+			setLinkDefinition (this.reactionList, reactionListId, subReaction)
+		}
+
+	}
+}
+
+
 
 /* MISC: facilities *****************************************************************/
 
 
  function MISC_Random (num) {
- return Math.floor((Math.random() * (+num)));
- }
-
- function MISC_HideMessages (flag) {
-
-	 console.log ("MISC_HideMessages. flag: " + flag)
-
-	 this.hidenMessages = flag
-
+   return Math.floor((Math.random() * (+num)));
  }
 
 

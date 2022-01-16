@@ -157,7 +157,7 @@ export default {
       afterGameLoaded(state, slotId)
     } else {
       state.choice = {choiceId:'top', isLeafe:false, parent:''}
-      state.runnerProxie.join (gameId, slotId)
+      state.runnerProxie.join (gameId, slotId, libVersion)
 
       //state.runnerProxie.setLocale (state) // update language data in proxie
 

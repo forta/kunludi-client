@@ -23,9 +23,10 @@ let attributes = []
 
 //module.exports = exports = {
 export default {
-  	dependsOn:dependsOn,
-	processAction:processAction,
+  dependsOn:dependsOn,
+  processAction:processAction,
 	actionIsEnabled:actionIsEnabled,
+  executeCode:executeCode
 }
 
 function dependsOn (primitives, reactionList) {
@@ -75,6 +76,9 @@ function actionIsEnabled (actionId, item1, item2) {
 
 }
 
+function executeCode (functionName, par) {
+	this.primitives.executeCode(functionName, par)
+}
 
 // ============================
 
@@ -91,6 +95,7 @@ ludi_lib.reactionById = function (actionId) {
 
 	look
 	go
+  goto
 	ex
 	take
 	drop
@@ -246,6 +251,25 @@ let initReactions =  function  (reactions, primitives) {
 		},
 
 	});
+
+  reactions.push ({
+    id: 'goto',
+
+    enabled: function (indexItem, indexItem2) {
+      return false; // internal usage
+    },
+
+    reaction: function (par_c) {
+
+      // reaction kernel: change of location
+      console.log("debug: goto!")
+      primitives.PC_SetCurrentLoc(par_c.item1);
+      primitives.CA_ShowDesc(par_c.item1);
+      return true;
+
+    }
+
+  });
 
 	reactions.push ({
 		id: 'ex',

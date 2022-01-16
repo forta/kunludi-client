@@ -637,8 +637,9 @@ function expandDynReactions (reactionList) {
 			}
 
 			// static resolution
-			let itemReaction = arrayObjectIndexOf (this.gameReactions.items, "id", sourceReactionList[currentPointer].o1Id)
-			if (itemReaction < 0) {
+			let reaction = this.gameReactions.getItem (sourceReactionList[currentPointer].o1Id)
+
+			if (reaction == undefined) {
 				sourceReactionList[currentPointer].resolved = true
 				expandedReactionList.push (JSON.parse(JSON.stringify(sourceReactionList[currentPointer])) )
 				continue
@@ -646,7 +647,7 @@ function expandDynReactions (reactionList) {
 
 			// dynamic resolution: getting a new this.reactionList
 			var attribute = "desc"
-			if (typeof this.gameReactions.items[itemReaction][attribute] != 'function') {
+			if (typeof reaction[attribute] != 'function') {
 				console.log ("dyn desc not resolved: " + JSON.stringify(sourceReactionList[currentPointer]))
 				sourceReactionList[currentPointer].resolved = true
 				expandedReactionList.push (JSON.parse(JSON.stringify(sourceReactionList[currentPointer])) )
@@ -655,7 +656,7 @@ function expandDynReactions (reactionList) {
 
 			// empty previous this.reactionList
 			this.reactionList.splice(0,this.reactionList.length)
-			this.gameReactions.items[itemReaction][attribute]()
+			reaction[attribute]()
 
 			// catch up reactions of this.reactionlist and insert them in expandedReactionList
 			for (let newReaction in this.reactionList) {
@@ -825,11 +826,11 @@ function getTargetAndLocked (loc, direction) {
 				connection.target = arrayObjectIndexOf(this.world.items, "id", targetId);
 			} else { // check dynamic target
 
-				var gameIndex = arrayObjectIndexOf(this.gameReactions.items, "id", this.world.items[loc].id);
+				let reaction = this.gameReactions.getItem (this.world.items[loc].id)
 
-				if (gameIndex>=0) {
-					if (typeof this.gameReactions.items[gameIndex].target == 'function'){
-						targetId = this.gameReactions.items[gameIndex].target (dirId);
+				if (reaction) {
+					if (typeof reaction.target == 'function'){
+						targetId = reaction.target (dirId);
 						if (targetId == "locked")
 							connection.isLocked = true;
 						else
@@ -946,11 +947,11 @@ function updateChoices(showAll) {
 		if (this.world.items[i].loc == this.world.items[this.PCState.profile.indexPC].loc) continue;
 		if (this.world.items[i].loc == this.world.items[this.PCState.profile.indexPC].id) continue;
 
-		var gameIndex = arrayObjectIndexOf(this.gameReactions.items, "id", this.world.items[i].id);
+		let reaction = this.gameReactions.getItem (this.world.items[i].id)
 
-		if (gameIndex>=0) {
-			if (typeof this.gameReactions.items[gameIndex].shownWhenAbsent == 'function'){
-				if (!this.gameReactions.items[gameIndex].shownWhenAbsent ()) continue
+		if (reaction) {
+			if (typeof reaction.shownWhenAbsent == 'function'){
+				if (!reaction.shownWhenAbsent ()) continue
 
 				this.internalChoices.itemGroup_notHere.push ({choiceId:'obj1', item1: i, item1Id: this.world.items[i].id, parent:"notHere"});
 			}
