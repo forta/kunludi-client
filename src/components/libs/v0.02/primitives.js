@@ -21,6 +21,7 @@ export default {
 	executeGameAction:executeGameAction,
 	dependsOn:dependsOn,
 	executeCode:executeCode,
+	arrayObjectIndexOf_2:arrayObjectIndexOf_2,
 
 	CA_ShowDesc:CA_ShowDesc,
 	CA_ShowStaticDesc:CA_ShowStaticDesc,
@@ -131,6 +132,13 @@ function caMapping (type) {
 }
 
 function arrayObjectIndexOf(myArray, property, searchTerm) {
+    for(var i = 0, len = myArray.length; i < len; i++) {
+        if (myArray[i][property] === searchTerm) return i;
+    }
+    return -1;
+}
+
+function arrayObjectIndexOf_2(myArray, property, searchTerm) {
     for(var i = 0, len = myArray.length; i < len; i++) {
         if (myArray[i][property] === searchTerm) return i;
     }

@@ -40,7 +40,7 @@ function dependsOn (primitives, libReactions, reactionList) {
 	this.libReactions = libReactions
 	this.reactionList = reactionList
 
-	this.usr.primitives = this.primitives
+	this.usr.lib = this.primitives
 	this.usr.usr = this.usr
 	this.usr.dependsOn (this.primitives, this.usr)
 
@@ -105,11 +105,7 @@ function actionIsEnabled (actionId, item1, item2) {
 
 // // external interface, used by Links
 function executeCode (functionName, par) {
-
-	if (typeof this.usr[functionName] == 'function') {
-  	return this.usr[functionName](par)
-	}
-
+	return this.usr.exec (functionName,par)
 }
 
 // GENERIC turn **********************************************************************************************
