@@ -69,7 +69,27 @@ export default {
 	itemMethod:itemMethod,
 	actionIsEnabled:actionIsEnabled,
 	turn:turn,
-	executeCode:executeCode
+	executeCode:executeCode,
+	getItem:getItem,
+	getReaction:getReaction
+}
+
+function getItem (itemId) {
+	var itemIndex = arrayObjectIndexOf(this.items, "id", itemId);
+
+	if (itemIndex>-1) {
+		return this.items[itemIndex]
+	}
+
+}
+
+function getReaction (itemId) {
+	var reactionIndex = arrayObjectIndexOf(this.reaction, "id", itemId);
+
+	if (reactionIndex>-1) {
+		return this.reactions[reactionIndex]
+	}
+
 }
 
 function dependsOn (primitives, libReactions, reactionList) {
