@@ -47,7 +47,6 @@ function dependsOn (primitives, libReactions, reactionList) {
   this.usr.initReactions(primitives, this.usr)
   this.usr.initAttributes(primitives, this.usr)
 	this.usr.initItems(primitives, this.usr)
-	this.usr.initUserFunctions(primitives, this.usr)
 
 }
 

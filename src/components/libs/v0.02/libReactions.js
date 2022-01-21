@@ -77,7 +77,7 @@ function actionIsEnabled (actionId, item1, item2) {
 }
 
 function executeCode (functionName, par) {
-	this.primitives.executeCode(functionName, par)
+	return this.primitives.exec(functionName, par)
 }
 
 // ============================

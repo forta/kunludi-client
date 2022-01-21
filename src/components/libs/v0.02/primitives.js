@@ -11,6 +11,7 @@ module that:
 let world;
 let reactionList;
 let userState;
+let libFunctions = []
 let hidenMessages = false;
 
 /* Expose stuff */
@@ -18,10 +19,11 @@ let hidenMessages = false;
 //module.exports = exports = {
 export default {
 	caMapping:caMapping,
-	executeGameAction:executeGameAction,
+	// executeGameAction:executeGameAction,
 	dependsOn:dependsOn,
-	executeCode:executeCode,
+	exec:exec,
 	arrayObjectIndexOf_2:arrayObjectIndexOf_2,
+	initLibFunctions:initLibFunctions,
 
 	CA_ShowDesc:CA_ShowDesc,
 	CA_ShowStaticDesc:CA_ShowStaticDesc,
@@ -145,15 +147,38 @@ function arrayObjectIndexOf_2(myArray, property, searchTerm) {
     return -1;
 }
 
+function initLibFunctions (lib) {
+
+	libFunctions.push ({
+		id: 'setValue',
+		code: function (par) { // par.id, par.value
+		  lib.IT_SetAttPropValue (lib.IT_X(par.id), "generalState", "state", par.value)
+		}
+	});
+
+	libFunctions.push ({
+		id: 'it_x',
+		code: function (par) { // par.id, par
+			return lib.IT_X (par.id)
+		}
+	});
+
+
+}
+
+
 function dependsOn (worldPar, reactionListPar, userStatePar, metaDealer, metaState) {
 	this.world = worldPar;
 	this.reactionList = reactionListPar;
 	this.userState = userStatePar;
 	this.metaDealer = metaDealer;
 	this.metaState = metaState;
+	this.initLibFunctions(this)
+
 
 };
 
+/* old code?
 function executeGameAction (type, parameters) {
 
  switch (type) {
@@ -167,23 +192,19 @@ function executeGameAction (type, parameters) {
  }
 };
 
-function executeCode (functionName, par) {
+*/
 
-	// here!!
+function exec (functionName, par) {
 
-	// shorcut
-	if (functionName == "setValue") {
-		let item = this.IT_X(par.id)
-		this.IT_SetAttPropValue (item, "generalState", "state", par.value)
+	let indexLibFunction = this.arrayObjectIndexOf_2(libFunctions, "id", functionName);
+	if (indexLibFunction<0) {
+		console.log ("missing functionName [" + functionName + "] in executeCode")
 		return
 	}
-
-	// direct mapping
-	if (typeof primitives[functionName] == 'function') {
-		return primitives[functionName](par)
-	}
+  return libFunctions[indexLibFunction].code (par)
 
 }
+
 
 
 // -----------------------------------

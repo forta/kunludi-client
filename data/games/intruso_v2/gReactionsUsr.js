@@ -9,7 +9,8 @@
 /*
 
 Partimos de 1436 líneas y 68000 chars en versión v0.01 y vamos a recodificar para v0.02
-(Por ahora v0.02: 13109 lineas y 61173 chars)
+- Fase 1 a v0.02 (usando template y renombrando primitives a lib): 13109 lineas y 61173 chars
+
 IT_*: 129
 IT_GetAttPropValue: 19
 IT_SetAttPropValue: 4
@@ -128,11 +129,26 @@ export default {
 function dependsOn (lib, usr) {
 	this.lib = lib
 	this.usr = usr
+	initUserFunctions(lib, usr)
+
 }
 
 function turn (indexItem) {
 
 	if (indexItem != this.lib.IT_X("hall")) return
+	/*
+		here!!
+		original:
+		if (indexItem != this.lib.IT_X ("hall")) return
+		suponiendo que recibimos lib en la función:
+		alternatives for lib v0.02.
+		if (indexItem != lib.IT_X ("hall")) return
+	  if (indexItem != this.lib.exec ("it_x", {id:"hall"} )) return
+		if (indexItem != lib.exec ("att", "hall")) return
+		if (!lib.exec ("it-eq", indexItem, "hall")) return
+
+	*/
+
 	if (this.usr.exec ("getValue", {id:"intro2"}) == "1") return
 
 	if (this.usr.exec ("escenas_pendientes") != "done") return
@@ -423,7 +439,7 @@ items.push ({
 
 			lib.GD_DefAllLinks ([
 				{ id:msg_pasillo_cuadro, action: { choiceId: "action", actionId:"ex", o1Id: "cuadro1"}},
-				{ id:msg_pasillo_poster, action: { choiceId: "action", actionId:"ex", o1Id: "póster"}, serCode: {functionId:'setValue', par: {id:"póster", value:"1"}} },
+				{ id:msg_pasillo_poster, action: { choiceId: "action", actionId:"ex", o1Id: "póster"}, libCode: {functionId:'setValue', par: {id:"póster", value:"1"}} },
 				{ id:msg_pasillo_hab_padres, action: { choiceId: "dir1", actionId:"go", target: lib.IT_X("hab_padres"), targetId: "hab_padres", d1Id:"d0", d1: lib.DIR_GetIndex("d0")}},
 				{ id:msg_pasillo_hab_hijos, action: { choiceId: "dir1", actionId:"go", target: lib.IT_X("hab_hijos"), targetId: "hab_hijos", d1Id:"d270", d1: lib.DIR_GetIndex("d270")}}
 			])
