@@ -23,6 +23,8 @@ export default {
 	dependsOn:dependsOn,
 	exec:exec,
 	arrayObjectIndexOf_2:arrayObjectIndexOf_2,
+	isIndex:isIndex,
+
 	initLibFunctions:initLibFunctions,
 
 	CA_ShowDesc:CA_ShowDesc,
@@ -80,9 +82,13 @@ export default {
 	IT_NumberOfAtts:IT_NumberOfAtts,
 	IT_ATT:IT_ATT,
 	IT_AttPropExists:IT_AttPropExists,
+
 	IT_GetAttPropValueUsingId:IT_GetAttPropValueUsingId,
 	IT_GetAttPropValue:IT_GetAttPropValue,
+
 	IT_SetAttPropValue:IT_SetAttPropValue,
+	IT_SetAttPropValueUsingId:IT_SetAttPropValueUsingId,
+
 	IT_IncrAttPropValue:IT_IncrAttPropValue,
 	IT_GetRandomDirectionFromLoc:IT_GetRandomDirectionFromLoc,
 	IT_SameLocThan:IT_SameLocThan,
@@ -147,22 +153,83 @@ function arrayObjectIndexOf_2(myArray, property, searchTerm) {
     return -1;
 }
 
+function isIndex (indexOrId) {
+		if ((indexOrId == -1) || (typeof indexOrId == "undefined")) return false
+		return !isNaN(indexOrId)
+}
+
 function initLibFunctions (lib) {
 
 	libFunctions.push ({
 		id: 'setValue',
-		code: function (par) { // par.id, par.value
-		  lib.IT_SetAttPropValue (lib.IT_X(par.id), "generalState", "state", par.value)
+		code: function (par) { // par: id, value [, att]
+			let parIn = (typeof par[0] == 'undefined') ? par : {id: par[0], value: par[1], att: par[2]}
+
+			if (typeof parIn.att == "undefined") {
+				lib.IT_SetAttPropValueUsingId (parIn.id, parIn.value)
+			} else {
+				lib.IT_SetAttPropValueUsingId (parIn.id + "." + parIn.att, parIn.value)
+			}
 		}
 	});
 
 	libFunctions.push ({
-		id: 'it_x',
-		code: function (par) { // par.id, par
-			return lib.IT_X (par.id)
+		id: 'getValue',
+		code: function (par) { // par: id [, att]
+			let parIn = (typeof par[0] == 'undefined') ? par : {id: par[0], att: par[1]}
+
+			if (typeof parIn.att == "undefined") {
+				return lib.IT_GetAttPropValueUsingId (parIn.id)
+			} else {
+				return lib.IT_GetAttPropValueUsingId (parIn.id + "." + parIn.att)
+			}
+
 		}
 	});
 
+	libFunctions.push ({
+		id: 'getLoc',
+		code: function (par) { // par: item
+			let parIn = (typeof par[0] == 'undefined') ? par : {item: par[0]}
+			return lib.IT_GetLoc (parIn.item)
+		}
+	});
+
+	libFunctions.push ({
+		id: 'setLoc',
+		code: function (par) { // par: item1, item2
+			let parIn = (typeof par[0] == 'undefined') ? par : {item1: par[0], item2: par[1]}
+			if (!isIndex (parIn.item1)) parIn.item1 = lib.IT_X(parIn.item1)
+			if (!isIndex (parIn.item2)) parIn.item2 = lib.IT_X(parIn.item2)
+			lib.IT_SetLoc (parIn.item1, parIn.item2)
+		}
+	});
+
+
+	libFunctions.push ({
+		id: 'getLocId',
+		code: function (par) { // par: id
+			let parIn = (typeof par[0] == 'undefined') ? par : {id: par[0]}
+			let item = lib.IT_GetLoc (parIn.id)
+			if (item<0) return
+			return lib.world.items[item].loc
+		}
+	});
+
+	libFunctions.push ({
+		id: 'x',
+		code: function (par) { // par.id
+			let parIn = (typeof par[0] == 'undefined') ? par : {id: par[0]}
+			return lib.IT_X (parIn.id)
+		}
+	});
+
+	libFunctions.push ({
+		id: 'pc',
+		code: function () {
+			return lib.PC_X ()
+		}
+	});
 
 }
 
@@ -277,8 +344,13 @@ Categories:
   IT_NumberOfAtts(i)
   IT_ATT (indexItem, idAttType)
   IT_AttPropExists (indexItem, attId, propId)
+
   IT_GetAttPropValue (indexItem, attId, propId)
+	IT_GetAttPropValueUsingId (itemId | itemId.att)
+
   IT_SetAttPropValue (indexItem, attId, propId, newValue)
+	IT_SetAttPropValueUsingId (itemId | itemId.att, value)
+
   IT_IncrAttPropValue (indexItem, attId, propId, increment)
 
   IT_GetRandomDirectionFromLoc(indexLoc)
@@ -505,9 +577,10 @@ function IT_GetGameIndex  (index) {
  return this.worldIndexes.items[index].gameIndex;
 }
 
-function IT_GetLoc  (i) {
- var locId = this.world.items[i].loc;
- return arrayObjectIndexOf(this.world.items, "id", locId);
+
+function IT_GetLoc  (indexOrId) {
+	let locId = isIndex(indexOrId) ? this.world.items[indexOrId].loc: indexOrId
+  return arrayObjectIndexOf(this.world.items, "id", locId);
 }
 
 function IT_SetLocToLimbo  (i) {
@@ -526,7 +599,9 @@ function IT_BringHere (i) {
 }
 
 function IT_SetLoc (i, value) {
- this.world.items[i].loc = this.world.items[value].id;
+  if (i<0) { console.log ("Error in IT_SetLoc item1"); return	}
+	if (value<0) { console.log ("Error in IT_SetLoc item2"); return	}
+  this.world.items[i].loc = this.world.items[value].id;
 }
 
 function IT_GetType (i) {
@@ -633,9 +708,10 @@ function IT_AttPropExists (indexItem, attId, propId) {
  return (j>=0);
 }
 
-function IT_GetAttPropValueUsingId (id) {  // id: item.att.state, or item[.generalState.state]
-	let parts = id.split(".")
-	let item = this.IT_X(parts[0])
+function IT_GetAttPropValueUsingId (itemAtt) {  // itemAtt: item.att.state, or item[.generalState.state]
+	let parts = itemAtt.split(".")
+
+	let item = isNaN(parts[0])? this.IT_X(parts[0]) : parts[0] // if part[0] is already a number, use it
 	let attId, propId
 
 	if (parts.length == 3) {
@@ -653,8 +729,7 @@ function IT_GetAttPropValueUsingId (id) {  // id: item.att.state, or item[.gener
 
 function IT_GetAttPropValue (indexItem, attId, propId) {
 
- // find j in this.world.items[indexItem].att[attId][i][propId]
- for (var i=0; i<this.world.items[indexItem].att[attId].length;i++) {
+ for (let i=0; i<this.world.items[indexItem].att[attId].length;i++) {
 
   // to-do: two versions!
   if (this.world.items[indexItem].att[attId][i].id == propId) {
@@ -663,6 +738,24 @@ function IT_GetAttPropValue (indexItem, attId, propId) {
    return this.world.items[indexItem].att[attId][i][propId];
   }
  }
+
+}
+
+function IT_SetAttPropValueUsingId (itemAtt, value) {
+	let parts = itemAtt.split(".")
+	let item = this.IT_X(parts[0])
+	let attId, propId
+
+	if (parts.length == 3) {
+		attId = parts[1]
+		propId = parts[2]
+	} else {
+		attId = "generalState"
+		propId = "state"
+	}
+
+	return this.IT_SetAttPropValue(item, attId, propId, value)
+
 
 }
 

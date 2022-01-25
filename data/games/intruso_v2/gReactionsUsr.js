@@ -8,87 +8,44 @@
 
 /*
 
-Partimos de 1436 líneas y 68000 chars en versión v0.01 y vamos a recodificar para v0.02
-- Fase 1 a v0.02 (usando template y renombrando primitives a lib): 13109 lineas y 61173 chars
-
-IT_*: 129
-IT_GetAttPropValue: 19
-IT_SetAttPropValue: 4
-IT_GetLoc: 10
-IT_X: 96  !!!!!!!!!!
-IT_SetLoc o lib.IT_SetLocToLimo: 13
-IsCarried o IT_IsHere: 3
-194 líneas con CA_
-178 líneas con GD_
-9 PC_
-7 DIR_
-getValue: 27 líneas
-setValue: 22 líneas
-
 Atributo por defecto:
 v0.01:
-	Llamada a libCode, en enlaces, equivale a lib.executeCode
-	Llamada a usrCode, en enlaces, equivale a usr.executeCode
- 	lib.IT_GetAttPropValue (item, "generalState", "state") (61 chars)
-	lib.executeCode ("getValue", {id}) // sólo implementado para getValue -> IT_GetAttPropValue
+ 	primitives.IT_GetAttPropValue (item, "generalState", "state") (61 chars)
 
-v0.02: Guía para pasar a lib2 lo juegos con lib v0.01:
+v0.02: Guía para pasar a lib v0.02:
+
+	ejemplo:
+	v0.01: primitives.IT_GetAttPropValue (primitives.IT_X(itemId), "generalState", "state")
+	v0.02: lib.if (lib.exec ("getValue", [ItemId])
+
+  #0: usar plantilla userTemplate para simplificación inicial de código
+		to-do: turn(lib, usr, item) ??
 	#1: renombramos primitives a lib
-	#2: acortamos lib.executeCode a lib.it
-	#3: no se usarán funciones IT
-	lib.it ("att", [item], "") (26 chars, 42% menos que v0.01)
-	Funciones para el usuario, usadas por los enlaces:
-	usr.att ([item, ""]) (20 chars, 33%)
-	#4: más adelante, hacer lo mismo con los output CA_ y DEF_
-	#5: usar "att" independientemente de si es para convesión de tipo, getValue o setValue
-	  lib.it ("att", [item]) <-> IT_X o IT_GetId
-		lib.it ("att", [item, ""])  <-> IT_GetAttPropValue
-		lib.it ("att", [item, "", "1"]) <-> IT_SetAttPropValue
-	#6: si hacemos que el cambio de valor devuelva el valor, se puden reducir código. en vez de :
-	# inc att de item1 y copiarlo a item2
-		att("perro", "", "1")
-		v = att("perro", "")
-		att(item2, "", v)
-	sería!!::
-		att(item2, "", att("perro", "", "1"))
+	#2: acortamos lib.executeCode a lib.exec
+	#3: reformato de funciones IT (en curso)
+		IT_*: 129
+			IT_GetAttPropValue (46) -> lib.exec ("getValue", [par])  // par: item [,att]
+			IT_SetAttPropValue (26) -> lib.exec ("setValue", [par])  // par: item, value [,att]
+			IT_GetLoc (10) -> lib.exec ("getLoc", [par])  // par: item
+			IT_X: 96! -> lib.exec ("x", [par]) // par: id
+			IT_SetLoc (5) -> lib.exec ("setLoc", ["", ""]) // par: item, item
+			IT_SetLocToLimbo (6) -> lib.exec ("setLoc", ["", "limbo"]) // par: item, "limbo"
+			IT_IsCarried -> lib.exec ("isCarried", [""]
+			IT_IsHere -> lib.exec ("isHere", [""]
+		9 PC_
+		194 líneas con CA_
+		178 líneas con GD_
+		7 DIR_
+	#4: Usar en los enlaces la acción activatedBy, para dar persistencia a las elecciones, vinculándolas al estado de ítems.
+	#5: to-do: reformato de funciones PC_, CA_, DEF_, GD_ y DIR_
+
+	Partimos de 1436 líneas y 68000 chars en versión v0.01 y vamos a recodificar para v0.02
+  Aplicado 1,2 y 3 a v0.02 (usando template y renombrando primitives a lib): 1260 lineas y 58000 chars
 
 
-Método:
-	1 Ir reemplazar funciones IT de este fichero por llamadas a lib.it
-	2 Al terminar, reemplazar funciones CA de este fichero por llamadas a lib.out
-	3 Usar en los enlaces la acción activatedBy, para dar persistencia a las elecciones, vinculándolas al estado de ítems.
+*/
 
-Brainstorming: debido a los interfaces externos que no queremos que el usuario pueda tocar...
-	1 ¿Se podría hacer que el gReactions.js del usuario se montara encima de la plantilla que no queremos que el usuario puda usar?
-  2 El juego del usuarios consistiría en (que sería muy fácil de explicar en la documentación):
-	3 El usuario no debería usar usr.att() sino directamente att()  !!!
-	4 Para el resto: ¿lib.it () o sólo it()?
-
-	reactions = []
-	reactions.push ({...})
-	items = []
-	items.push ({...})
-  turn()
-	y atributtes
-  usr: { funciones y variables no persistentes de usuario }
-
-	En la carga del módulo, simplemente se cargarían las reacciones, ítems, función del turno de máquina y las funciones del usuario.
-	Esto facilitaría la lectura del juego y los haría más seguros al meterlos en el servidor.
-	También facilita modificar todas las plantillas de golpe, en vez de ir de una a una.
-
-	En vez de:
-	let gameReactions = require ('../../data/games/' + gameId + ((subgameId != "")? '/' + subgameId  : "") + '/gReactions.js').default;
-	Sería:
-	let gameReactions =  require ('../components/libs/' + libVersion + '/userTemplate.js').default;
-  let gameReactions.usr = require ('../../data/games/' + gameId + ((subgameId != "")? '/' + subgameId  : "") + '/gReactions.js').default;
-
-	Habría que hacer que las referencias externas a gameReactions.reactions, gameReactions.items, gameReactions.turn  fueran a gameReactions.usr.X
-
-  to-do: prueba de concepto
-	paso 1: meter reactions, items y turn en usr. también podría ir alguna función "alias" como usr.exec ("getValue",
-	paso 2: hacer que el juego funcione con este cambio
-	paso 3: usar plantilla y que ahora gReactions.js sólo fuera el usr
-
+/*
 Atributos usados en el juego:
 
 porche
@@ -135,21 +92,9 @@ function dependsOn (lib, usr) {
 
 function turn (indexItem) {
 
-	if (indexItem != this.lib.IT_X("hall")) return
-	/*
-		here!!
-		original:
-		if (indexItem != this.lib.IT_X ("hall")) return
-		suponiendo que recibimos lib en la función:
-		alternatives for lib v0.02.
-		if (indexItem != lib.IT_X ("hall")) return
-	  if (indexItem != this.lib.exec ("it_x", {id:"hall"} )) return
-		if (indexItem != lib.exec ("att", "hall")) return
-		if (!lib.exec ("it-eq", indexItem, "hall")) return
+	if (indexItem != this.lib.exec ("x", ["hall"])) return
 
-	*/
-
-	if (this.usr.exec ("getValue", {id:"intro2"}) == "1") return
+	if (this.lib.exec ("getValue", {id:"intro2"}) == "1") return
 
 	if (this.usr.exec ("escenas_pendientes") != "done") return
 
@@ -298,25 +243,24 @@ items.push ({
 		lib.GD_CreateMsg ("es","desc-porche-1", "Las telarañas del sofá colgante son frondosas, pero no decorativas precisamente. Si aquí en el exterior está todo tan mugriento, no quieras ni imaginarte cómo estarán las cosas %l1.<br/>");
 		let dentro = lib.CA_ShowMsg ("desc-porche-1", {l1: {id: "dentro", txt: "dentro"}})
 
-		if (lib.IT_GetAttPropValue (lib.IT_X(id), "generalState", "state") == "0") {  // primera vez
+		if (lib.exec ("getValue", [this.id]) == "0") {  // primera vez
 			lib.GD_CreateMsg ("es","desc-porche-2", "Sólo estás armado con el %l1 vintage que te dejaron tus amigos.<br/>");
 
 			let msg_movil = lib.CA_ShowMsg ("desc-porche-2", {l1: {id: "móvil", txt: "móvil"}})
 			lib.GD_DefAllLinks ([
-				{ id:dentro, action: { choiceId: "dir1", actionId:"go", d1Id:"in", target: lib.IT_X("hall"), targetId: "hall", d1Id:"in", d1: lib.DIR_GetIndex("in")}},
+				{ id:dentro, action: { choiceId: "dir1", actionId:"go", d1Id:"in", target: lib.exec ("x", ["hall"]), targetId: "hall", d1Id:"in", d1: lib.DIR_GetIndex("in")}},
 			  { id:msg_movil, action: { choiceId: "obj1", o1Id: "móvil"}}
 			])
 
 			lib.GD_CreateMsg ("es","desc-porche-3", "Por el rabillo del ojo vez algo deslizarse. Al enfocar  la vista ves un surco sobre el descuidado césped que va desde donde viste el movimiento hasta un agujero debajo de una de las paredes externas de la casa.<br/>");
 			lib.CA_ShowMsg ("desc-porche-3")
-
-			lib.IT_SetLoc(lib.IT_X("móvil"), lib.PC_X());
-			lib.IT_SetAttPropValue (lib.IT_X(id), "generalState", "state", "1")
+			lib.exec ("setLoc", ["móvil", lib.exec ("pc")] )
+			lib.exec ("setValue", [this.id, "1"])
 
 			lib.CA_EnableChoices(true)
 		} else {
 			lib.GD_DefAllLinks ([
-			  { id:dentro, action: { choiceId: "dir1", actionId:"go", d1Id:"in", target: lib.IT_X("hall"), targetId: "hall", d1Id:"in", d1: lib.DIR_GetIndex("in")}}
+			  { id:dentro, action: { choiceId: "dir1", actionId:"go", d1Id:"in", target: lib.exec("x",["hall"]), targetId: "hall", d1Id:"in", d1: lib.DIR_GetIndex("in")}}
 			])
 		}
 
@@ -333,12 +277,12 @@ items.push ({
 
 			// debug: sólo por si en pruebas empezamos aquí.
 			lib.GD_CreateMsg ("es","tecla","avanza")
-			lib.IT_SetLoc(lib.IT_X("móvil"), lib.PC_X());
+			lib.exec ("setLoc", ["móvil", lib.exec ("pc")])
 
 			lib.GD_CreateMsg ("es","desc_hall_0", "Dejas detrás de ti la puerta exterior. Sabes que salir representa resignarte a la burla de tus amigos y perder tu fabuloso mazo de cartas.<br/>");
 			lib.CA_ShowMsg ("desc_hall_0");
 
-			let huesosVisto = (usr.exec("getValue", {id:"huesos"}) != "0")
+			let huesosVisto = (lib.exec("getValue", {id:"huesos"}) != "0")
 
 			lib.GD_CreateMsg ("es","desc_hall_1", "Una inmensa %l1 domina uno de los laterales del salón. ");
 			lib.GD_CreateMsg ("es","desc_hall_a_cocina", "Por el otro lateral, atravesando el comedor, entrevés una puerta que seguramente %l1.<br/>");
@@ -357,16 +301,16 @@ items.push ({
 			lib.GD_CreateMsg ("es","interruptores_1", "Está todo bastante oscuro pero ves %l1 ");
 			lib.GD_CreateMsg ("es","interruptores_2", "que están cubiertos de mugre pegajosa y no funcionan.<br/>");
 
-			let interruptoresVisto = (usr.exec ("getValue", {id:"interruptores"}) != "0")
+			let interruptoresVisto = (lib.exec ("getValue", {id:"interruptores"}) != "0")
 			let msg_interruptores_1 = lib.CA_ShowMsg ("interruptores_1", {l1:{id: "interruptores_1", txt: "algunos interruptores"}})
 			let msg_interruptores_2 = lib.CA_ShowMsg ("interruptores_2", undefined, interruptoresVisto)
 
 			lib.GD_DefAllLinks ([
 				{ id: desc_hall_1, action: { choiceId: "action", actionId:"ex", o1Id: "chimenea"} } ,
-				{ id: desc_hall_a_cocina, action: { choiceId: "dir1", actionId:"go", target: lib.IT_X("cocina"), targetId: "cocina", d1Id:"d270", d1: lib.DIR_GetIndex("d270")}},
+				{ id: desc_hall_a_cocina, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["cocina"]), targetId: "cocina", d1Id:"d270", d1: lib.DIR_GetIndex("d270")}},
 				{ id: desc_hall_2, visibleToTrue: [desc_hall_2_plus]},
 				{ id: msg_interruptores_1, visibleToTrue: [msg_interruptores_2], activatedBy: "interruptores" },
-				{id: desc_hall_3, action: { choiceId: "dir1", actionId:"go", target: lib.IT_X("pasillo"), targetId: "pasillo", d1Id:"up", d1: lib.DIR_GetIndex("up")}}
+				{id: desc_hall_3, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["pasillo"]), targetId: "pasillo", d1Id:"up", d1: lib.DIR_GetIndex("up")}}
 			])
 
 			// escena final (final feliz)
@@ -415,10 +359,11 @@ items.push ({
 
 		desc: function () {
 
-			let cuadroVisto = (usr.exec ("getValue", {id:"cuadro1"}) != 0)
-			let posterVisto = (usr.exec ("getValue", {id:"póster"}) != 0)
-			let espejoVisto = (usr.exec ("getValue", {id:"espejo"}) != 0)
-			let ratonPresente = (lib.IT_GetLoc(lib.IT_X("ratón")) != lib.IT_X("limbo"))
+			let cuadroVisto = (lib.exec ("getValue", {id:"cuadro1"}) != 0)
+			let posterVisto = (lib.exec ("getValue", {id:"póster"}) != 0)
+			let espejoVisto = (lib.exec ("getValue", {id:"espejo"}) != 0)
+
+			let ratonPresente = ( lib.exec ("getLocId", ["ratón"]) != "limbo")
 
 			lib.GD_CreateMsg ("es","pasillo_cuadro", "Observas un %l1 con los miembros de la familia. ")
 			lib.GD_CreateMsg ("es","pasillo_hab_común", "Sólo es un pasillo que conduce ");
@@ -440,8 +385,8 @@ items.push ({
 			lib.GD_DefAllLinks ([
 				{ id:msg_pasillo_cuadro, action: { choiceId: "action", actionId:"ex", o1Id: "cuadro1"}},
 				{ id:msg_pasillo_poster, action: { choiceId: "action", actionId:"ex", o1Id: "póster"}, libCode: {functionId:'setValue', par: {id:"póster", value:"1"}} },
-				{ id:msg_pasillo_hab_padres, action: { choiceId: "dir1", actionId:"go", target: lib.IT_X("hab_padres"), targetId: "hab_padres", d1Id:"d0", d1: lib.DIR_GetIndex("d0")}},
-				{ id:msg_pasillo_hab_hijos, action: { choiceId: "dir1", actionId:"go", target: lib.IT_X("hab_hijos"), targetId: "hab_hijos", d1Id:"d270", d1: lib.DIR_GetIndex("d270")}}
+				{ id:msg_pasillo_hab_padres, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["hab_padres"]), targetId: "hab_padres", d1Id:"d0", d1: lib.DIR_GetIndex("d0")}},
+				{ id:msg_pasillo_hab_hijos, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["hab_hijos"]), targetId: "hab_hijos", d1Id:"d270", d1: lib.DIR_GetIndex("d270")}}
 			])
 
 		}
@@ -469,8 +414,8 @@ items.push ({
 			// si das queso -> sale el ratón, coge queso, y se van ambos animales.
 			// ¿qué pasa si no tienes el queso? En vez de resolverse la situación dando el queso, aparecería un objeto en la habitación que podrías usar ahí mismo: quizás debajo de la alfombra o similar.
 
-			let ratonVisto = (usr.exec ("getValue",  {id:"ratón"}) != "0")
-			let gatoVisto = (usr.exec ("getValue",  {id:"gato"}) != "0")
+			let ratonVisto = (lib.exec ("getValue",  {id:"ratón"}) != "0")
+			let gatoVisto = (lib.exec ("getValue",  {id:"gato"}) != "0")
 
 			lib.GD_CreateMsg ("es","desc-hab-hijos-1", "¿Una litera? No te quieres ni imaginar las peleas por el territorio entre los dos hermanos Raritos, que no dejan de pelear todo el rato en el colegio.<br/>");
 			lib.GD_CreateMsg ("es","desc-hab-hijos-ratón", "Al lado de la cama inferior, hay un agujero del tamaño de una pelota de tenis en la base de la pared")
@@ -478,8 +423,8 @@ items.push ({
 			lib.GD_CreateMsg ("es","desc-hab-hijos-gato-presente", "En otra esquina de la habitación, entre sombras, un %l1 mira casi todo el tiempo hacia el agujero, ignorándote activamente mientras se lame las uñas. No lo podrías jurar, pero ¿tiene maquillaje en los ojos?<br/>");
 
 
-			let ratonHay = lib.IT_IsHere(lib.IT_X("ratón"))
-			let gatoHay = lib.IT_IsHere(lib.IT_X("gato"))
+			let ratonHay = lib.IT_IsHere(lib.exec("x",["ratón"]))
+			let gatoHay = lib.IT_IsHere(lib.exec("x",["gato"]))
 
 			lib.CA_ShowMsg ("desc-hab-hijos-1")
 			lib.CA_ShowMsg ("desc-hab-hijos-ratón")
@@ -515,13 +460,12 @@ items.push ({
 
 		desc: function () {
 
-
 			let familiaActivation = [
-				(lib.IT_GetAttPropValue (lib.IT_X("cuadro1"), "familiaState", "padre") == "0"),
-				(lib.IT_GetAttPropValue (lib.IT_X("cuadro1"), "familiaState", "madre") == "0"),
-				(lib.IT_GetAttPropValue (lib.IT_X("cuadro1"), "familiaState", "hija") == "0"),
-				(lib.IT_GetAttPropValue (lib.IT_X("cuadro1"), "familiaState", "hijo") == "0"),
-				(lib.IT_GetAttPropValue (lib.IT_X("cuadro1"), "familiaState", "abuelo") == "0") ]
+				(lib.exec ("getValue", {id: "cuadro1", att: "familiaState.padre"} )  == "0"),
+				(lib.exec ("getValue", {id: "cuadro1", att: "familiaState.madre"} )  == "0"),
+				(lib.exec ("getValue", {id: "cuadro1", att: "familiaState.hija"} )  == "0"),
+				(lib.exec ("getValue", {id: "cuadro1", att: "familiaState.hijo"} )  == "0"),
+				(lib.exec ("getValue", {id: "cuadro1", att: "familiaState.abuelo"} )  == "0") ]
 
 			let bis_active = !(familiaActivation[0] || familiaActivation[1] || familiaActivation[2] || familiaActivation[3] || familiaActivation[4])
 
@@ -592,7 +536,7 @@ items.push ({
 
 		desc: function () {
 
-			let jaulaVisto = (usr.exec ("getValue",  {id:"jaula"}) != "0")
+			let jaulaVisto = (lib.exec ("getValue",  {id:"jaula"}) != "0")
 
 			lib.GD_CreateMsg ("es","chimenea_1", "Entre carbón y madera quemada observas los restos de %l1.");
 			lib.GD_CreateMsg ("es","chimenea_1_bis", "Entre carbón y madera quemada observas los restos de una jaula chamuscada. ");
@@ -600,7 +544,7 @@ items.push ({
 			let msg_chimenea_1 = lib.CA_ShowMsg ("chimenea_1", {l1: {id: "chimenea_1", txt: "una jaula chamuscada"}}, !jaulaVisto)
 			let msg_chimenea_1_bis = lib.CA_ShowMsg ("chimenea_1_bis", false, jaulaVisto)
 
-			let huesosVisto = (usr.exec ("getValue",  {id:"huesos"}) != "0")
+			let huesosVisto = (lib.exec ("getValue",  {id:"huesos"}) != "0")
 
 			lib.GD_CreateMsg ("es","jaula_1", "Dentro puedes ver unos %l1 ")
 			lib.GD_CreateMsg ("es","jaula_1_bis", "Dentro puedes ver unos pequeños huesitos, ")
@@ -626,30 +570,33 @@ items.push ({
 
 		desc: function () {
 
-			let item1 = lib.IT_X("nevera")
-			if (lib.IT_GetAttPropValue (item1, "generalState", "state") == "0") {
+			let item1 = lib.exec("x",["nevera"])
+			if (lib.exec ("getValue", ["nevera"]) == "0") {
 				lib.GD_CreateMsg ("es","desc_nevera", "La abres con repuganancia y descubres con sorpresa que está fría. Tiene una lucecita encendida en el interior, a pesar de que el cable que sale de la nevera cuelga, pelado, sin conectar a ningún enchufe.")
 				lib.CA_ShowMsg ("desc_nevera")
-				lib.IT_SetAttPropValue (item1, "generalState", "state", "1");
+				lib.exec ("setValue", ["nevera", "1"])
+
 				// que no pasen a estar en la nevera hasta que se describa la primera vez
-				lib.IT_SetLoc(lib.IT_X("botella"), item1);
-				lib.IT_SetLoc(lib.IT_X("taper"), item1);
-				lib.IT_SetLoc(lib.IT_X("dinamita"), item1);
-				lib.IT_SetLoc(lib.IT_X("queso"), item1);
+				lib.IT_SetLoc(lib.exec("x",["botella"]), item1);
+				lib.IT_SetLoc(lib.exec("x",["taper"]), item1);
+				lib.IT_SetLoc(lib.exec("x",["dinamita"]), item1);
+				lib.IT_SetLoc(lib.exec("x",["queso"]), item1);
 			} else {
 				lib.GD_CreateMsg ("es","desc_nevera_2", "La vuelves a abrir, fascinado por su repugnancia.")
 				lib.CA_ShowMsg ("desc_nevera_2")
 			}
 
-			let botellaHay = (lib.IT_GetLoc(lib.IT_X("botella")) == item1)
-			let taperHay = (lib.IT_GetLoc(lib.IT_X("taper")) == item1)
-			let dinamitaHay = (lib.IT_GetLoc(lib.IT_X("dinamita")) == item1)
-			let quesoHay = (lib.IT_GetLoc(lib.IT_X("queso")) == item1)
+			let botellaHay = (lib.exec ("getLoc", ["botella"]) == item1)
+			let taperHay = (lib.exec ("getLoc", ["taper"]) == item1)
+			let dinamitaHay = (lib.exec ("getLoc", ["dinamita"]) == item1)
+			let quesoHay = (lib.exec ("getLoc", ["queso"]) == item1)
+
 			let mostrarContenido = (botellaHay || taperHay || dinamitaHay || quesoHay)
-			let botellaVisto = (lib.IT_GetAttPropValue (lib.IT_X("botella"), "generalState", "state") == "1")
-			let taperVisto = (lib.IT_GetAttPropValue (lib.IT_X("taper"), "generalState", "state") != "0")
-			let dinamitaVisto = (lib.IT_GetAttPropValue (lib.IT_X("dinamita"), "generalState", "state") == "1")
-			let quesoVisto = (lib.IT_GetAttPropValue (lib.IT_X("queso"), "generalState", "state") == "1")
+
+			let botellaVisto = (lib.exec ("getValue", ["botella"]) == "1")
+			let taperVisto = (lib.exec ("getValue", ["taper"]) != "0")
+			let dinamitaVisto = (lib.exec ("getValue", ["dinamita"]) == "1")
+			let quesoVisto = (lib.exec ("getValue", ["queso"]) == "1")
 
 			lib.GD_CreateMsg ("es", "dentro_de_nevera", "Dentro de la nevera hay:<br/>");
 			lib.CA_ShowMsg ("dentro_de_nevera", undefined, mostrarContenido)
@@ -712,7 +659,7 @@ items.push ({
 
 		desc: function () {
 
-			let posterVisto = (usr.exec ("getValue", {id:"póster"}) != 0)
+			let posterVisto = (lib.exec ("getValue", {id:"póster"}) != 0)
 
 			lib.GD_CreateMsg ("es","póster_1", "Ves las ropas y poses típicas de un grupo de rock gótico llamado Los Ultratumba y una estrofa de una cancion del grupo.");
 			lib.GD_CreateMsg ("es","póster_2", "La canción reza así:");
@@ -722,7 +669,7 @@ items.push ({
 			lib.CA_ShowMsg ("póster_2" )
 			if (!posterVisto) {lib.CA_PressKey ("tecla");}
 			lib.CA_ShowMsg ("póster_3" )
-			usr.exec ("setValue",  {id:"póster", value:"1"})
+			lib.exec ("setValue",  {id:"póster", value:"1"})
 
 		}
 	});
@@ -734,7 +681,7 @@ items.push ({
 
 			lib.GD_CreateMsg ("es","gato_1", "El gato, ¿o será gata?, parece tener pintada una cresta punky y los ojos maquillados. No te presta la menor atención, ocupado observando el agujero al otro lado de la habitación.");
 			lib.CA_ShowMsg ("gato_1" )
-			usr.exec ("setValue", {id:"gato"}, "1")
+			lib.exec ("setValue", {id:"gato"}, "1")
 		}
 	});
 
@@ -746,7 +693,7 @@ items.push ({
 
 				lib.GD_CreateMsg ("es","ratón_1", "Además de ver su húmedo hocico y sus bigotes moverse entre las sombas, en algún momento se gira y ves por su tamaño que no le falta basura que comer en esta casa.");
 				lib.CA_ShowMsg ("ratón_1" )
-				usr.exec ("setValue", {id:"ratón"}, "1")
+				lib.exec ("setValue", {id:"ratón"}, "1")
 
 			}
 		});
@@ -781,8 +728,8 @@ items.push ({
 				lib.CA_PressKey ("tecla-ataúd-2");
 				lib.CA_ShowMsg ("ataúd_4" )
 
-				usr.exec ("setValue", {id:"ataúd"}, "1")
-				lib.PC_SetCurrentLoc(lib.IT_X("hall"))
+				lib.exec ("setValue", {id:"ataúd"}, "1")
+				lib.PC_SetCurrentLoc(lib.exec("x",["hall"]))
 
 			}
 		});
@@ -801,13 +748,13 @@ function initReactions (lib, usr) {
 		id: 'look',
 
 		enabled: function (indexItem, indexItem2) {
-			if (lib.PC_GetCurrentLoc() == lib.IT_X("intro1")) { return false }
-			if (lib.PC_GetCurrentLoc() == lib.IT_X("intro2")) { return false }
+			if (lib.PC_GetCurrentLoc() == lib.exec("x",["intro1"])) { return false }
+			if (lib.PC_GetCurrentLoc() == lib.exec("x",["intro2"])) { return false }
 		},
 
 		reaction: function (par_c) {
 
-			/*if (par_c.loc == lib.IT_X("intro1")) {
+			/*if (par_c.loc == lib.exec("x",["intro1"])) {
 				return true // not to redescribe
 			}
 			*/
@@ -821,7 +768,7 @@ function initReactions (lib, usr) {
 
 		reaction: function (par_c) {
 
-			if (par_c.target == lib.IT_X("intro2")) {
+			if (par_c.target == lib.exec("x",["intro2"])) {
 
 				lib.GD_CreateMsg ("es", "intro2", "a intro2<br/>");
 				lib.CA_ShowMsg ("intro2")
@@ -829,7 +776,7 @@ function initReactions (lib, usr) {
 
 			}
 
- 			if ((par_c.loc == lib.IT_X("hall")) && (par_c.target == lib.IT_X("porche")))  {
+ 			if ((par_c.loc == lib.exec("x",["hall"])) && (par_c.target == lib.exec("x",["porche"])))  {
 				lib.GD_CreateMsg ("es", "al porche_1", "Huyes de la casa antes de tiempo, deshonra ante tus amigos<br/>La partida termina, pero seguro que puedes hacerlo mejor la próxima vez.<br/>");
 				lib.CA_ShowMsg ("al porche_1")
 				lib.CA_PressKey ("tecla");
@@ -840,9 +787,9 @@ function initReactions (lib, usr) {
 
 			}
 
-			if ((par_c.loc == lib.IT_X("porche")) && (par_c.target == lib.IT_X("hall")))  {
+			if ((par_c.loc == lib.exec("x",["porche"])) && (par_c.target == lib.exec("x",["hall"])))  {
 
-				if (!lib.IT_IsCarried(lib.IT_X("móvil"))) {
+				if (!lib.IT_IsCarried(lib.exec("x",["móvil"]))) {
 					lib.GD_CreateMsg ("es", "entrar_sin_móvil", "El reto consiste en salir con una foto, ¿cómo vas a conseguirla si dejas la cámara fuera?<br/>");
 					lib.CA_ShowMsg ("entrar_sin_móvil")
 					return true
@@ -858,24 +805,24 @@ function initReactions (lib, usr) {
 
 			}
 
-			if ((par_c.loc == lib.IT_X("pasillo")) && (par_c.target == lib.IT_X("hab-hijos")))  {
-				if (lib.IT_GetLoc(lib.IT_X("ratón")) == lib.IT_X("limbo")) {
+			if ((par_c.loc == lib.exec("x",["pasillo"])) && (par_c.target == lib.exec("x",["hab-hijos"])))  {
+				if ( lib.exec ("getLocId", ["ratón"]) == "limbo" ) {
 					lib.GD_CreateMsg ("es", "hab_hijos_sellada", "De alguna manera, ya sabes que no hay nada más que hacer en esta habitación.\n")
 					lib.CA_ShowMsg ("hab_hijos_sellada")
 					return true
 				}
 			}
 
-			if ((par_c.loc == lib.IT_X("pasillo")) && (par_c.target == lib.IT_X("hab-padres")))  {
-				if (usr.exec ("getValue", {id:"espejo"}) == "1") {
+			if ((par_c.loc == lib.exec("x",["pasillo"])) && (par_c.target == lib.exec("x",["hab-padres"])))  {
+				if (lib.exec ("getValue", {id:"espejo"}) == "1") {
 					lib.GD_CreateMsg ("es", "hab_padres_sellada", "Ni por lo más sagrado volverás a entrar en esa habitación y su horrendo espejo.\n")
 					lib.CA_ShowMsg ("hab_padres_sellada")
 					return true
 				}
 			}
 
-			if (par_c.loc == lib.IT_X("hab-padres"))  {
-				if (lib.IT_GetAttPropValue (lib.IT_X("espejo"), "generalState", "state") == "0") {
+			if (par_c.loc == lib.exec("x",["hab-padres"]))  {
+				if (lib.exec ("getValue", ["espejo"]) == "0") {
 					lib.GD_CreateMsg ("es", "mirar_espejo", "Cuando vas a salir, no puedes evitar dejar de observar el espejo.\n")
 					lib.CA_ShowMsg ("mirar_espejo")
 					usr.exec ("escena_espejo")
@@ -883,12 +830,12 @@ function initReactions (lib, usr) {
 				}
 		  }
 
-			if ((par_c.loc == lib.IT_X("pasillo")) && (par_c.target == lib.IT_X("hab-abuelos")))  {
-				if (usr.exec ("getValue", {id:"ataúd"}) == "1") {
+			if ((par_c.loc == lib.exec("x",["pasillo"])) && (par_c.target == lib.exec("x",["hab-abuelos"])))  {
+				if (lib.exec ("getValue", {id:"ataúd"}) == "1") {
 					lib.GD_CreateMsg ("es", "entrar_hab_abuelos_ya", "Los que quiera que te dejaron entrar una vez, no parecen querer que sigas merodeando por su casa.<br/>")
 					lib.CA_ShowMsg ("entrar_hab_abuelos_ya")
 					return true
-				} else if (lib.IT_GetLoc(lib.IT_X("botella-vacía")) == lib.IT_X("limbo")) {
+				} else if ( lib.exec ("getLocId", ["botella-vacía"]) == "limbo" ) {
 					lib.GD_CreateMsg ("es", "entrar_hab_abuelos_no", "La puerta no tiene pomo. Está tremendamente fría y es como un mármol negro y oscuro que no refleja la luz. Empujas la puerta, pero eres incapaz de abrirla.<br/>")
 					lib.CA_ShowMsg ("entrar_hab_abuelos_no")
 					return true
@@ -899,7 +846,7 @@ function initReactions (lib, usr) {
 				}
 			}
 
-			if ((par_c.loc == lib.IT_X("hab-abuelos")))  {
+			if ((par_c.loc == lib.exec("x",["hab-abuelos"])))  {
 				lib.GD_CreateMsg ("es", "salir_hab_abuelos_no", "No encuentras la manera de abrir la fría puerta de mármol.<br/>")
 				lib.CA_ShowMsg ("salir_hab_abuelos_no")
 				return true
@@ -920,7 +867,7 @@ function initReactions (lib, usr) {
 
 		reaction: function (par_c) {
 
-			if ((par_c.loc == lib.IT_X("intro2")) && (par_c.item1Id == "porche"))  {
+			if ((par_c.loc == lib.exec("x",["intro2"])) && (par_c.item1Id == "porche"))  {
 				lib.GD_CreateMsg ("es", "de_intro_a_porche", "Trastabillas y te caes, te arañas con los arbustos, y casi pierdes el móvil, pero llegas hasta el porche y recuperas el aliento.<br/>");
 				lib.CA_ShowMsg ("de_intro_a_porche")
 				lib.GD_CreateMsg ("es","mira","mira")
@@ -938,14 +885,14 @@ function initReactions (lib, usr) {
 
 		enabled: function (indexItem, indexItem2) {
 
-			if (indexItem != lib.IT_X("móvil")) return false;
+			if (indexItem != lib.exec("x",["móvil"])) return false;
 			return true;
 		},
 
 		reaction: function (par_c) {
 			// si en hall y ya has visto los huesos => significa que te vas a tu casa
-			if ((par_c.loc == lib.IT_X("hall")) && (usr.exec ("getValue", {id:"huesos"}) == "1") )  {
-				usr.exec ("setValue", {id:"huesos", value:"2"})
+			if ((par_c.loc == lib.exec("x",["hall"])) && (lib.exec ("getValue", {id:"huesos"}) == "1") )  {
+				lib.exec ("setValue", {id:"huesos", value:"2"})
 				lib.GD_CreateMsg ("es", "te_vas_si_pero_no_1", "Sacas las fotos a esos míseros huesos y te diriges a la puerta.<br/>");
 				lib.GD_CreateMsg ("es", "te_vas_si_pero_no_2", "Pero cuando vas a girar el pomo de la puerta oyes las risas de desprecio de tus amigos y con rabia das la vuelta. ¡Los vas a dejar muditos!<br/>");
 
@@ -956,8 +903,8 @@ function initReactions (lib, usr) {
 				return true;
 			}
 
-			if ((par_c.loc == lib.IT_X("cocina")) && (lib.IT_GetLocId(lib.IT_X("botella") ) == "limbo") && (usr.exec ("getValue", {id:"botella"}) != "2"))  {
-				usr.exec ("setValue", {id:"botella", value:"2"})
+			if ((par_c.loc == lib.exec("x",["cocina"])) && ( lib.exec ("getLocId", ["botella"]) == "limbo") && (lib.exec ("getValue", {id:"botella"}) != "2"))  {
+				lib.exec ("setValue", {id:"botella", value:"2"})
 				lib.GD_CreateMsg ("es", "selfie_de_sangre", "Te sacas un selfie, pero cuando ves a esa cara demacrada cuberta de sangre, lo borras para no dejar rastro de tu vergüenza.<br/>");
 
 				lib.CA_ShowMsg ("selfie_de_sangre");
@@ -999,10 +946,10 @@ function initReactions (lib, usr) {
 				lib.CA_PressKey ("tecla");
 				lib.CA_ShowMsg ("dar_queso_2")
 				lib.IT_SetLocToLimbo(par_c.item1)
-				lib.IT_SetLocToLimbo(lib.IT_X("ratón"))
-				lib.IT_SetLocToLimbo(lib.IT_X("gato"))
-				usr.exec ("setValue", {id:"ratón", value:"1"})
-				usr.exec ("setValue", {id:"gato", value:"1"})
+				lib.IT_SetLocToLimbo(lib.exec("x",["ratón"]))
+				lib.IT_SetLocToLimbo(lib.exec("x",["gato"]))
+				lib.exec ("setValue", {id:"ratón", value:"1"})
+				lib.exec ("setValue", {id:"gato", value:"1"})
 				return true
 			}
 		}
@@ -1017,7 +964,7 @@ function initReactions (lib, usr) {
 
 		enabled: function (indexItem, indexItem2) {
 
-			if (indexItem != lib.IT_X("chimenea")) return false;
+			if (indexItem != lib.exec("x",["chimenea"])) return false;
 			return true;
 		},
 
@@ -1076,9 +1023,9 @@ function initReactions (lib, usr) {
 					{ id:msg_coger_dinamita_3, action: { choiceId: "action", actionId:"sacar_foto", o1Id: "móvil"}}
 				])
 
-				lib.IT_SetLocToLimbo (lib.IT_X("dinamita"))
-				lib.IT_SetLocToLimbo (lib.IT_X("botella"))
-				lib.IT_SetLoc (lib.IT_X("botella-vacía"), lib.PC_GetCurrentLoc())
+				lib.IT_SetLocToLimbo (lib.exec("x",["dinamita"]))
+				lib.IT_SetLocToLimbo (lib.exec("x",["botella"]))
+				lib.IT_SetLoc (lib.exec("x",["botella-vacía"]), lib.PC_GetCurrentLoc())
 
 				return true;
 			}
@@ -1099,13 +1046,13 @@ function initReactions (lib, usr) {
 				lib.CA_PressKey ("tecla");
 
 				lib.IT_SetLocToLimbo (par_c.item1)
-				usr.exec ("setValue", {id:"taper", value:"2"})
+				lib.exec ("setValue", {id:"taper", value:"2"})
 				return true;
 			}
 
 			if (par_c.item1Id == "queso") {
 
-				if (usr.exec ("getValue", {id:"ratón"}) == "0") {
+				if (lib.exec ("getValue", {id:"ratón"}) == "0") {
 					lib.GD_CreateMsg ("es","coger_queso_no", "Más de cerca, ves que el queso maloliente está cubierto de una capa grasienta de moho multicolor, lo tocas pero te da tanto asco que no lo coges.<br/>")
 					lib.CA_ShowMsg ("coger_queso_no")
 					return true
@@ -1165,12 +1112,13 @@ function initUserFunctions (lib, usr) {
 
 				lib.CA_EnableChoices(true)
 			  console.log ("usr.setFrame: " + JSON.stringify (par))
+
 				let familiaActivation = [
-					(lib.IT_GetAttPropValue (lib.IT_X("cuadro1"), "familiaState", "padre") == "0"),
-					(lib.IT_GetAttPropValue (lib.IT_X("cuadro1"), "familiaState", "madre") == "0"),
-					(lib.IT_GetAttPropValue (lib.IT_X("cuadro1"), "familiaState", "hija") == "0"),
-					(lib.IT_GetAttPropValue (lib.IT_X("cuadro1"), "familiaState", "hijo") == "0"),
-					(lib.IT_GetAttPropValue (lib.IT_X("cuadro1"), "familiaState", "abuelo") == "0") ]
+					(lib.exec ("getValue", ["cuadro1", "familiaState.padre"]) == "0"),
+					(lib.exec ("getValue", ["cuadro1", "familiaState.madre"]) == "0"),
+					(lib.exec ("getValue", ["cuadro1", "familiaState.hija"]) == "0"),
+					(lib.exec ("getValue", ["cuadro1", "familiaState.hijo"]) == "0"),
+					(lib.exec ("getValue", ["cuadro1", "familiaState.abuelo"]) == "0") ]
 
 					let bis_active = !(familiaActivation[0] || familiaActivation[1] || familiaActivation[2] || familiaActivation[3] || familiaActivation[4])
 
@@ -1182,20 +1130,6 @@ function initUserFunctions (lib, usr) {
 
 				return status
 			}
-	});
-
-	userFunctions.push ({
-		id: 'setValue',
-		code: function (par) { // par.id, par.value
-		  lib.IT_SetAttPropValue (lib.IT_X(par.id), "generalState", "state", par.value)
-		}
-	});
-
-	userFunctions.push ({
-		id: 'getValue',
-		code: function (par) { // par.id
-		  return lib.IT_GetAttPropValue (lib.IT_X(par.id), "generalState", "state")
-		}
 	});
 
 	userFunctions.push ({
@@ -1212,9 +1146,9 @@ function initUserFunctions (lib, usr) {
 			lib.CA_ShowMsg ("desc_espejo_post_1")
 			lib.CA_PressKey ("tecla");
 
-			usr.exec ("setValue", {id:"espejo", value:"1"})
+			lib.exec ("setValue", {id:"espejo", value:"1"})
 			lib.CA_PressKey ("tecla");
-			lib.PC_SetCurrentLoc(lib.IT_X("pasillo"))
+			lib.PC_SetCurrentLoc(lib.exec("x",["pasillo"]))
 		}
 
 	});
@@ -1228,13 +1162,13 @@ function initUserFunctions (lib, usr) {
 
 			//let lib = lib // tricky
 
-			estado_escena[0] = (lib.IT_GetLoc(lib.IT_X("botella-vacía")) == lib.IT_X("limbo"))
-			estado_escena[1] = (lib.IT_GetLoc(lib.IT_X("ratón")) != lib.IT_X("limbo"))
-			estado_escena[2] = (usr.exec ("getValue", {id:"espejo"}) == "0")
-			estado_escena[3] = (usr.exec ("getValue", {id:"ataúd"}) == "0")
-			estado_escena[4] = (usr.exec ("getValue", {id:"cuadro1"}) == "0")
-			estado_escena[5] = (usr.exec ("getValue", {id:"huesos"}) == "0")
-			estado_escena[6] = (usr.exec ("getValue", {id:"taper"}) != "2")
+			estado_escena[0] = (lib.exec ("getLocId", ["botella-vacía"]) == "limbo")
+			estado_escena[1] = (lib.exec ("getLocId", ["ratón"]) != "limbo")
+			estado_escena[2] = (lib.exec ("getValue", {id:"espejo"}) == "0")
+			estado_escena[3] = (lib.exec ("getValue", {id:"ataúd"}) == "0")
+			estado_escena[4] = (lib.exec ("getValue", {id:"cuadro1"}) == "0")
+			estado_escena[5] = (lib.exec ("getValue", {id:"huesos"}) == "0")
+			estado_escena[6] = (lib.exec ("getValue", {id:"taper"}) != "2")
 
 			let pendientes = 0
 			for (let i=0; i<estado_escena.length;i++) if (estado_escena[i]) pendientes++
@@ -1317,7 +1251,7 @@ function initUserFunctions (lib, usr) {
 			lib.CA_PressKey ("tecla-caray");
 
 		  lib.CA_EndGame("caray")
-			usr.exec ("setValue", {id:"intro2", value:"1"})
+			lib.exec ("setValue", {id:"intro2", value:"1"})
 		}
 
 	});
