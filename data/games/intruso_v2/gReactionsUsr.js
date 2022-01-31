@@ -22,7 +22,7 @@ v0.02: Guía para pasar a lib v0.02:
 		to-do: turn(lib, usr, item) ??
 	#1: renombramos primitives a lib
 	#2: acortamos lib.executeCode a lib.exec
-	#3: reformato de funciones IT (en curso)
+	#3: reformato de funciones IT_, PC_ y DIR_ (en curso)
 		IT_*: 129
 			IT_GetAttPropValue (46) -> lib.exec ("getValue", [par])  // par: item [,att]
 			IT_SetAttPropValue (26) -> lib.exec ("setValue", [par])  // par: item, value [,att]
@@ -32,12 +32,25 @@ v0.02: Guía para pasar a lib v0.02:
 			IT_SetLocToLimbo (6) -> lib.exec ("setLoc", ["", "limbo"]) // par: item, "limbo"
 			IT_IsCarried -> lib.exec ("isCarried", [""]
 			IT_IsHere -> lib.exec ("isHere", [""]
-		9 PC_
-		194 líneas con CA_
-		178 líneas con GD_
-		7 DIR_
+		  PC_ (9) -> lib.exec("pcSetLoc",...) ; lib.exec ("pc.loc");
+			DIR_GetIndex (6) ->  lib.exec ("getDir", [par])   // par: dirId
+
+		CA_ (194):
+			CA_ShowMsg (152) -> it.exec ("outShowMsg", {}) // ?: let intro0 = lib.out ("MSG", {msg: "Intro0", l1: {id: "intro0", txt: "ectocomp 2021"}} )
+			CA_ShowMsgAsIs (2) -> it.exec ("outShowMsgAsIs")
+			lib.CA_PressKey (36)
+			lib.CA_ShowDesc (2)
+			lib.CA_EnableChoices(true)
+			lib.CA_EndGame("caray")
+			lib.CA_QuoteBegin
+			lib.CA_Refresh()
+
+		GD_: 182
+			GD_CreateMsg (166)
+			GD_DefAllLinks (16)
+
 	#4: Usar en los enlaces la acción activatedBy, para dar persistencia a las elecciones, vinculándolas al estado de ítems.
-	#5: to-do: reformato de funciones PC_, CA_, DEF_, GD_ y DIR_
+	#5: to-do: reformato de funciones CA_ y GD_
 
 	Partimos de 1436 líneas y 68000 chars en versión v0.01 y vamos a recodificar para v0.02
   Aplicado 1,2 y 3 a v0.02 (usando template y renombrando primitives a lib): 1260 lineas y 58000 chars
@@ -113,20 +126,7 @@ function exec(functionName, par) {
 
 }
 
-
 function initItems (lib, usr) {
-
-/*
-	items.push ({
-		id: 'móvil',
-
-		desc: function () {
-			lib.CA_ShowMsg ("móvil")
-
-		}
-
-	});
-*/
 
 items.push ({
 	id: 'intro1',
@@ -248,7 +248,7 @@ items.push ({
 
 			let msg_movil = lib.CA_ShowMsg ("desc-porche-2", {l1: {id: "móvil", txt: "móvil"}})
 			lib.GD_DefAllLinks ([
-				{ id:dentro, action: { choiceId: "dir1", actionId:"go", d1Id:"in", target: lib.exec ("x", ["hall"]), targetId: "hall", d1Id:"in", d1: lib.DIR_GetIndex("in")}},
+				{ id:dentro, action: { choiceId: "dir1", actionId:"go", d1Id:"in", target: lib.exec ("x", ["hall"]), targetId: "hall", d1Id:"in", d1: lib.exec ("getDir", ["in"])}},
 			  { id:msg_movil, action: { choiceId: "obj1", o1Id: "móvil"}}
 			])
 
@@ -260,7 +260,7 @@ items.push ({
 			lib.CA_EnableChoices(true)
 		} else {
 			lib.GD_DefAllLinks ([
-			  { id:dentro, action: { choiceId: "dir1", actionId:"go", d1Id:"in", target: lib.exec("x",["hall"]), targetId: "hall", d1Id:"in", d1: lib.DIR_GetIndex("in")}}
+			  { id:dentro, action: { choiceId: "dir1", actionId:"go", d1Id:"in", target: lib.exec("x",["hall"]), targetId: "hall", d1Id:"in", d1: lib.exec ("getDir", ["in"])}}
 			])
 		}
 
@@ -307,10 +307,10 @@ items.push ({
 
 			lib.GD_DefAllLinks ([
 				{ id: desc_hall_1, action: { choiceId: "action", actionId:"ex", o1Id: "chimenea"} } ,
-				{ id: desc_hall_a_cocina, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["cocina"]), targetId: "cocina", d1Id:"d270", d1: lib.DIR_GetIndex("d270")}},
+				{ id: desc_hall_a_cocina, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["cocina"]), targetId: "cocina", d1Id:"d270", d1: lib.exec ("getDir", ["d270"])}},
 				{ id: desc_hall_2, visibleToTrue: [desc_hall_2_plus]},
 				{ id: msg_interruptores_1, visibleToTrue: [msg_interruptores_2], activatedBy: "interruptores" },
-				{id: desc_hall_3, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["pasillo"]), targetId: "pasillo", d1Id:"up", d1: lib.DIR_GetIndex("up")}}
+				{id: desc_hall_3, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["pasillo"]), targetId: "pasillo", d1Id:"up", d1: lib.exec ("getDir", ["up"])}}
 			])
 
 			// escena final (final feliz)
@@ -385,8 +385,8 @@ items.push ({
 			lib.GD_DefAllLinks ([
 				{ id:msg_pasillo_cuadro, action: { choiceId: "action", actionId:"ex", o1Id: "cuadro1"}},
 				{ id:msg_pasillo_poster, action: { choiceId: "action", actionId:"ex", o1Id: "póster"}, libCode: {functionId:'setValue', par: {id:"póster", value:"1"}} },
-				{ id:msg_pasillo_hab_padres, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["hab_padres"]), targetId: "hab_padres", d1Id:"d0", d1: lib.DIR_GetIndex("d0")}},
-				{ id:msg_pasillo_hab_hijos, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["hab_hijos"]), targetId: "hab_hijos", d1Id:"d270", d1: lib.DIR_GetIndex("d270")}}
+				{ id:msg_pasillo_hab_padres, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["hab_padres"]), targetId: "hab_padres", d1Id:"d0", d1: lib.exec ("getDir", ["d0"])}},
+				{ id:msg_pasillo_hab_hijos, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["hab_hijos"]), targetId: "hab_hijos", d1Id:"d270", d1: lib.exec ("getDir", ["d270"])}}
 			])
 
 		}
@@ -422,9 +422,8 @@ items.push ({
 			lib.GD_CreateMsg ("es","desc-hab-hijos-ratón-presente", ", del que asoma el hocico de un %l1.");
 			lib.GD_CreateMsg ("es","desc-hab-hijos-gato-presente", "En otra esquina de la habitación, entre sombras, un %l1 mira casi todo el tiempo hacia el agujero, ignorándote activamente mientras se lame las uñas. No lo podrías jurar, pero ¿tiene maquillaje en los ojos?<br/>");
 
-
-			let ratonHay = lib.IT_IsHere(lib.exec("x",["ratón"]))
-			let gatoHay = lib.IT_IsHere(lib.exec("x",["gato"]))
+			let ratonHay = lib.exec ("isHere", ["ratón"])
+			let gatoHay = lib.exec ("isHere", ["gato"])
 
 			lib.CA_ShowMsg ("desc-hab-hijos-1")
 			lib.CA_ShowMsg ("desc-hab-hijos-ratón")
@@ -577,10 +576,11 @@ items.push ({
 				lib.exec ("setValue", ["nevera", "1"])
 
 				// que no pasen a estar en la nevera hasta que se describa la primera vez
-				lib.IT_SetLoc(lib.exec("x",["botella"]), item1);
-				lib.IT_SetLoc(lib.exec("x",["taper"]), item1);
-				lib.IT_SetLoc(lib.exec("x",["dinamita"]), item1);
-				lib.IT_SetLoc(lib.exec("x",["queso"]), item1);
+				lib.exec ("setLoc", ["botella", item1])
+				lib.exec ("setLoc", ["taper", item1])
+				lib.exec ("setLoc", ["dinamita", item1])
+				lib.exec ("setLoc", ["queso", item1])
+
 			} else {
 				lib.GD_CreateMsg ("es","desc_nevera_2", "La vuelves a abrir, fascinado por su repugnancia.")
 				lib.CA_ShowMsg ("desc_nevera_2")
@@ -729,7 +729,7 @@ items.push ({
 				lib.CA_ShowMsg ("ataúd_4" )
 
 				lib.exec ("setValue", {id:"ataúd"}, "1")
-				lib.PC_SetCurrentLoc(lib.exec("x",["hall"]))
+				lib.exec ("pcSetLoc", ["hall"])
 
 			}
 		});
@@ -748,8 +748,8 @@ function initReactions (lib, usr) {
 		id: 'look',
 
 		enabled: function (indexItem, indexItem2) {
-			if (lib.PC_GetCurrentLoc() == lib.exec("x",["intro1"])) { return false }
-			if (lib.PC_GetCurrentLoc() == lib.exec("x",["intro2"])) { return false }
+			if (lib.exec ("pc.loc"]) == lib.exec("x",["intro1"])) { return false }
+			if (lib.exec ("pc.loc"]) == lib.exec("x",["intro2"])) { return false }
 		},
 
 		reaction: function (par_c) {
@@ -789,7 +789,7 @@ function initReactions (lib, usr) {
 
 			if ((par_c.loc == lib.exec("x",["porche"])) && (par_c.target == lib.exec("x",["hall"])))  {
 
-				if (!lib.IT_IsCarried(lib.exec("x",["móvil"]))) {
+				if (!lib.exec ("isCarried", ["móvil"])) {
 					lib.GD_CreateMsg ("es", "entrar_sin_móvil", "El reto consiste en salir con una foto, ¿cómo vas a conseguirla si dejas la cámara fuera?<br/>");
 					lib.CA_ShowMsg ("entrar_sin_móvil")
 					return true
@@ -937,7 +937,7 @@ function initReactions (lib, usr) {
 			}
 
 		if (par_c.item1Id == "queso") {
-			if (lib.PC_GetCurrentLocId() == "hab-hijos") {
+			if (lib.exec ("pc.loc"]) == lib.exec ("x", ["hab-hijos"])) {
 				// escena pelea ratón y gato
 				lib.GD_CreateMsg ("es","dar_queso_1", "Al dejarle en el suelo el queso al ratón, el ratón sale tímidamente de su agujero, y el gato se abalanza sobre él.")
 				lib.GD_CreateMsg ("es","dar_queso_2", "El gato le propina un par de zarpazos, pero el ratón lo mira con unos llameantes ojos rojos que hacen arder la cola del gato, por lo que sale corriendo de la habitación mientras el ratón se va con el queso a su agujero, triunfante esta vez.<br/>")
@@ -945,9 +945,11 @@ function initReactions (lib, usr) {
 				lib.CA_ShowMsg ("dar_queso_1")
 				lib.CA_PressKey ("tecla");
 				lib.CA_ShowMsg ("dar_queso_2")
-				lib.IT_SetLocToLimbo(par_c.item1)
-				lib.IT_SetLocToLimbo(lib.exec("x",["ratón"]))
-				lib.IT_SetLocToLimbo(lib.exec("x",["gato"]))
+
+				lib.exec ("setLoc", ["queso", "limbo"])
+				lib.exec ("setLoc", ["ratón", "limbo"])
+				lib.exec ("setLoc", ["gato", "limbo"])
+
 				lib.exec ("setValue", {id:"ratón", value:"1"})
 				lib.exec ("setValue", {id:"gato", value:"1"})
 				return true
@@ -1023,9 +1025,9 @@ function initReactions (lib, usr) {
 					{ id:msg_coger_dinamita_3, action: { choiceId: "action", actionId:"sacar_foto", o1Id: "móvil"}}
 				])
 
-				lib.IT_SetLocToLimbo (lib.exec("x",["dinamita"]))
-				lib.IT_SetLocToLimbo (lib.exec("x",["botella"]))
-				lib.IT_SetLoc (lib.exec("x",["botella-vacía"]), lib.PC_GetCurrentLoc())
+				lib.exec ("setLoc", ["dinamita", "limbo"])
+				lib.exec ("setLoc", ["botella", "limbo"])
+				lib.exec ("setLoc", ["botella-vacía", lib.exec("pc.loc")])
 
 				return true;
 			}
@@ -1045,7 +1047,7 @@ function initReactions (lib, usr) {
 				lib.CA_ShowMsg ("coger_taper_4")
 				lib.CA_PressKey ("tecla");
 
-				lib.IT_SetLocToLimbo (par_c.item1)
+				lib.exec ("setLoc", ["taper", "limbo"])
 				lib.exec ("setValue", {id:"taper", value:"2"})
 				return true;
 			}
@@ -1095,12 +1097,11 @@ function initUserFunctions (lib, usr) {
 					lib.CA_PressKey ("tecla");
 			//	}
 
-				let loc = lib.IT_X(par.target)
 				// movimiento
-				lib.PC_SetCurrentLoc (loc)
+				lib.exec ("pcSetLoc", par.target)
 
 				// redescribe
-				lib.CA_ShowDesc (loc)
+				lib.CA_ShowDesc (lib.exec ("x", par.target))
 				lib.CA_Refresh()
 		}
 	});
@@ -1148,7 +1149,7 @@ function initUserFunctions (lib, usr) {
 
 			lib.exec ("setValue", {id:"espejo", value:"1"})
 			lib.CA_PressKey ("tecla");
-			lib.PC_SetCurrentLoc(lib.exec("x",["pasillo"]))
+			lib.exec ("pcSetLoc", ["pasillo"])
 		}
 
 	});

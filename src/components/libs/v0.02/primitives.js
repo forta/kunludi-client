@@ -1,7 +1,7 @@
 /*
 
 module that:
- 1. izolizes access to this.world
+ 1. isolizes access to this.world
  2. provides an interface to add reactions to this.reactionList
 
 */
@@ -158,6 +158,7 @@ function isIndex (indexOrId) {
 		return !isNaN(indexOrId)
 }
 
+
 function initLibFunctions (lib) {
 
 	libFunctions.push ({
@@ -196,6 +197,31 @@ function initLibFunctions (lib) {
 	});
 
 	libFunctions.push ({
+		id: 'itemIsAt',
+		code: function (par) { // par: item, loc
+			let parIn = (typeof par[0] == 'undefined') ? par : {item: par[0], loc: par[1]}
+			// to-do: id -> index
+			return (lib.IT_GetLoc (parIn.item) == parIn.loc )
+		}
+	});
+
+	libFunctions.push ({
+		id: 'isHere',
+		code: function (par) { // par: item
+			let parIn = (typeof par[0] == 'undefined') ? par : {item: par[0]}
+			return lib.IT_IsHere(parIn.item)
+		}
+	});
+
+	libFunctions.push ({
+		id: 'isCarried',
+		code: function (par) { // par: item
+			let parIn = (typeof par[0] == 'undefined') ? par : {item: par[0]}
+			return lib.IT_IsCarried(parIn.item)
+		}
+	});
+
+	libFunctions.push ({
 		id: 'setLoc',
 		code: function (par) { // par: item1, item2
 			let parIn = (typeof par[0] == 'undefined') ? par : {item1: par[0], item2: par[1]}
@@ -205,6 +231,14 @@ function initLibFunctions (lib) {
 		}
 	});
 
+	libFunctions.push ({
+		id: 'pcSetLoc',
+		code: function (par) { // par: item
+			let parIn = (typeof par[0] == 'undefined') ? par : {item: par[0]}
+			if (!isIndex (parIn.item)) parIn.item = lib.IT_X(parIn.item)
+			lib.PC_SetCurrentLoc(parIn.item)
+		}
+	});
 
 	libFunctions.push ({
 		id: 'getLocId',
@@ -225,9 +259,24 @@ function initLibFunctions (lib) {
 	});
 
 	libFunctions.push ({
+		id: 'getDir',
+		code: function (par) {  // par.dirId
+			let parIn = (typeof par[0] == 'undefined') ? par : {dirId: par[0]}
+			return lib.DIR_GetIndex(parIn.dirId)
+		}
+	});
+
+	libFunctions.push ({
 		id: 'pc',
 		code: function () {
 			return lib.PC_X ()
+		}
+	});
+
+	libFunctions.push ({
+		id: 'pc.loc',
+		code: function () {
+			return lib.PC_GetCurrentLoc()
 		}
 	});
 
@@ -245,22 +294,6 @@ function dependsOn (worldPar, reactionListPar, userStatePar, metaDealer, metaSta
 
 };
 
-/* old code?
-function executeGameAction (type, parameters) {
-
- switch (type) {
-
-  case 'msg':
-	reactionList.add ({type:type, parameters:parameters} );
-  break;
-
-  //default:
-  //break;
- }
-};
-
-*/
-
 function exec (functionName, par) {
 
 	let indexLibFunction = this.arrayObjectIndexOf_2(libFunctions, "id", functionName);
@@ -272,11 +305,7 @@ function exec (functionName, par) {
 
 }
 
-
-
 // -----------------------------------
-
-
 
 /*(begin)********************** INSTRUCTION SET *********************
 They are just a interface of macros for cleaner code
