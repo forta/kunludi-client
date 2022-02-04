@@ -7,58 +7,6 @@
 //Section 4: internal functions
 
 /*
-
-Atributo por defecto:
-v0.01:
- 	primitives.IT_GetAttPropValue (item, "generalState", "state") (61 chars)
-
-v0.02: Guía para pasar a lib v0.02:
-
-	ejemplo:
-	v0.01: primitives.IT_GetAttPropValue (primitives.IT_X(itemId), "generalState", "state")
-	v0.02: lib.if (lib.exec ("getValue", [ItemId])
-
-  #0: usar plantilla userTemplate para simplificación inicial de código
-		to-do: turn(lib, usr, item) ??
-	#1: renombramos primitives a lib
-	#2: acortamos lib.executeCode a lib.exec
-	#3: reformato de funciones IT_, PC_ y DIR_ (en curso)
-		IT_*: 129
-			IT_GetAttPropValue (46) -> lib.exec ("getValue", [par])  // par: item [,att]
-			IT_SetAttPropValue (26) -> lib.exec ("setValue", [par])  // par: item, value [,att]
-			IT_GetLoc (10) -> lib.exec ("getLoc", [par])  // par: item
-			IT_X: 96! -> lib.exec ("x", [par]) // par: id
-			IT_SetLoc (5) -> lib.exec ("setLoc", ["", ""]) // par: item, item
-			IT_SetLocToLimbo (6) -> lib.exec ("setLoc", ["", "limbo"]) // par: item, "limbo"
-			IT_IsCarried -> lib.exec ("isCarried", [""]
-			IT_IsHere -> lib.exec ("isHere", [""]
-		  PC_ (9) -> lib.exec("pcSetLoc",...) ; lib.exec ("pc.loc");
-			DIR_GetIndex (6) ->  lib.exec ("getDir", [par])   // par: dirId
-
-		CA_ (194):
-			CA_ShowMsg (152) -> it.exec ("outShowMsg", {}) // ?: let intro0 = lib.out ("MSG", {msg: "Intro0", l1: {id: "intro0", txt: "ectocomp 2021"}} )
-			CA_ShowMsgAsIs (2) -> it.exec ("outShowMsgAsIs")
-			lib.CA_PressKey (36)
-			lib.CA_ShowDesc (2)
-			lib.CA_EnableChoices(true)
-			lib.CA_EndGame("caray")
-			lib.CA_QuoteBegin
-			lib.CA_Refresh()
-
-		GD_: 182
-			GD_CreateMsg (166)
-			GD_DefAllLinks (16)
-
-	#4: Usar en los enlaces la acción activatedBy, para dar persistencia a las elecciones, vinculándolas al estado de ítems.
-	#5: to-do: reformato de funciones CA_ y GD_
-
-	Partimos de 1436 líneas y 68000 chars en versión v0.01 y vamos a recodificar para v0.02
-  Aplicado 1,2 y 3 a v0.02 (usando template y renombrando primitives a lib): 1260 lineas y 58000 chars
-
-
-*/
-
-/*
 Atributos usados en el juego:
 
 porche
@@ -79,21 +27,17 @@ let attributes = []
 let userFunctions = []
 
 export default {
-	// mandatory
 	dependsOn:dependsOn,
 	turn: turn,
 	initItems: initItems,
 	initReactions: initReactions,
 	initAttributes: initAttributes,
-	initUserFunctions:initUserFunctions, // user code definition
-
+	initUserFunctions:initUserFunctions,
 	items:items,
 	reactions:reactions,
 	attributes:attributes,
 	userFunctions:userFunctions,
-
-	exec:exec, // user code execution (it will be it, pc?, ac, gd, dir)
-
+	exec:exec
 }
 
 function dependsOn (lib, usr) {
@@ -106,11 +50,8 @@ function dependsOn (lib, usr) {
 function turn (indexItem) {
 
 	if (indexItem != this.lib.exec ("x", ["hall"])) return
-
 	if (this.lib.exec ("getValue", {id:"intro2"}) == "1") return
-
 	if (this.usr.exec ("escenas_pendientes") != "done") return
-
 	this.usr.exec ("escenaFinal")
 
 }
@@ -123,7 +64,6 @@ function exec(functionName, par) {
 		return
 	}
   return userFunctions[indexUsrFunction].code (par)
-
 }
 
 function initItems (lib, usr) {
@@ -133,7 +73,7 @@ items.push ({
 
 	desc: function () {
 
-		lib.CA_EnableChoices(false)
+		lib.out ("EnableChoices", [false])
 
 		lib.GD_CreateMsg ("es","tecla","avanza")
 
@@ -145,13 +85,13 @@ items.push ({
 		lib.GD_CreateMsg ("es", "Consideración1", "En esta versión del motor, se han incorporado enlaces en los textos, simulando un poco el estilo Twine/Inkle. %l1<br/>");
 		lib.GD_CreateMsg ("es", "Consideración2", "También se ha incorporado un filtro para los los ítems y acciones disponibles. Si pulsas 'enter' mientras editas el filtro, se ejecutará la primera de las opciones disponibles. Es una forma muy dinámica de interacturar (al menos por web) y te animamos a usarla.%l1<br/>");
 
-		let intro0 = lib.CA_ShowMsg ("Intro0", {l1: {id: "intro0", txt: "ectocomp 2021"}});
-		let intro1 = lib.CA_ShowMsg ("Intro1", {l1: {id: "intro1", txt: "consideraciones de jugabilidad"}});
-		let intro2 = lib.CA_ShowMsg ("Intro2", {l1: {id: "intro2", txt: "jugar"}});
-		let intro3 = lib.CA_ShowMsg ("Intro3", undefined, false);
-		let consi0 = lib.CA_ShowMsg ("Consideración0", {l1: {id: "consi0", txt: "sigue leyendo"}}, false)
-		let consi1 = lib.CA_ShowMsg ("Consideración1", {l1: {id: "consi1", txt: "sigue leyendo"}}, false)
-		let consi2 = lib.CA_ShowMsg ("Consideración2", {l1: {id: "consi2", txt: "El juego comienza"}}, false)
+		let intro0 = lib.out ("showMsg", ["Intro0",{l1: {id: "intro0", txt: "ectocomp 2021"}}]);
+		let intro1 = lib.out ("showMsg", ["Intro1",{l1: {id: "intro1", txt: "consideraciones de jugabilidad"}}]);
+		let intro2 = lib.out ("showMsg", ["Intro2",{l1: {id: "intro2", txt: "jugar"}}]);
+		let intro3 = lib.out ("showMsg", ["Intro3",undefined, false]);
+		let consi0 = lib.out ("showMsg", ["Consideración0",{l1: {id: "consi0", txt: "sigue leyendo"}}, false])
+		let consi1 = lib.out ("showMsg", ["Consideración1",{l1: {id: "consi1", txt: "sigue leyendo"}}, false])
+		let consi2 = lib.out ("showMsg", ["Consideración2",{l1: {id: "consi2", txt: "El juego comienza"}}, false])
 
 		lib.GD_DefAllLinks ([
 			{ id:intro0, url: "https://itch.io/jam/ectocomp-2021-espanol"},
@@ -181,11 +121,11 @@ items.push ({
 		lib.GD_CreateMsg ("es", "escena_inicial_2", "Sabes que la familia Rarita va a salir a celebrar la noche de Halloween fuera de casa. Escondido detrás de un arbusto en su ruinoso jardín, los acabas de ver desfilar delante tuyo, con unas pintas que por una vez al año no desentona con la del resto.<br/>")
 		lib.GD_CreateMsg ("es", "escena_inicial_3", "¿Cómo has podido dejarte enredar en esto?<br/>");
 
-		lib.CA_ShowMsg ("escena_inicial_1")
-		lib.CA_ShowMsg ("escena_inicial_2")
-		lib.CA_ShowMsg ("escena_inicial_3")
+		lib.out ("showMsg", ["escena_inicial_1"])
+		lib.out ("showMsg", ["escena_inicial_2"])
+		lib.out ("showMsg", ["escena_inicial_3"])
 
-		lib.CA_PressKey ("tecla");
+		lib.out ("PressKey", ["tecla"]);
 
 		lib.GD_CreateMsg ("es", "flashback_1", "Flashback. Ayer noche. Reunión semanal de colegas de rol-o-lo-que-surja<br/>");
 		lib.GD_CreateMsg ("es", "flashback_21", "Bela: Venga, tira tu carta ya, ¡que nos aburrimos! No seas gallina, no creo que te vaya a salir 'desafío'.<br/>")
@@ -200,26 +140,26 @@ items.push ({
 		lib.GD_CreateMsg ("es", "flashback_5", "Sales de tu ensimismamiento.<br/>");
 		lib.GD_CreateMsg ("es", "flashback_6", "Ahora que acaban de subirse a su coche fúnebre de cristales oscuros, sabes que ha llegado el momento de entrar. Tu corazón late a mil por hora, los músculos se tensan, así que...<br/>")
 
-		lib.CA_ShowMsg ("flashback_1")
-  	lib.CA_PressKey ("tecla");
-		lib.CA_ShowMsg ("flashback_21")
-		lib.CA_ShowMsg ("flashback_22")
-		lib.CA_ShowMsg ("flashback_23")
-		lib.CA_ShowMsg ("flashback_24")
-		lib.CA_ShowMsg ("flashback_25")
-		lib.CA_ShowMsg ("flashback_26")
-		lib.CA_PressKey ("tecla");
-		lib.CA_ShowMsg ("flashback_31")
-		lib.CA_ShowMsg ("flashback_32")
-		lib.CA_PressKey ("tecla");
-		lib.CA_ShowMsg ("flashback_4")
-		lib.CA_PressKey ("tecla");
-		lib.CA_ShowMsg ("flashback_5")
-		lib.CA_PressKey ("tecla");
-		lib.CA_ShowMsg ("flashback_6")
+		lib.out ("showMsg", ["flashback_1"])
+  	lib.out ("PressKey", ["tecla"]);
+		lib.out ("showMsg", ["flashback_21"])
+		lib.out ("showMsg", ["flashback_22"])
+		lib.out ("showMsg", ["flashback_23"])
+		lib.out ("showMsg", ["flashback_24"])
+		lib.out ("showMsg", ["flashback_25"])
+		lib.out ("showMsg", ["flashback_26"])
+		lib.out ("PressKey", ["tecla"]);
+		lib.out ("showMsg", ["flashback_31"])
+		lib.out ("showMsg", ["flashback_32"])
+		lib.out ("PressKey", ["tecla"]);
+		lib.out ("showMsg", ["flashback_4"])
+		lib.out ("PressKey", ["tecla"]);
+		lib.out ("showMsg", ["flashback_5"])
+		lib.out ("PressKey", ["tecla"]);
+		lib.out ("showMsg", ["flashback_6"])
 
 		lib.GD_CreateMsg ("es", "corre", "¡%l1!<br/>")
-		let msg_corre = lib.CA_ShowMsg ("corre", {l1: {id: "corre", txt: "CORRE"}})
+		let msg_corre = lib.out ("showMsg", ["corre",{l1: {id: "corre", txt: "CORRE"}}])
 
 		lib.GD_DefAllLinks ([
 			{ id: msg_corre, 	action: { choiceId: "action", actionId:"goto", o1Id: "porche"}}
@@ -227,8 +167,8 @@ items.push ({
 
 		/*
 		lib.GD_CreateMsg ("es", "DLG_test", "test")
-		lib.CA_QuoteBegin ("Nadie", "DLG_test" , undefined, true ); // error: [    ]
-		lib.CA_ShowMsg ("<br/>")
+		lib.out ("QuoteBegin", ["Nadie", "DLG_test" , undefined, true ]); // error: [    ]
+		lib.out ("showMsg", [",<br/>"])
 		*/
 
 	}
@@ -241,23 +181,24 @@ items.push ({
 	desc: function () {
 
 		lib.GD_CreateMsg ("es","desc-porche-1", "Las telarañas del sofá colgante son frondosas, pero no decorativas precisamente. Si aquí en el exterior está todo tan mugriento, no quieras ni imaginarte cómo estarán las cosas %l1.<br/>");
-		let dentro = lib.CA_ShowMsg ("desc-porche-1", {l1: {id: "dentro", txt: "dentro"}})
+		let dentro = lib.out ("showMsg", ["desc-porche-1",{l1: {id: "dentro", txt: "dentro"}}])
 
 		if (lib.exec ("getValue", [this.id]) == "0") {  // primera vez
 			lib.GD_CreateMsg ("es","desc-porche-2", "Sólo estás armado con el %l1 vintage que te dejaron tus amigos.<br/>");
 
-			let msg_movil = lib.CA_ShowMsg ("desc-porche-2", {l1: {id: "móvil", txt: "móvil"}})
+			let msg_movil = lib.out ("showMsg", ["desc-porche-2",{l1: {id: "móvil", txt: "móvil"}}]);
+
 			lib.GD_DefAllLinks ([
 				{ id:dentro, action: { choiceId: "dir1", actionId:"go", d1Id:"in", target: lib.exec ("x", ["hall"]), targetId: "hall", d1Id:"in", d1: lib.exec ("getDir", ["in"])}},
 			  { id:msg_movil, action: { choiceId: "obj1", o1Id: "móvil"}}
 			])
 
 			lib.GD_CreateMsg ("es","desc-porche-3", "Por el rabillo del ojo vez algo deslizarse. Al enfocar  la vista ves un surco sobre el descuidado césped que va desde donde viste el movimiento hasta un agujero debajo de una de las paredes externas de la casa.<br/>");
-			lib.CA_ShowMsg ("desc-porche-3")
+			lib.out ("showMsg", ["desc-porche-3"])
 			lib.exec ("setLoc", ["móvil", lib.exec ("pc")] )
 			lib.exec ("setValue", [this.id, "1"])
 
-			lib.CA_EnableChoices(true)
+			lib.out ("EnableChoices", [true])
 		} else {
 			lib.GD_DefAllLinks ([
 			  { id:dentro, action: { choiceId: "dir1", actionId:"go", d1Id:"in", target: lib.exec("x",["hall"]), targetId: "hall", d1Id:"in", d1: lib.exec ("getDir", ["in"])}}
@@ -280,7 +221,7 @@ items.push ({
 			lib.exec ("setLoc", ["móvil", lib.exec ("pc")])
 
 			lib.GD_CreateMsg ("es","desc_hall_0", "Dejas detrás de ti la puerta exterior. Sabes que salir representa resignarte a la burla de tus amigos y perder tu fabuloso mazo de cartas.<br/>");
-			lib.CA_ShowMsg ("desc_hall_0");
+			lib.out ("showMsg", ["desc_hall_0"]);
 
 			let huesosVisto = (lib.exec("getValue", {id:"huesos"}) != "0")
 
@@ -291,19 +232,19 @@ items.push ({
 			lib.GD_CreateMsg ("es","desc_hall_2_plus", " no sólo de personas sino también de animales de distintos tamaños y que no identificas, ");
 			lib.GD_CreateMsg ("es","desc_hall_3", " podrías %l1.");
 
-			let desc_hall_1 = lib.CA_ShowMsg ("desc_hall_1", {l1:{id: "desc_hall_1", txt: "chimenea"}}, !huesosVisto)
-			let desc_hall_a_cocina = lib.CA_ShowMsg ("desc_hall_a_cocina", {l1:{id: "desc_hall_a_cocina", txt: "lleva a la cocina"}})
-			let desc_hall_2 = lib.CA_ShowMsg ("desc_hall_2", {l1:{id: "desc_hall_2", txt: "pisadas"}})
-			let desc_hall_2_plus = lib.CA_ShowMsg ("desc_hall_2_plus", undefined, false)
-			let desc_hall_3 = lib.CA_ShowMsg ("desc_hall_3", {l1:{id: "desc_hall_3", txt: "ir a la planta alta"}})
+			let desc_hall_1 = lib.out ("showMsg", ["desc_hall_1",{l1:{id: "desc_hall_1", txt: "chimenea"}}, !huesosVisto])
+			let desc_hall_a_cocina = lib.out ("showMsg", ["desc_hall_a_cocina",{l1:{id: "desc_hall_a_cocina", txt: "lleva a la cocina"}}])
+			let desc_hall_2 = lib.out ("showMsg", ["desc_hall_2",{l1:{id: "desc_hall_2", txt: "pisadas"}}])
+			let desc_hall_2_plus = lib.out ("showMsg", ["desc_hall_2_plus",undefined, false])
+			let desc_hall_3 = lib.out ("showMsg", ["desc_hall_3",{l1:{id: "desc_hall_3", txt: "ir a la planta alta"}}])
 
 
 			lib.GD_CreateMsg ("es","interruptores_1", "Está todo bastante oscuro pero ves %l1 ");
 			lib.GD_CreateMsg ("es","interruptores_2", "que están cubiertos de mugre pegajosa y no funcionan.<br/>");
 
 			let interruptoresVisto = (lib.exec ("getValue", {id:"interruptores"}) != "0")
-			let msg_interruptores_1 = lib.CA_ShowMsg ("interruptores_1", {l1:{id: "interruptores_1", txt: "algunos interruptores"}})
-			let msg_interruptores_2 = lib.CA_ShowMsg ("interruptores_2", undefined, interruptoresVisto)
+			let msg_interruptores_1 = lib.out ("showMsg", ["interruptores_1",{l1:{id: "interruptores_1", txt: "algunos interruptores"}}])
+			let msg_interruptores_2 = lib.out ("showMsg", ["interruptores_2",undefined, interruptoresVisto])
 
 			lib.GD_DefAllLinks ([
 				{ id: desc_hall_1, action: { choiceId: "action", actionId:"ex", o1Id: "chimenea"} } ,
@@ -330,7 +271,7 @@ items.push ({
 			lib.GD_CreateMsg ("es","escena-final-11", "abuelo:<br/>");
 			lib.GD_CreateMsg ("es","escena-final-12", "Hijo mío, espero que esta noche hayas aprendido la lección de que no se debe entras en casas ajenas.<br/>");
 			lib.GD_CreateMsg ("es","escena-final-13", "Como recuerdo, llévate esta foto de recuerdo -> al verla con tus amigos, sales con un murciélago en tu hombro. Has conseguido el reto y no sólo conservas tu mazo de cartas sino el respeto y devoción de tus amigos.<br/>");
-			//lib.CA_EndGame("escena-final-13")
+			//lib.out ("EndGame("escena-final-13")
 
 		}
 
@@ -343,7 +284,7 @@ items.push ({
 
 
 			lib.GD_CreateMsg ("es","desc_cocina", "Es la cocina más nauseabunda que has visto en tu vida. Te da asco tocar nada, pero una curiosidad malsana te tienta a %l1.")
-			let desc_cocina =  lib.CA_ShowMsg ("desc_cocina", {l1:{id: "desc_cocina", txt: "mirar qué habrá dentro de la nevera"}})
+			let desc_cocina =  lib.out ("showMsg", ["desc_cocina",{l1:{id: "desc_cocina", txt: "mirar qué habrá dentro de la nevera"}}])
 
 			lib.GD_DefAllLinks ([
 				{id: desc_cocina, action: { choiceId: "action", actionId:"ex", o1Id: "nevera"} }
@@ -372,15 +313,15 @@ items.push ({
 			lib.GD_CreateMsg ("es","pasillo_poster", ", supones por %l1 de un grupo de rock gótico a la entrada, ");
 			lib.GD_CreateMsg ("es","pasillo_hab_abuelo", " y a una tercera habitación, sin nada digno de remarcar... salvo la ausencia de todo: una puerta lisa y negra, sin pomo.<br/>");
 
-			let msg_pasillo_cuadro = lib.CA_ShowMsg ("pasillo_cuadro", {l1: {id: "pasillo_cuadro", txt: "cuadro"}}, !cuadroVisto);
-			let msg_pasillo_hab_hijos_comun = lib.CA_ShowMsg ("pasillo_hab_común")
+			let msg_pasillo_cuadro = lib.out ("showMsg", ["pasillo_cuadro",{l1: {id: "pasillo_cuadro", txt: "cuadro"}}, !cuadroVisto]);
+			let msg_pasillo_hab_hijos_comun = lib.out ("showMsg", ["pasillo_hab_común"])
 
-			let msg_pasillo_hab_padres = lib.CA_ShowMsg ("pasillo_hab_padres", {l1: {id: "pasillo_hab_padres", txt: "a la habitación que preside las escaleras"}}, !espejoVisto )
+			let msg_pasillo_hab_padres = lib.out ("showMsg", ["pasillo_hab_padres",{l1: {id: "pasillo_hab_padres", txt: "a la habitación que preside las escaleras"}}, !espejoVisto ])
 
-			let msg_pasillo_hab_hijos = lib.CA_ShowMsg ("pasillo_hab_hijos", {l1: {id: "pasillo_hab_hijos", txt: "a la habitación de los hijos"}}, ratonPresente )
+			let msg_pasillo_hab_hijos = lib.out ("showMsg", ["pasillo_hab_hijos",{l1: {id: "pasillo_hab_hijos", txt: "a la habitación de los hijos"}}, ratonPresente ])
 
-			let msg_pasillo_poster = lib.CA_ShowMsg ("pasillo_poster", {l1: {id: "pasillo_poster", txt: "el póster"}}, !posterVisto & ratonPresente)
-			let msg_pasillo_hab_abuelo = lib.CA_ShowMsg ("pasillo_hab_abuelo" )
+			let msg_pasillo_poster = lib.out ("showMsg", ["pasillo_poster",{l1: {id: "pasillo_poster", txt: "el póster"}}, !posterVisto & ratonPresente])
+			let msg_pasillo_hab_abuelo = lib.out ("showMsg", ["pasillo_hab_abuelo"])
 
 			lib.GD_DefAllLinks ([
 				{ id:msg_pasillo_cuadro, action: { choiceId: "action", actionId:"ex", o1Id: "cuadro1"}},
@@ -399,7 +340,7 @@ items.push ({
 		desc: function () {
 
 			lib.GD_CreateMsg ("es","desc-hab-padres-1", "Qué desagradable, un crucifijo invertido preside una cama enorme, de unos tres por tres metros. La cama está sin hacer y las sábanas están llenas de manchas cuya naturaleza quizás sea mejor no saber. Un gran espejo en el techo habla de la morbosidad de sus ocupantes.<br/>");
-			lib.CA_ShowMsg ("desc-hab-padres-1")
+			lib.out ("showMsg", ["desc-hab-padres-1"])
 
 		}
 
@@ -425,12 +366,14 @@ items.push ({
 			let ratonHay = lib.exec ("isHere", ["ratón"])
 			let gatoHay = lib.exec ("isHere", ["gato"])
 
-			lib.CA_ShowMsg ("desc-hab-hijos-1")
-			lib.CA_ShowMsg ("desc-hab-hijos-ratón")
-			let msg_raton_presente = lib.CA_ShowMsg ("desc-hab-hijos-ratón-presente", {l1: {id: "ratoncito", txt: "ratoncito"}}, ratonHay & !ratonVisto)
+			lib.out ("showMsg", ["desc-hab-hijos-1"])
+			lib.out ("showMsg", ["desc-hab-hijos-ratón"])
+			let msg_raton_presente = lib.out ("showMsg", ["desc-hab-hijos-ratón-presente",{l1: {id: "ratoncito", txt: "ratoncito"}}, ratonHay & !ratonVisto])
 
-			lib.CA_ShowMsgAsIs (". ")
-			let msg_gato_presente = lib.CA_ShowMsg ("desc-hab-hijos-gato-presente", {l1: {id: "gato", txt: "gato"}}, gatoHay & !gatoVisto)
+			lib.out ("ShowMsgAsIs", [". "])
+
+
+			let msg_gato_presente = lib.out ("showMsg", ["desc-hab-hijos-gato-presente",{l1: {id: "gato", txt: "gato"}}, gatoHay & !gatoVisto])
 
 			lib.GD_DefAllLinks ([
 				{ id: msg_raton_presente, action: { choiceId: "action", actionId:"ex", o1Id: "ratón"} } ,
@@ -447,7 +390,7 @@ items.push ({
 		desc: function () {
 
 			lib.GD_CreateMsg ("es","desc-hab-abuelos", "Suelo y paredes de mármol, gélido y un ataúd flanqueado por dos velas inmensas encendidas. Sobre el ataúd un cuadro.<br/>");
-			lib.CA_ShowMsg ("desc-hab-abuelos")
+			lib.out ("showMsg", ["desc-hab-abuelos"])
 
 		}
 
@@ -470,7 +413,7 @@ items.push ({
 
 
 			// si no se han visto ya todos, no mostrar opciones habituales sino sólo los enlaces
-			if (!bis_active) {lib.CA_EnableChoices(false)}
+			if (!bis_active) {lib.out ("EnableChoices", [false])}
 
 			lib.GD_CreateMsg ("es","el_cuadro_1", "La familia Rarita al completo: ");
 
@@ -488,21 +431,21 @@ items.push ({
 			lib.GD_CreateMsg ("es","el_cuadro_7", "y %l1.<br/>");
 			lib.GD_CreateMsg ("es","el_cuadro_7_bis", "y una figura borrada a cuchilladas, que deja entrever a una señora mayor también con un murciélago sobre su hombro. Si existió una Abuela Rarita en la familia es algo que desconocías hasta ahora. ¿Por qué habrán querido destrozar su recuerdo de manera tan cruel?<br/>");
 
-			lib.CA_ShowMsg ("el_cuadro_1")
+			lib.out ("showMsg", ["el_cuadro_1"])
 
-			let msg_cuadro_2 = lib.CA_ShowMsg ("el_cuadro_2", {l1: {id: "cuadro_2", txt: "Papá Rarito"}}, !bis_active)
-			let msg_cuadro_2_bis = lib.CA_ShowMsg ("el_cuadro_2_bis", undefined, bis_active)
+			let msg_cuadro_2 = lib.out ("showMsg", ["el_cuadro_2",{l1: {id: "cuadro_2", txt: "Papá Rarito"}}, !bis_active])
+			let msg_cuadro_2_bis = lib.out ("showMsg", ["el_cuadro_2_bis",undefined, bis_active])
 
-			let msg_cuadro_3 = lib.CA_ShowMsg ("el_cuadro_3", {l1: {id: "cuadro_3", txt: "Mamá Rarita"}}, !bis_active)
-			let msg_cuadro_3_bis = lib.CA_ShowMsg ("el_cuadro_3_bis", undefined, bis_active)
-			let msg_cuadro_4 = lib.CA_ShowMsg ("el_cuadro_4", {l1: {id: "cuadro_4", txt: "Chica Rarita"}}, !bis_active)
-			let msg_cuadro_4_bis = lib.CA_ShowMsg ("el_cuadro_4_bis", undefined, bis_active)
-			let msg_cuadro_5 = lib.CA_ShowMsg ("el_cuadro_5", {l1: {id: "cuadro_5", txt: "Niño Rarito"}}, !bis_active)
-			let msg_cuadro_5_bis = lib.CA_ShowMsg ("el_cuadro_5_bis", undefined, bis_active)
-			let msg_cuadro_6 = lib.CA_ShowMsg ("el_cuadro_6", {l1: {id: "cuadro_6", txt: "Abuelo Rarito"}}, !bis_active)
-			let msg_cuadro_6_bis = lib.CA_ShowMsg ("el_cuadro_6_bis", undefined, bis_active)
-			let msg_cuadro_7 = lib.CA_ShowMsg ("el_cuadro_7", {l1: {id: "cuadro_7", txt: "una figura borrada a cuchilladas"}}, !bis_active)
-			let msg_cuadro_7_bis = lib.CA_ShowMsg ("el_cuadro_7_bis", undefined, bis_active)
+			let msg_cuadro_3 = lib.out ("showMsg", ["el_cuadro_3",{l1: {id: "cuadro_3", txt: "Mamá Rarita"}}, !bis_active])
+			let msg_cuadro_3_bis = lib.out ("showMsg", ["el_cuadro_3_bis",undefined, bis_active])
+			let msg_cuadro_4 = lib.out ("showMsg", ["el_cuadro_4",{l1: {id: "cuadro_4", txt: "Chica Rarita"}}, !bis_active])
+			let msg_cuadro_4_bis = lib.out ("showMsg", ["el_cuadro_4_bis",undefined, bis_active])
+			let msg_cuadro_5 = lib.out ("showMsg", ["el_cuadro_5",{l1: {id: "cuadro_5", txt: "Niño Rarito"}}, !bis_active])
+			let msg_cuadro_5_bis = lib.out ("showMsg", ["el_cuadro_5_bis",undefined, bis_active])
+			let msg_cuadro_6 = lib.out ("showMsg", ["el_cuadro_6",{l1: {id: "cuadro_6", txt: "Abuelo Rarito"}}, !bis_active])
+			let msg_cuadro_6_bis = lib.out ("showMsg", ["el_cuadro_6_bis",undefined, bis_active])
+			let msg_cuadro_7 = lib.out ("showMsg", ["el_cuadro_7",{l1: {id: "cuadro_7", txt: "una figura borrada a cuchilladas"}}, !bis_active])
+			let msg_cuadro_7_bis = lib.out ("showMsg", ["el_cuadro_7_bis",undefined, bis_active])
 
 			/*
 			here!
@@ -540,20 +483,20 @@ items.push ({
 			lib.GD_CreateMsg ("es","chimenea_1", "Entre carbón y madera quemada observas los restos de %l1.");
 			lib.GD_CreateMsg ("es","chimenea_1_bis", "Entre carbón y madera quemada observas los restos de una jaula chamuscada. ");
 
-			let msg_chimenea_1 = lib.CA_ShowMsg ("chimenea_1", {l1: {id: "chimenea_1", txt: "una jaula chamuscada"}}, !jaulaVisto)
-			let msg_chimenea_1_bis = lib.CA_ShowMsg ("chimenea_1_bis", false, jaulaVisto)
+			let msg_chimenea_1 = lib.out ("showMsg", ["chimenea_1",{l1: {id: "chimenea_1", txt: "una jaula chamuscada"}}, !jaulaVisto])
+			let msg_chimenea_1_bis = lib.out ("showMsg", ["chimenea_1_bis",undefined, jaulaVisto])
 
 			let huesosVisto = (lib.exec ("getValue",  {id:"huesos"}) != "0")
 
 			lib.GD_CreateMsg ("es","jaula_1", "Dentro puedes ver unos %l1 ")
 			lib.GD_CreateMsg ("es","jaula_1_bis", "Dentro puedes ver unos pequeños huesitos, ")
-			let msg_jaula_1 = lib.CA_ShowMsg ("jaula_1", {l1: {id: "jaula_1", txt: "pequeños huesitos."}}, jaulaVisto & !huesosVisto)
-			let msg_jaula_1_bis = lib.CA_ShowMsg ("jaula_1_bis", undefined, jaulaVisto & huesosVisto)
+			let msg_jaula_1 = lib.out ("showMsg", ["jaula_1",{l1: {id: "jaula_1", txt: "pequeños huesitos."}}, jaulaVisto & !huesosVisto])
+			let msg_jaula_1_bis = lib.out ("showMsg", ["jaula_1_bis",undefined, jaulaVisto & huesosVisto])
 
 			lib.GD_CreateMsg ("es","huesos_1", "como de ratón o murciélago. Capaz que estos bárbaros lo han quemado, ya sea para comérselo o a saber para qué innominioso ritual. ¿Cómo vas a poder conseguir el trofeo? Puedes %l1, o bien seguir investigando. Si consigues un trofeo mejor, quizás tus amigos te lo acepten.<br/>");
 			lib.GD_CreateMsg ("es","huesos_1_bis", "como de ratón o murciélago. Capaz que estos bárbaros lo han quemado, ya sea para comérselo o a saber para qué innominioso ritual. ¿Cómo vas a poder conseguir el trofeo? Puedes sacarle una foto a la jaula y volverte a casa, o bien seguir investigando. Si consigues un trofeo mejor, quizás tus amigos te lo acepten.");
-			let msg_huesos_1 = lib.CA_ShowMsg ("huesos_1", {l1: {id: "huesos_1", txt: "sacarle una foto a la jaula y volverte a casa"}}, jaulaVisto & huesosVisto)
-			let msg_huesos_1_bis = lib.CA_ShowMsg ("huesos_1_bis", undefined, jaulaVisto & !huesosVisto)
+			let msg_huesos_1 = lib.out ("showMsg", ["huesos_1",{l1: {id: "huesos_1", txt: "sacarle una foto a la jaula y volverte a casa"}}, jaulaVisto & huesosVisto])
+			let msg_huesos_1_bis = lib.out ("showMsg", ["huesos_1_bis",undefined, jaulaVisto & !huesosVisto])
 
 			lib.GD_DefAllLinks ([
 				{ id: msg_chimenea_1, changeTo: msg_chimenea_1_bis, visibleToTrue: [msg_jaula_1], libCode: {functionId:'setValue', par: {id:"jaula", value:"1"}} },
@@ -572,7 +515,7 @@ items.push ({
 			let item1 = lib.exec("x",["nevera"])
 			if (lib.exec ("getValue", ["nevera"]) == "0") {
 				lib.GD_CreateMsg ("es","desc_nevera", "La abres con repuganancia y descubres con sorpresa que está fría. Tiene una lucecita encendida en el interior, a pesar de que el cable que sale de la nevera cuelga, pelado, sin conectar a ningún enchufe.")
-				lib.CA_ShowMsg ("desc_nevera")
+				lib.out ("showMsg", ["desc_nevera"])
 				lib.exec ("setValue", ["nevera", "1"])
 
 				// que no pasen a estar en la nevera hasta que se describa la primera vez
@@ -583,7 +526,7 @@ items.push ({
 
 			} else {
 				lib.GD_CreateMsg ("es","desc_nevera_2", "La vuelves a abrir, fascinado por su repugnancia.")
-				lib.CA_ShowMsg ("desc_nevera_2")
+				lib.out ("showMsg", ["desc_nevera_2"])
 			}
 
 			let botellaHay = (lib.exec ("getLoc", ["botella"]) == item1)
@@ -599,30 +542,30 @@ items.push ({
 			let quesoVisto = (lib.exec ("getValue", ["queso"]) == "1")
 
 			lib.GD_CreateMsg ("es", "dentro_de_nevera", "Dentro de la nevera hay:<br/>");
-			lib.CA_ShowMsg ("dentro_de_nevera", undefined, mostrarContenido)
+			lib.out ("showMsg", ["dentro_de_nevera",undefined, mostrarContenido])
 
 			lib.GD_CreateMsg ("es","desc_botella_1", "- %l1<br/>");
-			let msg_desc_botella_1 = lib.CA_ShowMsg ("desc_botella_1",  {l1: {id: "desc_botella_1", txt: "una botella"}} , botellaHay && !botellaVisto)
+			let msg_desc_botella_1 = lib.out ("showMsg", ["desc_botella_1",{l1: {id: "desc_botella_1", txt: "una botella"}} , botellaHay && !botellaVisto])
 			lib.GD_CreateMsg ("es","desc_botella_1_bis", "- una botella con un líquido rojo que no parece vino.<br/>");
-			let msg_desc_botella_1_bis = lib.CA_ShowMsg ("desc_botella_1_bis", undefined , botellaHay && botellaVisto)
+			let msg_desc_botella_1_bis = lib.out ("showMsg", ["desc_botella_1_bis",undefined , botellaHay && botellaVisto])
 
 			lib.GD_CreateMsg ("es","desc_taper_1", "- %l1<br/>");
-			let msg_desc_taper_1 = lib.CA_ShowMsg ("desc_taper_1",  {l1: {id: "desc_taper_1", txt: "un táper"}} , taperHay && !taperVisto)
+			let msg_desc_taper_1 = lib.out ("showMsg", ["desc_taper_1",{l1: {id: "desc_taper_1", txt: "un táper"}} , taperHay && !taperVisto])
 			lib.GD_CreateMsg ("es","desc_taper_1_bis", "- un  táper con cosas moviéndose dentro.<br/>");
-			let msg_desc_taper_1_bis = lib.CA_ShowMsg ("desc_taper_1_bis", undefined , taperHay && taperVisto)
+			let msg_desc_taper_1_bis = lib.out ("showMsg", ["desc_taper_1_bis",undefined , taperHay && taperVisto])
 
 			lib.GD_CreateMsg ("es","desc_dinamita_1", "- %l1<br/>");
-			let msg_desc_dinamita_1 = lib.CA_ShowMsg ("desc_dinamita_1",  {l1: {id: "desc_dinamita_1", txt: "una barra de dinamita"}} , dinamitaHay && !dinamitaVisto)
+			let msg_desc_dinamita_1 = lib.out ("showMsg", ["desc_dinamita_1",{l1: {id: "desc_dinamita_1", txt: "una barra de dinamita"}} , dinamitaHay && !dinamitaVisto])
 			lib.GD_CreateMsg ("es","desc_dinamita_1_bis", "- una barra de dinamita, ¿en serio?<br/>");
-			let msg_desc_dinamita_1_bis = lib.CA_ShowMsg ("desc_dinamita_1_bis", undefined , dinamitaHay && dinamitaVisto)
+			let msg_desc_dinamita_1_bis = lib.out ("showMsg", ["desc_dinamita_1_bis",undefined , dinamitaHay && dinamitaVisto])
 
 			lib.GD_CreateMsg ("es","desc_queso_1", "- %l1<br/>");
-			let msg_desc_queso_1 = lib.CA_ShowMsg ("desc_queso_1",  {l1: {id: "desc_queso_1", txt: "queso"}} , quesoHay && !quesoVisto)
+			let msg_desc_queso_1 = lib.out ("showMsg", ["desc_queso_1",{l1: {id: "desc_queso_1", txt: "queso"}} , quesoHay && !quesoVisto])
 			lib.GD_CreateMsg ("es","desc_queso_1_bis", "- queso maloliente<br/>");
-			let msg_desc_queso_1_bis = lib.CA_ShowMsg ("desc_queso_1_bis", undefined , quesoHay && quesoVisto)
+			let msg_desc_queso_1_bis = lib.out ("showMsg", ["desc_queso_1_bis",undefined , quesoHay && quesoVisto])
 
 			lib.GD_CreateMsg ("es","desc_nevera_3", "Pero ya no queda nada de su contenido original.<br/>");
-			lib.CA_ShowMsg ("desc_nevera_3", undefined, !mostrarContenido)
+			lib.out ("showMsg", ["desc_nevera_3",undefined, !mostrarContenido])
 
 			lib.GD_DefAllLinks ([
 				{ id: msg_desc_botella_1, changeTo: msg_desc_botella_1_bis,
@@ -665,10 +608,10 @@ items.push ({
 			lib.GD_CreateMsg ("es","póster_2", "La canción reza así:");
 			lib.GD_CreateMsg ("es","póster_3", "Dame tu sangre<br/>Si quieres entrar<br/>Dame su sangre<br/>Al mundo infernal.<br/>");
 
-			lib.CA_ShowMsg ("póster_1" )
-			lib.CA_ShowMsg ("póster_2" )
-			if (!posterVisto) {lib.CA_PressKey ("tecla");}
-			lib.CA_ShowMsg ("póster_3" )
+			lib.out ("showMsg", ["póster_1"])
+			lib.out ("showMsg", ["póster_2"])
+			if (!posterVisto) {lib.out ("PressKey", ["tecla"]);}
+			lib.out ("showMsg", ["póster_3"])
 			lib.exec ("setValue",  {id:"póster", value:"1"})
 
 		}
@@ -680,7 +623,7 @@ items.push ({
 		desc: function () {
 
 			lib.GD_CreateMsg ("es","gato_1", "El gato, ¿o será gata?, parece tener pintada una cresta punky y los ojos maquillados. No te presta la menor atención, ocupado observando el agujero al otro lado de la habitación.");
-			lib.CA_ShowMsg ("gato_1" )
+			lib.out ("showMsg", ["gato_1"])
 			lib.exec ("setValue", {id:"gato"}, "1")
 		}
 	});
@@ -692,7 +635,7 @@ items.push ({
 			desc: function () {
 
 				lib.GD_CreateMsg ("es","ratón_1", "Además de ver su húmedo hocico y sus bigotes moverse entre las sombas, en algún momento se gira y ves por su tamaño que no le falta basura que comer en esta casa.");
-				lib.CA_ShowMsg ("ratón_1" )
+				lib.out ("showMsg", ["ratón_1"])
 				lib.exec ("setValue", {id:"ratón"}, "1")
 
 			}
@@ -704,7 +647,7 @@ items.push ({
 			desc: function () {
 
 				lib.GD_CreateMsg ("es","cuatro2_1", "Es un retato nupcial en el que se observa al Abuelo Rarito de joven, acompañado de su mujer. El cuadro está en perfecto estado, sin una rozadura.");
-				lib.CA_ShowMsg ("cuatro2_1" )
+				lib.out ("showMsg", ["cuatro2_1"])
 			}
 		});
 
@@ -718,15 +661,15 @@ items.push ({
 				lib.GD_CreateMsg ("es","ataúd_3", "Tierra cayendo sobre tu ataúd, gritos de '¡Monstruo!', ¡ahí te pudras toda la eternidad!<br/>La sangre de la doncella estuvo deliciosa y esos cafres no te clavaron ninguna estaca. Sólo será una siestita de unos años, y volverás a la superficie, en uno de tus saltos temporales al futuro.");
 				lib.GD_CreateMsg ("es","ataúd_4", "Ya no estás en el ataúd sino de vuelta en el hall de la mansión.")
 
-				lib.CA_ShowMsg ("ataúd_1" )
+				lib.out ("showMsg", ["ataúd_1"])
 				lib.GD_CreateMsg ("es","tecla-ataúd-1", "Entra en el ataúd")
-				lib.CA_PressKey ("tecla-ataúd-1");
-				lib.CA_ShowMsg ("ataúd_2" )
-				lib.CA_PressKey ("tecla");
-				lib.CA_ShowMsg ("ataúd_3" )
+				lib.out ("PressKey", ["tecla-ataúd-1"]);
+				lib.out ("showMsg", ["ataúd_2"])
+				lib.out ("PressKey", ["tecla"]);
+				lib.out ("showMsg", ["ataúd_3"])
 				lib.GD_CreateMsg ("es","tecla-ataúd-2", "Vuelves al presente")
-				lib.CA_PressKey ("tecla-ataúd-2");
-				lib.CA_ShowMsg ("ataúd_4" )
+				lib.out ("PressKey", ["tecla-ataúd-2"]);
+				lib.out ("showMsg", ["ataúd_4"])
 
 				lib.exec ("setValue", {id:"ataúd"}, "1")
 				lib.exec ("pcSetLoc", ["hall"])
@@ -748,8 +691,8 @@ function initReactions (lib, usr) {
 		id: 'look',
 
 		enabled: function (indexItem, indexItem2) {
-			if (lib.exec ("pc.loc"]) == lib.exec("x",["intro1"])) { return false }
-			if (lib.exec ("pc.loc"]) == lib.exec("x",["intro2"])) { return false }
+			if (lib.exec ("pc.loc") == lib.exec("x",["intro1"])) { return false }
+			if (lib.exec ("pc.loc") == lib.exec("x",["intro2"])) { return false }
 		},
 
 		reaction: function (par_c) {
@@ -771,18 +714,18 @@ function initReactions (lib, usr) {
 			if (par_c.target == lib.exec("x",["intro2"])) {
 
 				lib.GD_CreateMsg ("es", "intro2", "a intro2<br/>");
-				lib.CA_ShowMsg ("intro2")
+				lib.out ("showMsg", ["intro2"])
 				return false; // just a transition
 
 			}
 
  			if ((par_c.loc == lib.exec("x",["hall"])) && (par_c.target == lib.exec("x",["porche"])))  {
 				lib.GD_CreateMsg ("es", "al porche_1", "Huyes de la casa antes de tiempo, deshonra ante tus amigos<br/>La partida termina, pero seguro que puedes hacerlo mejor la próxima vez.<br/>");
-				lib.CA_ShowMsg ("al porche_1")
-				lib.CA_PressKey ("tecla");
+				lib.out ("showMsg", ["al,porche_1"])
+				lib.out ("PressKey", ["tecla"]);
 				lib.GD_CreateMsg ("es", "al porche_2", "Ahora, entre tú y yo, jugador, hagamos como que nunca has intentado salir, y continua la partida como si nada.<br/>");
-				lib.CA_ShowMsg ("al porche_2")
-				//lib.CA_EndGame("al porche_1")
+				lib.out ("showMsg", ["al,porche_2"])
+				//lib.out ("EndGame(", [al porche_1"])
 				return true
 
 			}
@@ -791,7 +734,7 @@ function initReactions (lib, usr) {
 
 				if (!lib.exec ("isCarried", ["móvil"])) {
 					lib.GD_CreateMsg ("es", "entrar_sin_móvil", "El reto consiste en salir con una foto, ¿cómo vas a conseguirla si dejas la cámara fuera?<br/>");
-					lib.CA_ShowMsg ("entrar_sin_móvil")
+					lib.out ("showMsg", ["entrar_sin_móvil"])
 					return true
 				}
 
@@ -799,8 +742,8 @@ function initReactions (lib, usr) {
 				// ?: "Al tocar el pomo la puerta lanzó un horripilante grito de bienvenida. El intruso dio un salto y casi se dio la vuelta, pero se sobrepuso y acabó de abrir la puerta. Sólo veía un poco alrededor, de la luz de la calle. Al encender la linterna vio que estaba ante un inmenso hall que con su exigua luz no podía apreciar de manera clara, como si en las sombras que quedaban fuera de su haz se movieran figuras amenazantes.<br/>");
 
 				lib.GD_CreateMsg ("es", "ruido_puerta", "Un pequeño empujón y el sonido lastimoso de la puerta al abrirse te suena como la madre del sonido de todas las puertas de las películas de terror de nunca jamás, como si esos presuntuosos ruidos no fueran más que una reproducción de mala calidad de lo que acabas de escuchar.");
-				lib.CA_ShowMsg ("ruido_puerta")
-				lib.CA_PressKey ("tecla");
+				lib.out ("showMsg", ["ruido_puerta"])
+				lib.out ("PressKey", ["tecla"]);
 				return false
 
 			}
@@ -808,7 +751,7 @@ function initReactions (lib, usr) {
 			if ((par_c.loc == lib.exec("x",["pasillo"])) && (par_c.target == lib.exec("x",["hab-hijos"])))  {
 				if ( lib.exec ("getLocId", ["ratón"]) == "limbo" ) {
 					lib.GD_CreateMsg ("es", "hab_hijos_sellada", "De alguna manera, ya sabes que no hay nada más que hacer en esta habitación.\n")
-					lib.CA_ShowMsg ("hab_hijos_sellada")
+					lib.out ("showMsg", ["hab_hijos_sellada"])
 					return true
 				}
 			}
@@ -816,7 +759,7 @@ function initReactions (lib, usr) {
 			if ((par_c.loc == lib.exec("x",["pasillo"])) && (par_c.target == lib.exec("x",["hab-padres"])))  {
 				if (lib.exec ("getValue", {id:"espejo"}) == "1") {
 					lib.GD_CreateMsg ("es", "hab_padres_sellada", "Ni por lo más sagrado volverás a entrar en esa habitación y su horrendo espejo.\n")
-					lib.CA_ShowMsg ("hab_padres_sellada")
+					lib.out ("showMsg", ["hab_padres_sellada"])
 					return true
 				}
 			}
@@ -824,7 +767,7 @@ function initReactions (lib, usr) {
 			if (par_c.loc == lib.exec("x",["hab-padres"]))  {
 				if (lib.exec ("getValue", ["espejo"]) == "0") {
 					lib.GD_CreateMsg ("es", "mirar_espejo", "Cuando vas a salir, no puedes evitar dejar de observar el espejo.\n")
-					lib.CA_ShowMsg ("mirar_espejo")
+					lib.out ("showMsg", ["mirar_espejo"])
 					usr.exec ("escena_espejo")
 					return false
 				}
@@ -833,22 +776,22 @@ function initReactions (lib, usr) {
 			if ((par_c.loc == lib.exec("x",["pasillo"])) && (par_c.target == lib.exec("x",["hab-abuelos"])))  {
 				if (lib.exec ("getValue", {id:"ataúd"}) == "1") {
 					lib.GD_CreateMsg ("es", "entrar_hab_abuelos_ya", "Los que quiera que te dejaron entrar una vez, no parecen querer que sigas merodeando por su casa.<br/>")
-					lib.CA_ShowMsg ("entrar_hab_abuelos_ya")
+					lib.out ("showMsg", ["entrar_hab_abuelos_ya"])
 					return true
 				} else if ( lib.exec ("getLocId", ["botella-vacía"]) == "limbo" ) {
 					lib.GD_CreateMsg ("es", "entrar_hab_abuelos_no", "La puerta no tiene pomo. Está tremendamente fría y es como un mármol negro y oscuro que no refleja la luz. Empujas la puerta, pero eres incapaz de abrirla.<br/>")
-					lib.CA_ShowMsg ("entrar_hab_abuelos_no")
+					lib.out ("showMsg", ["entrar_hab_abuelos_no"])
 					return true
 				} else {
 					lib.GD_CreateMsg ("es", "entrar_hab_abuelos_sí", "Apoyas tus manos cubiertas de sangre en la fría puerta de mármol negro y notas cómo se abre sin hacer ningún ruido. Al entrar descubres que se cierra detrás tuya con igual discreción.<br/>")
-					lib.CA_ShowMsg ("entrar_hab_abuelos_sí")
+					lib.out ("showMsg", ["entrar_hab_abuelos_sí"])
 					return false
 				}
 			}
 
 			if ((par_c.loc == lib.exec("x",["hab-abuelos"])))  {
 				lib.GD_CreateMsg ("es", "salir_hab_abuelos_no", "No encuentras la manera de abrir la fría puerta de mármol.<br/>")
-				lib.CA_ShowMsg ("salir_hab_abuelos_no")
+				lib.out ("showMsg", ["salir_hab_abuelos_no"])
 				return true
 			}
 
@@ -869,9 +812,9 @@ function initReactions (lib, usr) {
 
 			if ((par_c.loc == lib.exec("x",["intro2"])) && (par_c.item1Id == "porche"))  {
 				lib.GD_CreateMsg ("es", "de_intro_a_porche", "Trastabillas y te caes, te arañas con los arbustos, y casi pierdes el móvil, pero llegas hasta el porche y recuperas el aliento.<br/>");
-				lib.CA_ShowMsg ("de_intro_a_porche")
+				lib.out ("showMsg", ["de_intro_a_porche"])
 				lib.GD_CreateMsg ("es","mira","mira")
-				lib.CA_PressKey ("mira");
+				lib.out ("PressKey", ["mira"]);
 				return false
 			}
 
@@ -896,9 +839,9 @@ function initReactions (lib, usr) {
 				lib.GD_CreateMsg ("es", "te_vas_si_pero_no_1", "Sacas las fotos a esos míseros huesos y te diriges a la puerta.<br/>");
 				lib.GD_CreateMsg ("es", "te_vas_si_pero_no_2", "Pero cuando vas a girar el pomo de la puerta oyes las risas de desprecio de tus amigos y con rabia das la vuelta. ¡Los vas a dejar muditos!<br/>");
 
-				lib.CA_ShowMsg ("te_vas_si_pero_no_1");
-				lib.CA_PressKey ("tecla");
-				lib.CA_ShowMsg ("te_vas_si_pero_no_2");
+				lib.out ("showMsg", ["te_vas_si_pero_no_1"]);
+				lib.out ("PressKey", ["tecla"]);
+				lib.out ("showMsg", ["te_vas_si_pero_no_2"]);
 
 				return true;
 			}
@@ -907,7 +850,7 @@ function initReactions (lib, usr) {
 				lib.exec ("setValue", {id:"botella", value:"2"})
 				lib.GD_CreateMsg ("es", "selfie_de_sangre", "Te sacas un selfie, pero cuando ves a esa cara demacrada cuberta de sangre, lo borras para no dejar rastro de tu vergüenza.<br/>");
 
-				lib.CA_ShowMsg ("selfie_de_sangre");
+				lib.out ("showMsg", ["selfie_de_sangre"]);
 
 				return true;
 
@@ -915,7 +858,7 @@ function initReactions (lib, usr) {
 
 
 			lib.GD_CreateMsg ("es", "sacas_foto", "Sacas una foto sin ton ni son.<br/>");
-			lib.CA_ShowMsg ("sacas_foto");
+			lib.out ("showMsg", ["sacas_foto"]);
 
 
 			return true;
@@ -932,19 +875,19 @@ function initReactions (lib, usr) {
 
 			if (par_c.item1Id == "móvil") {
 				lib.GD_CreateMsg ("es","dejar_móvil", "Aunque ilumina poco, sin él no verías casi nada en la casa. Además, ¿cómo sacarás la foto que necesitas sin él? Lo dejas estar.<br/>")
-				lib.CA_ShowMsg ("dejar_móvil")
+				lib.out ("showMsg", ["dejar_móvil"])
 				return true
 			}
 
 		if (par_c.item1Id == "queso") {
-			if (lib.exec ("pc.loc"]) == lib.exec ("x", ["hab-hijos"])) {
+			if (lib.exec ("pc.loc") == lib.exec ("x", ["hab-hijos"])) {
 				// escena pelea ratón y gato
 				lib.GD_CreateMsg ("es","dar_queso_1", "Al dejarle en el suelo el queso al ratón, el ratón sale tímidamente de su agujero, y el gato se abalanza sobre él.")
 				lib.GD_CreateMsg ("es","dar_queso_2", "El gato le propina un par de zarpazos, pero el ratón lo mira con unos llameantes ojos rojos que hacen arder la cola del gato, por lo que sale corriendo de la habitación mientras el ratón se va con el queso a su agujero, triunfante esta vez.<br/>")
 
-				lib.CA_ShowMsg ("dar_queso_1")
-				lib.CA_PressKey ("tecla");
-				lib.CA_ShowMsg ("dar_queso_2")
+				lib.out ("showMsg", ["dar_queso_1"])
+				lib.out ("PressKey", ["tecla"]);
+				lib.out ("showMsg", ["dar_queso_2"])
 
 				lib.exec ("setLoc", ["queso", "limbo"])
 				lib.exec ("setLoc", ["ratón", "limbo"])
@@ -975,8 +918,8 @@ function initReactions (lib, usr) {
 
 			let escena = usr.exec ("escenas_pendientes")
 			lib.GD_CreateMsg ("es","escuchas_1", "Una voz lejana y amable te susurra:<br/>")
-			lib.CA_ShowMsg ("escuchas_1")
-			lib.CA_ShowMsgAsIs (escena)
+			lib.out ("showMsg", ["escuchas_1"])
+			lib.out ("ShowMsgAsIs", [escena])
 
 			if (escena == "done") {
 				usr.exec ("escenaFinal")
@@ -996,28 +939,28 @@ function initReactions (lib, usr) {
 			if ((par_c.item1Id == "dinamita") || (par_c.item1Id == "botella")) {
 				if (par_c.item1Id == "dinamita") {
 					lib.GD_CreateMsg ("es","coger_dinamita", "Al coger la dinamita todo se vuelve oscuro.")
-					lib.CA_ShowMsg ("coger_dinamita")
+					lib.out ("showMsg", ["coger_dinamita"])
 				} else {
 					lib.GD_CreateMsg ("es","coger_botella", "Nunca has bebido alcohol en tu vida, pero esta casa te está dando tanto miedo que crees que echarte un trago te hará sacudírtelo de encima. Pero nada más abrirlo te das cuenta de que eso no es vino, sino... los efluvios que salen de la botella te transportan a otro mundo.")
-					lib.CA_ShowMsg ("coger_botella")
+					lib.out ("showMsg", ["coger_botella"])
 				}
-				lib.CA_PressKey ("tecla");
+				lib.out ("PressKey", ["tecla"]);
 
 				lib.GD_CreateMsg ("es","coger_dinamita_11", "Estás en mitad de un combate de principios de siglo 20, en las trincheras. Un enemigo a caballo salta hacia ti. Coges la dinamita, se la arrojas. Caballo y jinete saltan por los aires en pedazos, y sobre ti caen jirones de carne y mucha sangre.<br/>")
 				lib.GD_CreateMsg ("es","coger_dinamita_12", "Te estás muriendo desangrado, pero llega una especie de ratón volador, un murciélago que se posa en tu pecho y te mira con mirada inquisidora.<br/>")
 				lib.GD_CreateMsg ("es","coger_dinamita_13", "Sin saber muy bien por qué, con tu último álito vital, asientas, ladeas la cabeza y dejas que el bicho te muerda en el cuello.<br/>")
-				lib.CA_ShowMsg ("coger_dinamita_11")
-				lib.CA_ShowMsg ("coger_dinamita_12")
-				lib.CA_ShowMsg ("coger_dinamita_13")
-				lib.CA_PressKey ("tecla");
+				lib.out ("showMsg", ["coger_dinamita_11"])
+				lib.out ("showMsg", ["coger_dinamita_12"])
+				lib.out ("showMsg", ["coger_dinamita_13"])
+				lib.out ("PressKey", ["tecla"]);
 
 				lib.GD_CreateMsg ("es","coger_dinamita_21", 	"Al recuperar la consciencia, ya no tienes la dinamita en la mano, pero sí la botella, ahora vacía, de la nevera. Estás cubierto de sangre de cabeza a los pie , rodeado de un charco alrededor.<br/>");
 				lib.GD_CreateMsg ("es","coger_dinamita_22", 	"Al volver en sí, te tocas el cuello, pero no tienes nada.<br/>");
-				lib.CA_ShowMsg ("coger_dinamita_21")
-				lib.CA_ShowMsg ("coger_dinamita_22")
+				lib.out ("showMsg", ["coger_dinamita_21"])
+				lib.out ("showMsg", ["coger_dinamita_22"])
 
 				lib.GD_CreateMsg ("es","coger_dinamita_3", "¿No has tenido suficiente? %l1<br/>");
-				let msg_coger_dinamita_3 = lib.CA_ShowMsg ("coger_dinamita_3", {l1: {id: "coger_dinamita_3", txt: "¡Sácate un selfie y sale de esta casa diabólica por dios!"}} )
+				let msg_coger_dinamita_3 = lib.out ("showMsg", ["coger_dinamita_3",{l1: {id: "coger_dinamita_3", txt: "¡Sácate un selfie y sale de esta casa diabólica por dios!"}} ])
 				//  (selfie -> la foto saldrá sin sangre)
 
 
@@ -1038,14 +981,14 @@ function initReactions (lib, usr) {
 				lib.GD_CreateMsg ("es","coger_taper_3", "Noche de brujas. Hoguera y luna llena. Estás encerrada (eres mujer) en una jaula transportada por personas de ambos sexo desnudas y con máscaras de animales. Gritas a medida que se acercan al fuego. Cada vez más calor. Dolor. Depositan la jaula dentro del fuego. Dolor imposible.<br/>")
 				lib.GD_CreateMsg ("es","coger_taper_4", "Sales del trance. El táper está en el suelo, rodeado del vómito que has debido de haber tenido, con algunos gusanos merodeando aún por ahí, pero estás tan avergonzado de lo que acaba de pasar que anulas el táper de tu visión, como si no existiera.<br/>")
 
-				lib.CA_ShowMsg ("coger_taper_1")
-				lib.CA_PressKey ("tecla");
-				lib.CA_ShowMsg ("coger_taper_2")
-				lib.CA_PressKey ("tecla");
-				lib.CA_ShowMsg ("coger_taper_3")
-				lib.CA_PressKey ("tecla");
-				lib.CA_ShowMsg ("coger_taper_4")
-				lib.CA_PressKey ("tecla");
+				lib.out ("showMsg", ["coger_taper_1"])
+				lib.out ("PressKey", ["tecla"]);
+				lib.out ("showMsg", ["coger_taper_2"])
+				lib.out ("PressKey", ["tecla"]);
+				lib.out ("showMsg", ["coger_taper_3"])
+				lib.out ("PressKey", ["tecla"]);
+				lib.out ("showMsg", ["coger_taper_4"])
+				lib.out ("PressKey", ["tecla"]);
 
 				lib.exec ("setLoc", ["taper", "limbo"])
 				lib.exec ("setValue", {id:"taper", value:"2"})
@@ -1056,11 +999,11 @@ function initReactions (lib, usr) {
 
 				if (lib.exec ("getValue", {id:"ratón"}) == "0") {
 					lib.GD_CreateMsg ("es","coger_queso_no", "Más de cerca, ves que el queso maloliente está cubierto de una capa grasienta de moho multicolor, lo tocas pero te da tanto asco que no lo coges.<br/>")
-					lib.CA_ShowMsg ("coger_queso_no")
+					lib.out ("showMsg", ["coger_queso_no"])
 					return true
 				} else {
 					lib.GD_CreateMsg ("es","coger_queso_sí", "Es asqueroso, pero quizás... en la habitación de la litera...<br/>")
-					lib.CA_ShowMsg ("coger_queso_sí")
+					lib.out ("showMsg", ["coger_queso_sí"])
 					return false
 
 				}
@@ -1093,16 +1036,16 @@ function initUserFunctions (lib, usr) {
 				// transición
 			//	if (par.target == "porche") {
 					lib.GD_CreateMsg ("es", "de_intro_a_porche", "Casi trastabillas y te caes, te arañas con los arbustos, y casi pierdes del móvil, pero llegas hasta el porche y recuperas el aliento.<br/>");
-					lib.CA_ShowMsg ("de_intro_a_porche")
-					lib.CA_PressKey ("tecla");
+					lib.out ("showMsg", ["de_intro_a_porche"])
+					lib.out ("PressKey", ["tecla"]);
 			//	}
 
 				// movimiento
 				lib.exec ("pcSetLoc", par.target)
 
 				// redescribe
-				lib.CA_ShowDesc (lib.exec ("x", par.target))
-				lib.CA_Refresh()
+				lib.out ("ShowDesc", [lib.exec ("x", par.target)])
+				lib.out ("Refresh")
 		}
 	});
 
@@ -1111,7 +1054,7 @@ function initUserFunctions (lib, usr) {
 		code: function (par) { // par.pnj
 				let status = {}
 
-				lib.CA_EnableChoices(true)
+				lib.out ("EnableChoices", [true])
 			  console.log ("usr.setFrame: " + JSON.stringify (par))
 
 				let familiaActivation = [
@@ -1125,7 +1068,7 @@ function initUserFunctions (lib, usr) {
 
 					// si se han visto ya todos, mostrar opciones habituales
 					if (bis_active) {
-						//lib.CA_EnableChoices(false)
+						//lib.out ("EnableChoices", [false])
 						status.enableChoices = true
 				}
 
@@ -1140,15 +1083,15 @@ function initUserFunctions (lib, usr) {
 			lib.GD_CreateMsg ("es","desc_espejo_2", "Oyes un aullido al otro lado de la puerta, que se abre de golpe. La figura imponente de un lobo salta a la cama y te arroja fuera de ella con un zarpazo. La pelea de pasión y sexo que ves desplegarse delante tuya entre dos seres de naturaleza tan dispar, de seguro dejarán huella en tu psique el resto de tu vida. No lo pudes soportar y gritas, pierdes el aliento y caes al suelo.")
 			lib.GD_CreateMsg ("es","desc_espejo_post_1", "Al despertar descubres que estás fuera de la habitación, que está ahora cerrada con llave.")
 
-			lib.CA_ShowMsg ("desc_espejo_1")
-			lib.CA_PressKey ("tecla");
-			lib.CA_ShowMsg ("desc_espejo_2")
-			lib.CA_PressKey ("tecla");
-			lib.CA_ShowMsg ("desc_espejo_post_1")
-			lib.CA_PressKey ("tecla");
+			lib.out ("showMsg", ["desc_espejo_1"])
+			lib.out ("PressKey", ["tecla"]);
+			lib.out ("showMsg", ["desc_espejo_2"])
+			lib.out ("PressKey", ["tecla"]);
+			lib.out ("showMsg", ["desc_espejo_post_1"])
+			lib.out ("PressKey", ["tecla"]);
 
 			lib.exec ("setValue", {id:"espejo", value:"1"})
-			lib.CA_PressKey ("tecla");
+			lib.out ("PressKey", ["tecla"]);
 			lib.exec ("pcSetLoc", ["pasillo"])
 		}
 
@@ -1215,43 +1158,43 @@ function initUserFunctions (lib, usr) {
 
 			lib.GD_CreateMsg ("es","caray", "Caray, qué noche. Sales de la finca de Los Raritos, caminando entre zombies y brujas.")
 
-			lib.CA_ShowMsg ("escena_final_1" )
-			lib.CA_PressKey ("tecla");
-			lib.CA_ShowMsg ("escena_final_2" )
-			lib.CA_ShowMsg ("escena_final_3" )
-			lib.CA_ShowMsg ("escena_final_4" )
-			lib.CA_PressKey ("tecla");
-			lib.CA_ShowMsg ("escena_final_5" )
-			lib.CA_ShowMsg ("escena_final_6" )
+			lib.out ("showMsg", ["escena_final_1"])
+			lib.out ("PressKey", ["tecla"]);
+			lib.out ("showMsg", ["escena_final_2"])
+			lib.out ("showMsg", ["escena_final_3"])
+			lib.out ("showMsg", ["escena_final_4"])
+			lib.out ("PressKey", ["tecla"]);
+			lib.out ("showMsg", ["escena_final_5"])
+			lib.out ("showMsg", ["escena_final_6"])
 
-			lib.CA_PressKey ("tecla");
+			lib.out ("PressKey", ["tecla"]);
 
-			lib.CA_ShowMsg ("escena_final_7" )
+			lib.out ("showMsg", ["escena_final_7"])
 
-			lib.CA_PressKey ("tecla");
+			lib.out ("PressKey", ["tecla"]);
 
-			lib.CA_ShowMsg ("escena_abuelo_1" )
-			lib.CA_ShowMsg ("escena_abuelo_2" )
-			lib.CA_PressKey ("tecla");
-			lib.CA_ShowMsg ("escena_abuelo_3" )
-			lib.CA_ShowMsg ("escena_abuelo_4" )
-			lib.CA_PressKey ("tecla");
-			lib.CA_ShowMsg ("escena_abuelo_5" )
-			lib.CA_ShowMsg ("escena_abuelo_6" )
-			lib.CA_ShowMsg ("escena_abuelo_7" )
+			lib.out ("showMsg", ["escena_abuelo_1"])
+			lib.out ("showMsg", ["escena_abuelo_2"])
+			lib.out ("PressKey", ["tecla"]);
+			lib.out ("showMsg", ["escena_abuelo_3"])
+			lib.out ("showMsg", ["escena_abuelo_4"])
+			lib.out ("PressKey", ["tecla"]);
+			lib.out ("showMsg", ["escena_abuelo_5"])
+			lib.out ("showMsg", ["escena_abuelo_6"])
+			lib.out ("showMsg", ["escena_abuelo_7"])
 
 		  // to-do: interactivo
 			lib.GD_CreateMsg ("es","tecla-sobre", "Ver el contenido del sobre")
-			lib.CA_PressKey ("tecla-sobre");
-			lib.CA_ShowMsg ("sobre" )
+			lib.out ("PressKey", ["tecla-sobre"]);
+			lib.out ("showMsg", ["sobre"])
 			lib.GD_CreateMsg ("es","tecla-foto", "Ver el selfie con el Abuelo Rarito")
-			lib.CA_PressKey ("tecla-foto");
-			lib.CA_ShowMsg ("foto" )
+			lib.out ("PressKey", ["tecla-foto"]);
+			lib.out ("showMsg", ["foto"])
 
 			lib.GD_CreateMsg ("es","tecla-caray", "Sales a la calle")
-			lib.CA_PressKey ("tecla-caray");
+			lib.out ("PressKey", ["tecla-caray"]);
 
-		  lib.CA_EndGame("caray")
+		  lib.out ("EndGame", ["caray"])
 			lib.exec ("setValue", {id:"intro2", value:"1"})
 		}
 

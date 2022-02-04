@@ -107,23 +107,23 @@ botella: 1 abierta; 2 cuando te has huntado las manos con la sangre
 
 */
 
-let reactionList = [];
-let primitives, libReactions
-
+let items = []
 let reactions = []
 let attributes = []
-let items = []
 
+let reactionList = [];
+let primitives, libReactions
 let usr = {}
 
 /* Expose stuff */
 // module.exports = exports = {
 export default {
 	dependsOn:dependsOn,
+	turn:turn,
+
 	processAction:processAction,
 	itemMethod:itemMethod,
 	actionIsEnabled:actionIsEnabled,
-	turn:turn,
 	executeCode:executeCode,
 	getItem:getItem,
 	getReaction:getReaction
@@ -151,19 +151,13 @@ function dependsOn (primitives, libReactions, reactionList) {
 	this.primitives = primitives
 	this.libReactions = libReactions
 	this.reactionList = reactionList
-
 	this.reactions = []
-
 	initReactions(this.reactions, this.primitives)
-
 	this.attributes = []
 	initAttributes(this.attributes, this.primitives)
-
 	this.items = []
 	initItems(this.items, this.primitives)
-
 	usr.primitives = this.primitives
-
 }
 
 function arrayObjectIndexOf(myArray, property, searchTerm) {

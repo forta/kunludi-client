@@ -1,5 +1,7 @@
 // references to external modules
-var libReactions, gameReactions, reactionList
+let libReactions, gameReactions, reactionList
+
+let debugMode = false
 
 
 ////export
@@ -878,11 +880,15 @@ function updateChoices(showAll) {
 	// update current loc
 	var pos = arrayObjectIndexOf(this.world.items[this.PCState.profile.indexPC].state.itemsMemory, "itemIndex", newLoc)
 	if (pos < 0) { // new entry
-		 console.log ("<KL>Loc ["+ this.world.items[this.PCState.profile.indexPC].loc + "] is now known.")
+		 if (debugMode) {
+			 	console.log ("<KL>Loc ["+ this.world.items[this.PCState.profile.indexPC].loc + "] is now known.")
+		 }
 		 this.world.items[this.PCState.profile.indexPC].state.itemsMemory.push ({itemIndex: newLoc})
 	} else { // update it
-		 console.log ("<KL>Loc ["+ this.world.items[this.PCState.profile.indexPC].loc + "] is now updated.")
-		 this.world.items[this.PCState.profile.indexPC].state.itemsMemory[pos] = {itemIndex: newLoc, whereWas:-1, lastTime:-1 }
+		if (debugMode) {
+ 		  console.log ("<KL>Loc ["+ this.world.items[this.PCState.profile.indexPC].loc + "] is now updated.")
+		}
+		this.world.items[this.PCState.profile.indexPC].state.itemsMemory[pos] = {itemIndex: newLoc, whereWas:-1, lastTime:-1 }
 	}
 
 	this.choices = []
@@ -912,11 +918,13 @@ function updateChoices(showAll) {
 
 		var link = this.getTargetAndLocked (this.PCState.profile.loc, d)
 		if (link.target >= 0) {
-			// bug: actionIsEnabled not used
-			console.log ("debug actionIsEnabled on directions")
-			//if (this.actionIsEnabled  (actionId, d, link.target)) {
-				this.internalChoices.directionGroup.push ({choiceId:'dir1', isLeafe:true, parent:"directionGroup", parent:"directActions", action: {actionId:'go', d1: d, d1Id: this.world.directions[d].id, target:link.target, targetId: this.world.items[link.target].id, isKnown:link.isKnown}})
-			//}
+				if (debugMode) {
+					// bug: actionIsEnabled not used
+					console.log ("warning: actionIsEnabled on directions")
+				}
+				//if (this.actionIsEnabled  (actionId, d, link.target)) {
+					this.internalChoices.directionGroup.push ({choiceId:'dir1', isLeafe:true, parent:"directionGroup", parent:"directActions", action: {actionId:'go', d1: d, d1Id: this.world.directions[d].id, target:link.target, targetId: this.world.items[link.target].id, isKnown:link.isKnown}})
+				//}
 		}
 	}
 

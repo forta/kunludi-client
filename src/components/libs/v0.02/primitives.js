@@ -22,6 +22,7 @@ export default {
 	// executeGameAction:executeGameAction,
 	dependsOn:dependsOn,
 	exec:exec,
+	out:out,
 	arrayObjectIndexOf_2:arrayObjectIndexOf_2,
 	isIndex:isIndex,
 
@@ -192,6 +193,7 @@ function initLibFunctions (lib) {
 		id: 'getLoc',
 		code: function (par) { // par: item
 			let parIn = (typeof par[0] == 'undefined') ? par : {item: par[0]}
+			if (!isIndex (parIn.item)) parIn.item = lib.IT_X(parIn.item)
 			return lib.IT_GetLoc (parIn.item)
 		}
 	});
@@ -200,7 +202,8 @@ function initLibFunctions (lib) {
 		id: 'itemIsAt',
 		code: function (par) { // par: item, loc
 			let parIn = (typeof par[0] == 'undefined') ? par : {item: par[0], loc: par[1]}
-			// to-do: id -> index
+			if (!isIndex (parIn.item)) parIn.item = lib.IT_X(parIn.item)
+			if (!isIndex (parIn.loc)) parIn.loc = lib.IT_X(parIn.loc)
 			return (lib.IT_GetLoc (parIn.item) == parIn.loc )
 		}
 	});
@@ -209,6 +212,7 @@ function initLibFunctions (lib) {
 		id: 'isHere',
 		code: function (par) { // par: item
 			let parIn = (typeof par[0] == 'undefined') ? par : {item: par[0]}
+			if (!isIndex (parIn.item)) parIn.item = lib.IT_X(parIn.item)
 			return lib.IT_IsHere(parIn.item)
 		}
 	});
@@ -217,6 +221,7 @@ function initLibFunctions (lib) {
 		id: 'isCarried',
 		code: function (par) { // par: item
 			let parIn = (typeof par[0] == 'undefined') ? par : {item: par[0]}
+			if (!isIndex (parIn.item)) parIn.item = lib.IT_X(parIn.item)
 			return lib.IT_IsCarried(parIn.item)
 		}
 	});
@@ -302,6 +307,38 @@ function exec (functionName, par) {
 		return
 	}
   return libFunctions[indexLibFunction].code (par)
+
+}
+
+function out (typeId, par) { // temp
+	let parIn
+	// mapping
+	if (typeId == "showMsg") {
+		parIn = (typeof par[0] == 'undefined') ? par : {txt: par[0], param: par[1], visibleIn: par[2]}
+		return this.CA_ShowMsg (parIn.txt, parIn.param, parIn.visibleIn)
+	}
+	//else
+	// here!! to-do
+	if (typeId == "PressKey") {
+		parIn = (typeof par[0] == 'undefined') ? par : {txt: par[0]}
+		return this.CA_PressKey (parIn.txt)
+	} else if (typeId == "ShowDesc") {
+		parIn = (typeof par[0] == 'undefined') ? par : {txt: par[0]}
+		return this.CA_ShowDesc (parIn.txt)
+	} else if (typeId == "EnableChoices") {
+		parIn = (typeof par[0] == 'undefined') ? par : {txt: par[0]}
+		return this.CA_EnableChoices (parIn.txt)
+	} else if (typeId == "EndGame") {
+		parIn = (typeof par[0] == 'undefined') ? par : {txt: par[0]}
+		return this.CA_EndGame (parIn.txt)
+	} else if (typeId == "QuoteBegin") {
+		parIn = (typeof par[0] == 'undefined') ? par : {txt: par[0]}
+		return this.CA_QuoteBegin (parIn.txt)
+	} else if (typeId == "Refresh") {
+		parIn = (typeof par[0] == 'undefined') ? par : {txt: par[0]}
+		return this.CA_Refresh (parIn.txt)
+	}
+
 
 }
 
