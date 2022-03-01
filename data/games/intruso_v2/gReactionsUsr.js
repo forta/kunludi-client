@@ -105,8 +105,6 @@ items.push ({
 			{ id:consi2, changeTo: intro3, 	action: { choiceId: "action", actionId:"goto", o1Id: "intro2"}}
 		])
 
-
-
 	}
 
 });
@@ -115,7 +113,6 @@ items.push ({
 	id: 'intro2',
 
 	desc: function () {
-
 
 		lib.GD_CreateMsg ("es", "escena_inicial_1", "Es sólo entrar y salir. Localizar el dichoso trofeo, sacarle una foto y salir pitando.<br/>");
 		lib.GD_CreateMsg ("es", "escena_inicial_2", "Sabes que la familia Rarita va a salir a celebrar la noche de Halloween fuera de casa. Escondido detrás de un arbusto en su ruinoso jardín, los acabas de ver desfilar delante tuyo, con unas pintas que por una vez al año no desentona con la del resto.<br/>")
@@ -209,8 +206,6 @@ items.push ({
 
 });
 
-
-
 	items.push ({
 		id: 'hall',
 
@@ -253,26 +248,6 @@ items.push ({
 				{ id: msg_interruptores_1, visibleToTrue: [msg_interruptores_2], activatedBy: "interruptores" },
 				{id: desc_hall_3, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["pasillo"]), targetId: "pasillo", d1Id:"up", d1: lib.exec ("getDir", ["up"])}}
 			])
-
-			// escena final (final feliz)
-			lib.GD_CreateMsg ("es","escena-final-1", "Estás rodeado del lobo, el murciélago, el ratón, el gato y sólo falta la serpiente para completar el zoo Rarito.<br/>");
-			lib.GD_CreateMsg ("es","escena-final-2", "En ese momento, suena el teléfono: ¡Los Raritos están llegando, corre!<br/>");
-			lib.GD_CreateMsg ("es","escena-final-3", "Al ir a la puerta, aparece la serpiente que se levanta y te corta el camino.<br/>");
-			lib.GD_CreateMsg ("es","escena-final-4", "Estás atrapado! Cierras los ojos, te haces un ovillo en el suelo y te lo haces encima.<br/>");
-			//<tecla>
-			lib.GD_CreateMsg ("es","escena-final-5", "Al poco, oyes como un grupo de personas se aproxima cantando y haciéndo bromas de Hallowen. Entonces se abre la puerta, casi de manera imperceptible, y oyes el clic de un interruptor. Se enciende una luz respandeciente, que se cuela entre tus dedos.<br/>");
-			lib.GD_CreateMsg ("es","escena-final-6", "Levantas la cabeza, te tapas torpemente la entrepierna del pantalón mojada de orín y los ves. La Familia Rarita al completo, que te observa con atención.<br/>");
-			lib.GD_CreateMsg ("es","escena-final-7", "Niño Rarito deja su calabaza llena de chuches y saca un móvil.<br/>");
-			//<tecla>
-			lib.GD_CreateMsg ("es","escena-final-8", "Flash! Te acaba de sacar una foto?<br/>");
-			lib.GD_CreateMsg ("es","escena-final-9", "La adolescente Rarita sube las escaleras escuchando la música de sus cascos y mirando su móvil, sin prestarte atención.<br/>");
-			lib.GD_CreateMsg ("es","escena-final-10", "El abuelo te sonríe y te hace un gesto para que lo acompañes al exterior.<br/>");
-			// <tecla>
-			lib.GD_CreateMsg ("es","escena-final-11", "abuelo:<br/>");
-			lib.GD_CreateMsg ("es","escena-final-12", "Hijo mío, espero que esta noche hayas aprendido la lección de que no se debe entras en casas ajenas.<br/>");
-			lib.GD_CreateMsg ("es","escena-final-13", "Como recuerdo, llévate esta foto de recuerdo -> al verla con tus amigos, sales con un murciélago en tu hombro. Has conseguido el reto y no sólo conservas tu mazo de cartas sino el respeto y devoción de tus amigos.<br/>");
-			//lib.out ("EndGame("escena-final-13")
-
 		}
 
 	});
@@ -281,16 +256,12 @@ items.push ({
 		id: 'cocina',
 
 		desc: function () {
-
-
 			lib.GD_CreateMsg ("es","desc_cocina", "Es la cocina más nauseabunda que has visto en tu vida. Te da asco tocar nada, pero una curiosidad malsana te tienta a %l1.")
 			let desc_cocina =  lib.out ("showMsg", ["desc_cocina",{l1:{id: "desc_cocina", txt: "mirar qué habrá dentro de la nevera"}}])
 
 			lib.GD_DefAllLinks ([
 				{id: desc_cocina, action: { choiceId: "action", actionId:"ex", o1Id: "nevera"} }
 			])
-
-
 		}
 
 	});
@@ -1138,6 +1109,7 @@ function initUserFunctions (lib, usr) {
 	userFunctions.push ({
 		id: 'escenaFinal',
 		code: function (par) {
+
 			lib.GD_CreateMsg ("es","escena_final_1", "Suena el móvil! Los Raritos, ya están de vuelta! No sabes ni donde esconderte y acabas en el hall, debajo de una mesa, justo a tiempo cuando oyes abrir la puerta se abre en silencio dejando pasar las risas de la famila. Un click y la luz se enciende.<br/>")
 		  lib.GD_CreateMsg ("es","escena_final_2", "Todo es brillo y pulcritud.")
 			lib.GD_CreateMsg ("es","escena_final_3", "El niño sin dejar de comer golosinas sin parar, se te acerca, te lanza un ingenuo bú! y se va entre risas mientras le intenta poner la zancadilla a su hermana, que lo esquiva sin mayor esfuerzo y subes las escaleras a su habitación mientras escucha música de sus casos y sin prestarte la más mínima atención.")

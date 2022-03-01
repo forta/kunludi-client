@@ -1,7 +1,7 @@
 <template>
 
   <!-- to-do: gameId2 -->
-  
+
   <div class="games">
 
 	<div v-if="!slotId">
@@ -80,7 +80,16 @@ export default {
   methods: mapActions([
     'setLocale',
     'setGame'
-  ])
+  ]),
+
+  beforeMount: function () {
+    if (typeof this.$route.query.game != "undefined") {
+      console.log("Game by path: " + this.$route.query.game)
+      console.log("to-do: setgame " + this.$route.query.game)
+      //this.setGame (this.$route.query.game)
+    }
+  }
+
 }
 
 

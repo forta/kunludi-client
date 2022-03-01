@@ -362,33 +362,30 @@ function actionTranslation (choice, isEcho) {
   if (typeof choice.i8n[this.locale].txt == 'undefined') choice.i8n[this.locale].txt = ""
   if (choice.i8n[this.locale].txt != '') return // just done before
 
-  let outText = ""
+  let outText = "", outText4echo = ""
 
 	if (choice.choiceId == 'action0') {
 
 		outText = this.msgResolution(this.getLongMsgId ("actions", choice.action.actionId))
+		// echo message
+		outText4echo = outText
 
 	}	else if ((choice.choiceId == 'action') || (choice.choiceId == 'action2')) {
 
-		if (isEcho) { // echo message
-			if (choice.choiceId == 'action') {
-				let msg = this.msgResolution  (this.getLongMsgId (this.getLongMsgId ("messages", "Echo_o1_a1", "txt")))
-				outText =  this.expandParams (msg, {a1: choice.action.actionId, o1: choice.action.item1Id})
-			} else {
-				let msg = this.msgResolution  (this.getLongMsgId ("messages", "Echo_o1_a1_o2", "txt"))
-				outText = this.expandParams (msg, {a1: choice.action.actionId, o1: choice.action.item1Id, o2: choice.action.item2Id})
-			}
-
-		} else { // button
-
-			// to-do?: modified as in the Echo?
-			if (choice.choiceId == 'action')
-				outText = this.msgResolution(this.getLongMsgId ("actions", choice.action.actionId))
-			else
-				outText = this.msgResolution(this.getLongMsgId ("actions", choice.action.actionId)) +
-									 " -> " +
-									this.msgResolution(this.getLongMsgId ("items", choice.action.item2Id, "txt"))
+		if (choice.choiceId == 'action') {
+			outText = this.msgResolution(this.getLongMsgId ("actions", choice.action.actionId))
+			// echo message
+			let msg = this.msgResolution  (this.getLongMsgId ("messages", "Echo_o1_a1", "txt"))
+			outText4echo =  this.expandParams (msg, {a1: choice.action.actionId, o1: choice.action.item1Id})
+		} else {
+			outText = this.msgResolution(this.getLongMsgId ("actions", choice.action.actionId)) +
+								 " -> " +
+								this.msgResolution(this.getLongMsgId ("items", choice.action.item2Id, "txt"))
+ 		// echo message
+  		let msg = this.msgResolution  (this.getLongMsgId ("messages", "Echo_o1_a1_o2", "txt"))
+	  	outText4echo = this.expandParams (msg, {a1: choice.action.actionId, o1: choice.action.item1Id, o2: choice.action.item2Id})
 		}
+
 
 	}  else if (choice.choiceId == 'dir1') {
 		// show the target only ii it is known
@@ -397,6 +394,7 @@ function actionTranslation (choice, isEcho) {
 		var txt = this.msgResolution(this.getLongMsgId ("directions", choice.action.d1Id, "desc"))
 		if (choice.action.isKnown) txt += " -> " + this.msgResolution(this.getLongMsgId ("items", choice.action.targetId, "txt"))
 		outText = txt
+		outText4echo = outText
 
 	}
 
@@ -408,6 +406,9 @@ function actionTranslation (choice, isEcho) {
   */
 
   choice.i8n[this.locale].txt = playerSt + outText
+
+	choice.i8n[this.locale].txt4echo = playerSt + outText4echo
+
 }
 
 function reactionTranslation (reaction) {
@@ -559,7 +560,7 @@ function reactionTranslation (reaction) {
 		// to-do: make it language-dependent
 		expanded = "<br/>"
 		//expanded = "<br/>[...]<br/><br/>"
-		
+
 
     reaction.i8n[this.locale].txt = expanded
     return
@@ -593,7 +594,8 @@ function translateAll (locale, history, runner, translatedStuff) {
 
   translatedStuff.history = history.slice()
   for (var h in translatedStuff.history ) {
-    this.actionTranslation (translatedStuff.history[h].action)
+		// echo
+    this.actionTranslation (translatedStuff.history[h].action, true)
     for (var re in translatedStuff.history[h].reactionList ) {
       this.reactionTranslation (translatedStuff.history[h].reactionList[re])
     }

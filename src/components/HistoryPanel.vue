@@ -2,11 +2,12 @@
   <div class="history-panel">
   <h2>{{kt("History")}}</h2>
 
+
     <div v-for="hitem in history">
         <!-- echo -->
         <p><b>
           <!-- <span v-if ="hitem.gameTurn > 0"> {{hitem.gameTurn}} &gt; </span> -->
-          {{i8n_showText(hitem.action)}}
+          {{i8n_showText(hitem.action, true)}} 
         </b></p>
 
         <div :class = " (hitem.gameTurn < history.length - 1)? 'beforeTheLastReaction': 'lastReaction' " >

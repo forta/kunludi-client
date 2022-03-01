@@ -118,7 +118,7 @@ export default {
           for (var c2 in state.choices) {
             if (state.choices[c2].choiceId == 'obj1' &&
                 state.choices[c2].item1 == state.choices[c].action.item1) {
-                  return "<p>" + i8n_showText_interno (state.choices[c2], state.locale) + "</p>"
+                  return "<p>" + i8n_showText_interno (state.choices[c2], false, state.locale) + "</p>"
             }
           }
         }
@@ -135,11 +135,11 @@ export default {
   },
 
   i8n_showText: (state) => (i8nMsg, isEcho) => {
-    return i8n_showText_interno (i8nMsg, state.locale)
+    return i8n_showText_interno (i8nMsg, isEcho, state.locale)
   },
 
-  i8n_showText_with_Filter: (state) => (i8nMsg, isEcho, choiceFilter) => {
-    var txt = i8n_showText_interno (i8nMsg, state.locale)
+  i8n_showText_with_Filter: (state) => (i8nMsg, choiceFilter) => {
+    var txt = i8n_showText_interno (i8nMsg, false, state.locale)
     if (typeof choiceFilter == "undefined"  || choiceFilter == "" ) return txt
     return (txt.indexOf(choiceFilter) !== -1)? txt: ""
   },
@@ -150,12 +150,12 @@ export default {
     if (typeof state.PCState.profile == 'undefined') return "(loc)"
     if (typeof state.PCState.profile.locMsg == 'undefined') "(loc)"
 
-    return i8n_showText_interno (state.PCState.profile.locMsg, state.locale)
+    return i8n_showText_interno (state.PCState.profile.locMsg, false, state.locale)
   },
 
   i8n_showReaction: (state, getters) => (reaction, gameTurn) => {
 
-    var txt = i8n_showText_interno (reaction, state.locale)
+    var txt = i8n_showText_interno (reaction, false, state.locale)
 
     if (typeof reaction.type == 'undefined') {
       return JSON.stringify (reaction)
@@ -259,10 +259,14 @@ export default {
 
 }
 
-function i8n_showText_interno (i8nMsg, locale) {
+function i8n_showText_interno (i8nMsg, isEcho, locale) {
 
-  // txt_final: static conversion, forever
+  // txt_final is cached: static conversion, forever
   if (typeof (i8nMsg.txt_final) != 'undefined') {
+    if (isEcho) {
+      return i8nMsg.txt_final4echo
+    }
+
     return i8nMsg.txt_final
   }
 
@@ -270,6 +274,7 @@ function i8n_showText_interno (i8nMsg, locale) {
     if (typeof (i8nMsg.i8n[locale]) !== 'undefined') {
       if (typeof (i8nMsg.i8n[locale].txt) !== 'undefined') {
         i8nMsg.txt_final = i8nMsg.i8n[locale].txt
+        i8nMsg.txt_final4echo = i8nMsg.i8n[locale].txt4echo
         i8nMsg.i8n = undefined
         return i8nMsg.txt_final
       }

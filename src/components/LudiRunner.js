@@ -231,6 +231,13 @@ function setDefaultAttributeProperties (context, indexItem) {
 			}
 		}
 
+		// generalState: dirty tricky
+		if (!attToBeImported) {
+			if (attId_def == "generalState") {
+				attToBeImported = true
+			}
+		}
+
 		if (attToBeImported) {
 			// get properties from attribute definition (at least: some of them)
 			var propAlready;
