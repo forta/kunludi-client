@@ -82,11 +82,20 @@ export default {
     'setGame'
   ]),
 
-  beforeMount: function () {
+  updated: function () {
     if (typeof this.$route.query.game != "undefined") {
-      console.log("Game by path: " + this.$route.query.game)
-      console.log("to-do: setgame " + this.$route.query.game)
-      //this.setGame (this.$route.query.game)
+      console.log("Trying direct gameId: " + this.$route.query.game)
+      for (var gameIndex in this.games) {
+        if (this.games[gameIndex].name == this.$route.query.game) {
+          console.log ("Correct direct gameId:" + this.translatedGameName (this.games[gameIndex].name))
+          this.currentgame=this.games[gameIndex]
+          this.setGame(this.games[gameIndex].name)
+          // drop query in the url
+          this.$router.replace({'query': null});
+          // to-change: this.$router.replace({'query': {'game': game2Id}});
+          break
+        }
+      }
     }
   }
 
