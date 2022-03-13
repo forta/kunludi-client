@@ -3,6 +3,7 @@
 
 let reactionList = [];
 let primitives, libReactions
+let offlineMode = false // detailed console.log only when offline game
 
 /* Expose stuff */
 // module.exports = exports = {
@@ -67,8 +68,9 @@ function processAction (action) {
 	}
 
 	// to-do: verify again  if action is enabled
-
-	console.log ("game action: " +  JSON.stringify (action))
+  if (offlineMode) {
+		console.log ("game action: " +  JSON.stringify (action))
+	}
 
 	if (typeof reaction.reaction == 'function') {
 		return reaction.reaction (action)

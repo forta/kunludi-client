@@ -2,6 +2,8 @@ let games = []
 let gameSlotList = []
 let gameId = ''
 
+let offlineMode = false // detailed console.log only when offline game
+
 // language
 let locale = "xx", language = {}
 
@@ -123,8 +125,12 @@ function loadGames() {
   	}
 }
 
-
 function join (gameId, slotId) {
+
+  if (offlineMode) {
+    console.log ("state.locale: " + state.locale)
+    console.log ("Slot: " + slotId)
+  }
 
   var subgameId = "", metaDealer, metaState
 
@@ -214,7 +220,9 @@ function join (gameId, slotId) {
   this.slotId = slotId
   this.refreshCache ()
 
-  console.log ("Game loaded!. Slot: " + slotId)
+  if (offlineMode) {
+    console.log ("Game loaded!. Slot: " + slotId)
+  }
 
 	return true
 
@@ -282,6 +290,10 @@ function loadGameState (slotId, showIntro) {
 }
 
 function setLocale (state) {
+
+  if (offlineMode) {
+    console.log ("locale: " + state.locale)
+  }
 
   this.locale = state.locale
 
@@ -358,7 +370,12 @@ function requestGameSlotList(filter) {
   this.refreshGameSlotList (filter.gameId)
 }
 
-function getGameSlotList() {
+function getGameSlotList(gameId) {
+
+  if (offlineMode) {
+    console.log ("Checking gameId: " + gameId)
+  }
+
   return this.gameSlotList
 }
 
@@ -450,13 +467,13 @@ function saveGameState (slotDescription) {
 	console.log ("Game slot saved on localStorage!")
 }
 
-function deleteGameState (slotId) {
+function deleteGameState (gameId, slotId) {
   		if (!storageON()) return
   		var slotIndex = arrayObjectIndexOf (this.gameSlotList, "id", slotId)
   		if (slotIndex>=0) {
   			var ludi_games = JSON.parse (localStorage.ludi_games)
   			this.gameSlotList.splice(slotIndex,1)
-  			ludi_games[this.gameId] = this.gameSlotList
+  			ludi_games[gameId] = this.gameSlotList
   			localStorage.setItem("ludi_games", JSON.stringify(ludi_games));
   			console.log ("Game slot deleted!. Slot: " + slotId)
   		}
@@ -556,7 +573,9 @@ function sendUserCode(functionId, par) {
 
 function execLink(param) {
 
-  console.log("execute link (locally): " + JSON.stringify(param))
+  if (offlineMode) {
+    console.log("execute link (locally): " + JSON.stringify(param))    
+  }
   this.runner.execLink (param)
   this.refreshCache ()
 

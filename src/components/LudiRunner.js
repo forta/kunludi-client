@@ -2,7 +2,7 @@
 let libReactions, gameReactions, reactionList
 
 let debugMode = false
-
+let offlineMode = false // detailed console.log only when offline game
 
 ////export
 let choice = {choiceId:'top', isLeafe:false, parent:''}
@@ -353,7 +353,7 @@ function execLink (param) {
 	      } else if (choice.choiceId == 'dir1') {
 	        choice.isLeafe = true
 	        choice.parent = "directActions"
-	        console.log ("exec go: to-do, d1Id -> d1")
+	        // to-do?: d1Id -> d1
 	        choice.action = {
 	          actionId:"go",
 	          d1: ir.d1,
@@ -419,6 +419,10 @@ function execLink (param) {
 }
 
 function processChoice (newChoice, optionMsg) {
+
+  if (offlineMode) {
+		console.log("Debug choice: " + JSON.stringify(newChoice))
+	}
 
   if (this.choice == undefined) {
 		this.choice = {choiceId:'top', isLeafe:false, parent:''}

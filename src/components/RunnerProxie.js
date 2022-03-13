@@ -93,7 +93,6 @@ function storageON() {
 
 function setLocale (state) {
 
-	console.log ("locale: " + state.locale)
 	this.locale = state.locale
 	if (connected) {
   	kunludiClient.setLocale (state)
@@ -431,10 +430,10 @@ function join (gameId, slotId) {
 function deleteGameState (gameId, slotId) {
 
 	if (!connected) {
-		kunludiLocalClient.deleteGameState(slotId)
+		kunludiLocalClient.deleteGameState(gameId, slotId)
 	} else {
 		alert ("Not implemented yet")
-		//kunludiClient.deleteGameState(slotId)
+		//kunludiClient.deleteGameState(gameId, slotId)
 	}
 
 }
@@ -485,11 +484,11 @@ function requestGameSlotList (filter) {
 	}
 }
 
-function getGameSlotList () {
+function getGameSlotList (gameId) {
 	if (connected) {
-	  return kunludiClient.getGameSlotList()
+	  return kunludiClient.getGameSlotList(gameId)
 	} else {
-	  return kunludiLocalClient.getGameSlotList()
+	  return kunludiLocalClient.getGameSlotList(gameId)
 	}
 }
 

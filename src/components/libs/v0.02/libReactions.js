@@ -19,6 +19,8 @@ let primitives
 let reactions = []
 let attributes = []
 
+let offlineMode = false // detailed console.log only when offline game
+
 /* Expose stuff */
 
 //module.exports = exports = {
@@ -56,7 +58,10 @@ function processAction (action) {
 		return true
 	}
 
-	console.log ("lib action: " +  JSON.stringify (action))
+  if (offlineMode) {
+    console.log ("lib action: " +  JSON.stringify (action))
+
+  }
 
 	this.reactions[actionIndex].reaction (action)
 

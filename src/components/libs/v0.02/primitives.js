@@ -12,7 +12,9 @@ let world;
 let reactionList;
 let userState;
 let libFunctions = []
-let hidenMessages = false;
+// dead code?: let hidenMessages = false;
+
+let offlineMode = false // detailed console.log only when offline game
 
 /* Expose stuff */
 
@@ -482,7 +484,9 @@ function CA_ShowMsg (txt, param, visibleIn) {
   if (param != undefined) {
 		// console.log ("<KL>Param in CA_ShowMsg: " + JSON.stringify (param))
 		if (param.o1 != undefined) {
-				console.log ("<KL>Param.o1 in CA_ShowMsg: " + param.o1)
+			  if (offlineMode) {
+					console.log ("<KL>Param.o1 in CA_ShowMsg: " + param.o1)
+				}
 				if  (!isNaN(parseFloat(param.o1)) && isFinite(param.o1)) {
 					param.o1 = this.world.items[param.o1].id
 				}
@@ -968,7 +972,9 @@ function GD_DefAllLinks (linkArray) {
 		this.reactionList[rIndex].active = true
 		// to-do: if activatedBy exists, the pointed variable should be used to set whether it's active or not
 		if (typeof linkArray[i].activatedBy != "undefined") {
-			console.log ("ActivatedBy?: " + JSON.stringify (linkArray[i]))
+			if (offlineMode) {
+				console.log ("ActivatedBy?: " + JSON.stringify (linkArray[i]))
+			}
 
 			/*
 			let item = this.IT_X (linkArray[i].activatedBy)
@@ -977,7 +983,9 @@ function GD_DefAllLinks (linkArray) {
 
 			let value = this.IT_GetAttPropValueUsingId (linkArray[i].activatedBy)
 
-			console.log ("Value: " + value)
+			if (offlineMode) {
+				console.log ("Value: " + value)
+			}
 			if (value > 0) {
 				this.reactionList[rIndex].active = false
 			}

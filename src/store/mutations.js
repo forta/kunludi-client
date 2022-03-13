@@ -66,6 +66,7 @@ export default {
       return
     }
 
+    console.log ("execLink: {" +  JSON.stringify(param) + "}" )
     state.runnerProxie.execLink (param)
 
    	if (state.runnerProxie.getUserId() == '') {
@@ -75,8 +76,6 @@ export default {
   },
 
   PROCESS_CHOICE (state, choice) {
-     console.log("Debug choice: " + JSON.stringify(choice))
-
 	   processChoice (state, choice)
   },
 
@@ -102,7 +101,6 @@ export default {
 
   SETGAME (state, gameId) {
     state.gameId = gameId
-    console.log ("gameId: " + state.gameId)
     state.slotId = ""
     state.gameSlots = state.runnerProxie.getGameSlotList (state.gameId)
     var gameIndex = arrayObjectIndexOf (state.games, "name", gameId)
@@ -113,9 +111,6 @@ export default {
 
     var gameId= payload.gameId
     var slotId= payload.slotId
-
-    console.log ("state.locale: " + state.locale)
-    console.log ("Slot: " + slotId)
 
     let l;
     let t = state.gameAbout.translation;
@@ -299,7 +294,7 @@ function LOAD_GAME_ABOUT (state, gameId) {
 }
 
 function afterRequesGameSlotList (state) {
-  state.gameSlots = state.runnerProxie.getGameSlotList ()
+  state.gameSlots = state.runnerProxie.getGameSlotList (state.gameId)
 }
 
 
@@ -421,12 +416,12 @@ function processChoice (state, choice) {
 
 	var optionMsg
 	if (choice.isLeafe) {
-		console.log ("store.js. leafe action: {userSession:'" + state.userSession + "', action: {" +  JSON.stringify(choice.action) + "}" )
+		console.log ("leafe action: {userSession:'" + state.userSession + "', action: {" +  JSON.stringify(choice.action) + "}" )
 
 		optionMsg = choice.action.msg
     state.lastAction = choice
 	} else {
-    console.log ("store.js. non-leafe action: {userSession:'" + state.userSession + "', choice: {" +  JSON.stringify(choice) + "}" )
+    console.log ("non-leafe action: {userSession:'" + state.userSession + "', choice: {" +  JSON.stringify(choice) + "}" )
 
   }
 
