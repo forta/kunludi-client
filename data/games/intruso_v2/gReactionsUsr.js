@@ -96,10 +96,7 @@ items.push ({
 		lib.GD_DefAllLinks ([
 			{ id:intro0, url: "https://itch.io/jam/ectocomp-2021-espanol"},
 			{ id:intro1, visibleToFalse: [intro2], changeTo: consi0},
-			{ id:intro2, visibleToFalse: [intro1], changeTo: intro3,
-				action: { choiceId: "action", actionId:"goto", o1Id: "intro2"}
-				//userCode: {functionId: "goto", par: {target:"intro2"} }
-			},
+			{ id:intro2, visibleToFalse: [intro1], changeTo: intro3, action: { choiceId: "action", actionId:"goto", o1Id: "intro2"} },
 			{ id:consi0, changeTo: consi1},
 			{ id:consi1, changeTo: consi2},
 			{ id:consi2, changeTo: intro3, 	action: { choiceId: "action", actionId:"goto", o1Id: "intro2"}}
@@ -161,13 +158,6 @@ items.push ({
 		lib.GD_DefAllLinks ([
 			{ id: msg_corre, 	action: { choiceId: "action", actionId:"goto", o1Id: "porche"}}
 		])
-
-		/*
-		lib.GD_CreateMsg ("es", "DLG_test", "test")
-		lib.out ("QuoteBegin", ["Nadie", "DLG_test" , undefined, true ]); // error: [    ]
-		lib.out ("showMsg", [",<br/>"])
-		*/
-
 	}
 
 });
@@ -215,19 +205,21 @@ items.push ({
 			lib.GD_CreateMsg ("es","tecla","avanza")
 			lib.exec ("setLoc", ["móvil", lib.exec ("pc")])
 
+			// here!
+
 			lib.GD_CreateMsg ("es","desc_hall_0", "Dejas detrás de ti la puerta exterior. Sabes que salir representa resignarte a la burla de tus amigos y perder tu fabuloso mazo de cartas.<br/>");
 			lib.out ("showMsg", ["desc_hall_0"]);
 
 			let huesosVisto = (lib.exec("getValue", {id:"huesos"}) != "0")
 
 			lib.GD_CreateMsg ("es","desc_hall_1", "Una inmensa %l1 domina uno de los laterales del salón. ");
-			lib.GD_CreateMsg ("es","desc_hall_a_cocina", "Por el otro lateral, atravesando el comedor, entrevés una puerta que seguramente %l1.<br/>");
+			let desc_hall_1 = lib.out ("showMsg", ["desc_hall_1",{l1:{id: "desc_hall_1", txt: "chimenea"}}])
 
+			lib.GD_CreateMsg ("es","desc_hall_a_cocina", "Por el otro lateral, atravesando el comedor, entrevés una puerta que seguramente %l1.<br/>");
 			lib.GD_CreateMsg ("es","desc_hall_2", "A través de un magnífica escalera con tapete, que sería rojo si no fuera por las marcas de %l1, ");
 			lib.GD_CreateMsg ("es","desc_hall_2_plus", " no sólo de personas sino también de animales de distintos tamaños y que no identificas, ");
 			lib.GD_CreateMsg ("es","desc_hall_3", " podrías %l1.");
 
-			let desc_hall_1 = lib.out ("showMsg", ["desc_hall_1",{l1:{id: "desc_hall_1", txt: "chimenea"}}, !huesosVisto])
 			let desc_hall_a_cocina = lib.out ("showMsg", ["desc_hall_a_cocina",{l1:{id: "desc_hall_a_cocina", txt: "lleva a la cocina"}}])
 			let desc_hall_2 = lib.out ("showMsg", ["desc_hall_2",{l1:{id: "desc_hall_2", txt: "pisadas"}}])
 			let desc_hall_2_plus = lib.out ("showMsg", ["desc_hall_2_plus",undefined, false])
@@ -242,7 +234,7 @@ items.push ({
 			let msg_interruptores_2 = lib.out ("showMsg", ["interruptores_2",undefined, interruptoresVisto])
 
 			lib.GD_DefAllLinks ([
-				{ id: desc_hall_1, action: { choiceId: "action", actionId:"ex", o1Id: "chimenea"} } ,
+				{ id: desc_hall_1, action: { choiceId: "action", actionId:"ex", o1Id: "chimenea"}, activatedBy: "huesos"  } ,
 				{ id: desc_hall_a_cocina, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["cocina"]), targetId: "cocina", d1Id:"d270", d1: lib.exec ("getDir", ["d270"])}},
 				{ id: desc_hall_2, visibleToTrue: [desc_hall_2_plus]},
 				{ id: msg_interruptores_1, visibleToTrue: [msg_interruptores_2], activatedBy: "interruptores" },
@@ -417,15 +409,6 @@ items.push ({
 			let msg_cuadro_6_bis = lib.out ("showMsg", ["el_cuadro_6_bis",undefined, bis_active])
 			let msg_cuadro_7 = lib.out ("showMsg", ["el_cuadro_7",{l1: {id: "cuadro_7", txt: "una figura borrada a cuchilladas"}}, !bis_active])
 			let msg_cuadro_7_bis = lib.out ("showMsg", ["el_cuadro_7_bis",undefined, bis_active])
-
-			/*
-			here!
-			error:
-			actualmente, es setFrame el que devuelve  (status.enableChoices == true)
-			lo que produce el  setEnableChoices(true)
-	     Pero al pasar a setValue de libCode, ahora no hay nadie que lo haga
-
-			*/
 
 			lib.GD_DefAllLinks ([
 				// activatedBy: cuadro1.familiaState.X
@@ -773,12 +756,6 @@ function initReactions (lib, usr) {
 	reactions.push ({
 		id: 'goto',
 
-		/*enabled: function (indexItem, indexItem2) {
-			alert ("debug goto.enabled: " + indexItem)
-			return true
-		},
-		*/
-
 		reaction: function (par_c) {
 
 			if ((par_c.loc == lib.exec("x",["intro2"])) && (par_c.item1Id == "porche"))  {
@@ -786,7 +763,7 @@ function initReactions (lib, usr) {
 				lib.out ("showMsg", ["de_intro_a_porche"])
 				lib.GD_CreateMsg ("es","mira","mira")
 				lib.out ("PressKey", ["mira"]);
-				return false
+				return false // go to the location and show description
 			}
 
 		}
@@ -998,27 +975,6 @@ function initAttributes (lib, usr) {
 }
 
 function initUserFunctions (lib, usr) {
-
-	userFunctions.push ({
-		id: 'goto',
-		code: function (par) { // par.target
-			  console.log ("usr.goto: " + JSON.stringify (par))
-
-				// transición
-			//	if (par.target == "porche") {
-					lib.GD_CreateMsg ("es", "de_intro_a_porche", "Casi trastabillas y te caes, te arañas con los arbustos, y casi pierdes del móvil, pero llegas hasta el porche y recuperas el aliento.<br/>");
-					lib.out ("showMsg", ["de_intro_a_porche"])
-					lib.out ("PressKey", ["tecla"]);
-			//	}
-
-				// movimiento
-				lib.exec ("pcSetLoc", par.target)
-
-				// redescribe
-				lib.out ("ShowDesc", [lib.exec ("x", par.target)])
-				lib.out ("Refresh")
-		}
-	});
 
 	userFunctions.push ({
 		id: 'setFrame',

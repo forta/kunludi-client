@@ -264,14 +264,10 @@ let initReactions =  function  (reactions, primitives) {
       return false; // internal usage
     },
 
-    reaction: function (par_c) {
-
-      // reaction kernel: change of location
-      console.log("debug: goto!")
+    reaction: function (par_c) { // change of location: used mainly from links
       primitives.PC_SetCurrentLoc(par_c.item1);
       primitives.CA_ShowDesc(par_c.item1);
       return true;
-
     }
 
   });

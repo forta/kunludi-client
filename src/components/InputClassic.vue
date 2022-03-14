@@ -3,7 +3,7 @@
 
     <!-- press key -->
     <div v-if = "pendingPressKey">
-       <button v-on:click="pressAnyKey();showEndOfText()" > {{i8n_showText(pressKeyMessage)}}  </button>
+       <button class="puntero" v-on:click="pressAnyKey();showEndOfText()" > {{i8n_showText(pressKeyMessage)}}  </button>
     </div>
 
     <!--
@@ -196,6 +196,10 @@ div.mainChoices {
 
 div.menuPiece {
   float:left;
+}
+
+.puntero {
+  cursor: pointer;
 }
 
 </style>

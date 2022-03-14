@@ -7,7 +7,7 @@
         <!-- echo -->
         <p><b>
           <!-- <span v-if ="hitem.gameTurn > 0"> {{hitem.gameTurn}} &gt; </span> -->
-          {{i8n_showText(hitem.action, true)}} 
+          {{i8n_showText(hitem.action, true)}}
         </b></p>
 
         <div :class = " (hitem.gameTurn < history.length - 1)? 'beforeTheLastReaction': 'lastReaction' " >
@@ -17,9 +17,8 @@
         <!-- to-do: if choicesDisable do not show choice bottons at all! -->
                 <span v-if= "(r.type != 'rt_link')" v-html="i8n_showReaction(r, hitem.gameTurn)"></span>
                 <span v-if="(r.type == 'rt_link')">
-
                   <span v-if="((hitem.gameTurn < history.length - 1) || gameIsOver || (r.active == false))">{{r.param.l1.txt}}</span>
-                  <span v-if="((hitem.gameTurn == history.length - 1) && !gameIsOver  && ((typeof r.active == 'undefined') || (r.active == true)) )"><a v-on:click="execLink(r.param)">{{r.param.l1.txt}}</a></span>
+                  <span v-if="((hitem.gameTurn == history.length - 1) && !gameIsOver  && ((typeof r.active == 'undefined') || (r.active == true)) )"><a v-on:click="execLink(r.param)" class="puntero">{{r.param.l1.txt}}</a></span>
 
                 </span>
              </span>
@@ -116,12 +115,16 @@ div.lastReaction {
 
 span.reactionLink {
   background-color: #FFD;
+  cursor: pointer;
+}
+
+.puntero {
+  cursor: pointer;
 }
 
 div.choices {
 	background-color: #FFD;
   text-align: left;
 }
-
 
 </style>
