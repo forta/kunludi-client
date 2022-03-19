@@ -100,7 +100,8 @@ export default {
 	W_GetAttIndex:W_GetAttIndex,
 
 	GD_CreateMsg:GD_CreateMsg,
-	GD_DefAllLinks:GD_DefAllLinks,
+	GD_ResetLinks:GD_ResetLinks,
+	GD_addLink:GD_addLink,
 
 	MISC_Random:MISC_Random
 
@@ -435,6 +436,7 @@ Categories:
   GD_CreateMsg (indexLang, idMsg, txtMsg)
 
 	GD_DefAllLinks (linkArray)
+	GD_addLink
 
 	MISC:
 
@@ -923,65 +925,102 @@ function GD_CreateMsg (lang, idMsg, txtMsg) {
 
 }
 
-function GD_DefAllLinks (linkArray) {
+function	addDetailedSubreactionToLink (reactionList, reactionListId, subReaction) {
+	// add the subREaction
+  for (var k=0; k<reactionList.length;k++) {
+		if (typeof reactionList[k].id != "undefined" ) {
+			if ((reactionList[k].id == reactionListId) && (reactionList[k].type == "rt_link")){
+				// reactionList[k].active = true
+				if (typeof reactionList[k].param.l1.subReactions == "undefined") {reactionList[k].param.l1.subReactions = []}
 
-	//console.log ("Definition of links: " + JSON.stringify(linkArray))
+				var subReaction2=JSON.parse(JSON.stringify(subReaction)); // to avoid strange behaviour (because of "var")
+				reactionList[k].param.l1.subReactions.push (subReaction2)
+			}
+		}
+	}
+}
 
-	function getReactionListIndex (reactionList, reactionListId) {
+function GD_addLink (linkDef) {
 
-		for (let k=0; k<reactionList.length;k++) {
-			if (typeof reactionList[k].id != "undefined" ) {
-				if ((reactionList[k].id == reactionListId) && (reactionList[k].type == "rt_link")) {
-					return k
-				}
+  let reactionListId = linkDef.id
+
+	// index of reactionListId in reactionList, if it is a link
+	let rIndex
+	for (rIndex=0; rIndex<this.reactionList.length;rIndex++) {
+		if (typeof this.reactionList[rIndex].id != "undefined" ) {
+			if ((this.reactionList[rIndex].id == reactionListId) && (this.reactionList[rIndex].type == "rt_link")) {
+				break
 			}
 		}
 	}
 
-	function setLinkDefinition (reactionList, reactionListId, subReaction) {
+	// link activation
+	this.reactionList[rIndex].active = true
 
-		for (var k=0; k<reactionList.length;k++) {
-			if (typeof reactionList[k].id != "undefined" ) {
-				if ((reactionList[k].id == reactionListId) && (reactionList[k].type == "rt_link")){
-					// reactionList[k].active = true
-					if (typeof reactionList[k].param.l1.subReactions == "undefined") {reactionList[k].param.l1.subReactions = []}
-					var subReaction2=JSON.parse(JSON.stringify(subReaction)); // to avoid strange behaviour (because of "var")
-					reactionList[k].param.l1.subReactions.push (subReaction2)
-				}
+  // for each attribute but id
+	const props = Object.getOwnPropertyNames(linkDef)
+	for (let px=0;px<props.length; px++) {
+		if (props[px] == "id") continue
+		let type = props[px]
+
+		// completing especific data for each subReaction
+	  let subReaction = {type: type}
+
+	 	console.log ("reactionListId: " + reactionListId + ", type: " + type)
+
+	  if (type == "url") {
+		  subReaction.url = linkDef.url
+			addDetailedSubreactionToLink (this.reactionList, reactionListId, subReaction)
+
+		} else if (type == "libCode") {
+		  subReaction.functionId = linkDef.libCode.functionId
+			subReaction.par = linkDef.libCode.par
+			addDetailedSubreactionToLink (this.reactionList, reactionListId, subReaction)
+
+		} else if (type == "userCode") {
+			subReaction.functionId = linkDef.userCode.functionId
+			subReaction.par = linkDef.userCode.par
+			addDetailedSubreactionToLink (this.reactionList, reactionListId, subReaction)
+
+		} else if (type == "visibleToTrue") {
+	  	subReaction = {type: "visible"}
+		  for (var j=0; j<linkDef.visibleToTrue.length;j++) {
+				subReaction.rid = linkDef.visibleToTrue[j]
+				subReaction.visible = true
+				addDetailedSubreactionToLink (this.reactionList, reactionListId, subReaction)
 			}
-		}
 
-	}
-
-	// clear data
-	for (var k=0; k<this.reactionList.length;k++) {
-		if (typeof this.reactionList[k].id != "undefined" ) {
-			if (this.reactionList[k].type == "rt_link"){
-				this.reactionList[k].active = false
-				this.reactionList[k].param.l1.subReactions = []
+		} else if (type == "visibleToFalse") {
+	  	subReaction = {type: "visible"}
+		  for (var j=0; j<linkDef.visibleToFalse.length;j++) {
+				subReaction.rid = linkDef.visibleToFalse[j]
+				subReaction.visible = false
+				addDetailedSubreactionToLink (this.reactionList, reactionListId, subReaction)
 			}
-		}
-	}
 
-	for (var i=0; i<linkArray.length;i++) {
-		var reactionListId = linkArray[i].id
-		let subReaction
+		} else if (type == "changeTo") {
+	    subReaction = {type: "visible"}
+		  subReaction.rid = linkDef.changeTo
+		  subReaction.visible = true
+		  addDetailedSubreactionToLink (this.reactionList, reactionListId, subReaction)
+		  // self hidden
+		  subReaction = {type: "visible"}
+		  subReaction.rid = reactionListId
+		  subReaction.visible = false
+		  addDetailedSubreactionToLink  (this.reactionList, reactionListId, subReaction)
 
-		// link activation
-		let rIndex = getReactionListIndex (this.reactionList, reactionListId)
-		this.reactionList[rIndex].active = true
-		// to-do: if activatedBy exists, the pointed variable should be used to set whether it's active or not
-		if (typeof linkArray[i].activatedBy != "undefined") {
+		} else if (type == "activatedBy") {
+		  // to-do: if activatedBy exists, the pointed variable should be used to set whether it's active or not
 			if (offlineMode) {
-				console.log ("ActivatedBy?: " + JSON.stringify (linkArray[i]))
+				console.log ("ActivatedBy?: " + JSON.stringify (linkDef))
 			}
 
 			/*
-			let item = this.IT_X (linkArray[i].activatedBy)
+			let item = this.IT_X (linkDef.activatedBy)
 			let value = this.IT_GetAttPropValue (item, "generalState", "state")
 			*/
 
-			let value = this.IT_GetAttPropValueUsingId (linkArray[i].activatedBy)
+			let value = this.IT_GetAttPropValueUsingId (linkDef.activatedBy)
 
 			if (offlineMode) {
 				console.log ("Value: " + value)
@@ -991,113 +1030,85 @@ function GD_DefAllLinks (linkArray) {
 			}
 			// to-do: ??
 			subReaction = {type: "activatedBy"}
-			subReaction.activatedBy = linkArray[i].activatedBy
-			setLinkDefinition (this.reactionList, reactionListId, subReaction)
+			subReaction.activatedBy = linkDef.activatedBy
+			addDetailedSubreactionToLink  (this.reactionList, reactionListId, subReaction)
 
-		}
-
-		if (typeof linkArray[i].changeTo  != "undefined") {
-			subReaction = {type: "visible"}
-			subReaction.rid = linkArray[i].changeTo
-			subReaction.visible = true
-			setLinkDefinition (this.reactionList, reactionListId, subReaction)
-			// self hidden
-			subReaction = {type: "visible"}
-			subReaction.rid = reactionListId
-			subReaction.visible = false
-			setLinkDefinition (this.reactionList, reactionListId, subReaction)
-		}
-
-		if (typeof linkArray[i].visibleToFalse  != "undefined") {
-			subReaction = {type: "visible"}
-			for (var j=0; j<linkArray[i].visibleToFalse.length; j++) {
-					subReaction.rid = linkArray[i].visibleToFalse[j]
-					subReaction.visible = false
-					setLinkDefinition (this.reactionList, reactionListId, subReaction)
-			}
-		}
-
-		if (typeof linkArray[i].visibleToTrue != "undefined") {
-			subReaction = {type: "visible"}
-			for (var j=0; j<linkArray[i].visibleToTrue.length;j++) {
-					subReaction.rid = linkArray[i].visibleToTrue[j]
-					subReaction.visible = true
-					setLinkDefinition (this.reactionList, reactionListId, subReaction)
-			}
-		}
-
-		if (typeof linkArray[i].action != "undefined") {
-			// console.log ("link def (action): " + JSON.stringify(linkArray[i].action))
-			subReaction = {type: "action", choiceId: linkArray[i].action.choiceId}
+		} else if (type == "action") {
+			// console.log ("link def (action): " + JSON.stringify(linkDef.action))
+			subReaction = {type: "action", choiceId: linkDef.action.choiceId}
 
 			// parm validation
 			let validation = true
 			if (subReaction.choiceId == "dir1") {
 				// params: d1, d1Id, target, targetId
-				if (typeof linkArray[i].action.d1 == "undefined") {validation = false}
-				else {subReaction.d1 = linkArray[i].action.d1}
-				if (typeof linkArray[i].action.d1Id == "undefined") {validation = false}
-				else {subReaction.d1Id = linkArray[i].action.d1Id}
-				if (typeof linkArray[i].action.target == "undefined") {validation = false}
-				else {subReaction.target = linkArray[i].action.target}
-				if (typeof linkArray[i].action.targetId == "undefined") {validation = false}
-				else {subReaction.targetId = linkArray[i].action.targetId}
+				if (typeof linkDef.action.d1 == "undefined") {validation = false}
+				else {subReaction.d1 = linkDef.action.d1}
+				if (typeof linkDef.action.d1Id == "undefined") {validation = false}
+				else {subReaction.d1Id = linkDef.action.d1Id}
+				if (typeof linkDef.action.target == "undefined") {validation = false}
+				else {subReaction.target = linkDef.action.target}
+				if (typeof linkDef.action.targetId == "undefined") {validation = false}
+				else {subReaction.targetId = linkDef.action.targetId}
 				// param: targetId
-				if (typeof linkArray[i].action.targetId == "undefined") {validation = false}
-				else {subReaction.targetId = linkArray[i].action.targetId}
-		  } else if ((subReaction.choiceId == "obj1") || (subReaction.choiceId == "action0") ||  (subReaction.choiceId == "action") ||  (subReaction.choiceId == "action2") ) {
+				if (typeof linkDef.action.targetId == "undefined") {validation = false}
+				else {subReaction.targetId = linkDef.action.targetId}
+			} else if ((subReaction.choiceId == "obj1") || (subReaction.choiceId == "action0") ||  (subReaction.choiceId == "action") ||  (subReaction.choiceId == "action2") ) {
 				// param: actionId
 				if ((subReaction.choiceId == "action0") ||  (subReaction.choiceId == "action") ||  (subReaction.choiceId == "action2") ) {
-				  if (typeof linkArray[i].action.actionId == "undefined") {validation = false}
-				  else subReaction.actionId = linkArray[i].action.actionId
-			  }
+					if (typeof linkDef.action.actionId == "undefined") {validation = false}
+					else subReaction.actionId = linkDef.action.actionId
+				}
 
 				// param o1Id
 				if ((subReaction.choiceId == "obj1") ||  (subReaction.choiceId == "action") ||  (subReaction.choiceId == "action2") ) {
-				  if (typeof linkArray[i].action.o1Id == "undefined") {validation = false}
+					if (typeof linkDef.action.o1Id == "undefined") {validation = false}
 					else {
-						subReaction.o1Id = linkArray[i].action.o1Id
-	 				  subReaction.o1 = this.IT_X (subReaction.o1Id)
+						subReaction.o1Id = linkDef.action.o1Id
+						subReaction.o1 = this.IT_X (subReaction.o1Id)
 					}
 					//param parent
 					if (subReaction.choiceId == "obj1") {subReaction.parent = "here"} // to-do
 				}
 				// param o2Id
 				if (subReaction.choiceId == "action2") {
-				  if (typeof linkArray[i].action.o2Id == "undefined") {validation = false}
+					if (typeof linkDef.action.o2Id == "undefined") {validation = false}
 					else {
-						subReaction.o2Id = linkArray[i].action.o21Id
-	 				  subReaction.o2 = this.IT_X (subReaction.o2Id)
+						subReaction.o2Id = linkDef.action.o21Id
+						subReaction.o2 = this.IT_X (subReaction.o2Id)
 					}
 				}
-			} else { validation = false	}
+			} else {
+				validation = false
+		  }
 
 			if (validation) {
-				setLinkDefinition (this.reactionList, reactionListId, subReaction)
+				addDetailedSubreactionToLink (this.reactionList, reactionListId, subReaction)
 			} else  {
 				console.log ("error on param of link def")
 			}
-		} // choiceId == action
 
-		if (typeof linkArray[i].userCode != "undefined") {
-		  //console.log ("link def (userCode): " + JSON.stringify(linkArray[i].userCode))
-			subReaction = {type: "userCode", functionId: linkArray[i].userCode.functionId, par: linkArray[i].userCode.par}
-		  setLinkDefinition (this.reactionList, reactionListId, subReaction)
-		}
-
-		if (typeof linkArray[i].libCode != "undefined") {
-		  //console.log ("link def (libCode): " + JSON.stringify(linkArray[i].libCode))
-			subReaction = {type: "libCode", functionId: linkArray[i].libCode.functionId, par: linkArray[i].libCode.par}
-		  setLinkDefinition (this.reactionList, reactionListId, subReaction)
-		}
-
-		if (typeof linkArray[i].url != "undefined") {
-			subReaction = {type: "url"}
-			subReaction.url = linkArray[i].url
-			setLinkDefinition (this.reactionList, reactionListId, subReaction)
+		} else {
+			console.log ("Erro: reactionListId: " + reactionListId + ", type: " +  type)
 		}
 
 	}
+}
+
+
+function GD_ResetLinks () {
+
+	//console.log ("Definition of links: " + JSON.stringify(linkArray))
+
+	// clear data: deactivate links and clean subReactions
+	for (let k=0; k<this.reactionList.length;k++) {
+		if (typeof this.reactionList[k].id != "undefined" ) {
+			if (this.reactionList[k].type == "rt_link"){
+				this.reactionList[k].active = false
+				this.reactionList[k].param.l1.subReactions = []
+			}
+		}
+	}
+
 }
 
 

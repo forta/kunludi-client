@@ -93,14 +93,13 @@ items.push ({
 		let consi1 = lib.out ("showMsg", ["Consideración1",{l1: {id: "consi1", txt: "sigue leyendo"}}, false])
 		let consi2 = lib.out ("showMsg", ["Consideración2",{l1: {id: "consi2", txt: "El juego comienza"}}, false])
 
-		lib.GD_DefAllLinks ([
-			{ id:intro0, url: "https://itch.io/jam/ectocomp-2021-espanol"},
-			{ id:intro1, visibleToFalse: [intro2], changeTo: consi0},
-			{ id:intro2, visibleToFalse: [intro1], changeTo: intro3, action: { choiceId: "action", actionId:"goto", o1Id: "intro2"} },
-			{ id:consi0, changeTo: consi1},
-			{ id:consi1, changeTo: consi2},
-			{ id:consi2, changeTo: intro3, 	action: { choiceId: "action", actionId:"goto", o1Id: "intro2"}}
-		])
+		lib.GD_ResetLinks ()
+		lib.GD_addLink({ id:intro0, url: "https://itch.io/jam/ectocomp-2021-espanol"})
+		lib.GD_addLink({ id:intro1, visibleToFalse: [intro2], changeTo: consi0})
+		lib.GD_addLink({ id:intro2, visibleToFalse: [intro1], changeTo: intro3, action: { choiceId: "action", actionId:"goto", o1Id: "intro2"} })
+		lib.GD_addLink({ id:consi0, changeTo: consi1})
+		lib.GD_addLink({ id:consi1, changeTo: consi2})
+		lib.GD_addLink({ id:consi2, changeTo: intro3, 	action: { choiceId: "action", actionId:"goto", o1Id: "intro2"}})
 
 	}
 
@@ -155,9 +154,8 @@ items.push ({
 		lib.GD_CreateMsg ("es", "corre", "¡%l1!<br/>")
 		let msg_corre = lib.out ("showMsg", ["corre",{l1: {id: "corre", txt: "CORRE"}}])
 
-		lib.GD_DefAllLinks ([
-			{ id: msg_corre, 	action: { choiceId: "action", actionId:"goto", o1Id: "porche"}}
-		])
+		lib.GD_ResetLinks ()
+		lib.GD_addLink(	{ id: msg_corre, 	action: { choiceId: "action", actionId:"goto", o1Id: "porche"}} )
 	}
 
 });
@@ -175,10 +173,9 @@ items.push ({
 
 			let msg_movil = lib.out ("showMsg", ["desc-porche-2",{l1: {id: "móvil", txt: "móvil"}}]);
 
-			lib.GD_DefAllLinks ([
-				{ id:dentro, action: { choiceId: "dir1", actionId:"go", d1Id:"in", target: lib.exec ("x", ["hall"]), targetId: "hall", d1Id:"in", d1: lib.exec ("getDir", ["in"])}},
-			  { id:msg_movil, action: { choiceId: "obj1", o1Id: "móvil"}}
-			])
+			lib.GD_ResetLinks ()
+			lib.GD_addLink (	{ id:dentro, action: { choiceId: "dir1", actionId:"go", d1Id:"in", target: lib.exec ("x", ["hall"]), targetId: "hall", d1Id:"in", d1: lib.exec ("getDir", ["in"])}} )
+			lib.GD_addLink (  { id:msg_movil, action: { choiceId: "obj1", o1Id: "móvil"}} )
 
 			lib.GD_CreateMsg ("es","desc-porche-3", "Por el rabillo del ojo vez algo deslizarse. Al enfocar  la vista ves un surco sobre el descuidado césped que va desde donde viste el movimiento hasta un agujero debajo de una de las paredes externas de la casa.<br/>");
 			lib.out ("showMsg", ["desc-porche-3"])
@@ -187,9 +184,8 @@ items.push ({
 
 			lib.out ("EnableChoices", [true])
 		} else {
-			lib.GD_DefAllLinks ([
-			  { id:dentro, action: { choiceId: "dir1", actionId:"go", d1Id:"in", target: lib.exec("x",["hall"]), targetId: "hall", d1Id:"in", d1: lib.exec ("getDir", ["in"])}}
-			])
+			lib.GD_ResetLinks ()
+			lib.GD_addLink ( { id:dentro, action: { choiceId: "dir1", actionId:"go", d1Id:"in", target: lib.exec("x",["hall"]), targetId: "hall", d1Id:"in", d1: lib.exec ("getDir", ["in"])}} )
 		}
 
 	}
@@ -233,13 +229,13 @@ items.push ({
 			let msg_interruptores_1 = lib.out ("showMsg", ["interruptores_1",{l1:{id: "interruptores_1", txt: "algunos interruptores"}}])
 			let msg_interruptores_2 = lib.out ("showMsg", ["interruptores_2",undefined, interruptoresVisto])
 
-			lib.GD_DefAllLinks ([
-				{ id: desc_hall_1, action: { choiceId: "action", actionId:"ex", o1Id: "chimenea"}, activatedBy: "huesos"  } ,
-				{ id: desc_hall_a_cocina, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["cocina"]), targetId: "cocina", d1Id:"d270", d1: lib.exec ("getDir", ["d270"])}},
-				{ id: desc_hall_2, visibleToTrue: [desc_hall_2_plus]},
-				{ id: msg_interruptores_1, visibleToTrue: [msg_interruptores_2], activatedBy: "interruptores" },
-				{id: desc_hall_3, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["pasillo"]), targetId: "pasillo", d1Id:"up", d1: lib.exec ("getDir", ["up"])}}
-			])
+			lib.GD_ResetLinks ()
+			lib.GD_addLink (	{ id: desc_hall_1, action: { choiceId: "action", actionId:"ex", o1Id: "chimenea"}, activatedBy: "huesos"  } )
+			lib.GD_addLink (	{ id: desc_hall_a_cocina, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["cocina"]), targetId: "cocina", d1Id:"d270", d1: lib.exec ("getDir", ["d270"])}} )
+			lib.GD_addLink (	{ id: desc_hall_2, visibleToTrue: [desc_hall_2_plus]} )
+			lib.GD_addLink (	{ id: msg_interruptores_1, visibleToTrue: [msg_interruptores_2], activatedBy: "interruptores" } )
+			lib.GD_addLink (	{id: desc_hall_3, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["pasillo"]), targetId: "pasillo", d1Id:"up", d1: lib.exec ("getDir", ["up"])}} )
+
 		}
 
 	});
@@ -251,9 +247,9 @@ items.push ({
 			lib.GD_CreateMsg ("es","desc_cocina", "Es la cocina más nauseabunda que has visto en tu vida. Te da asco tocar nada, pero una curiosidad malsana te tienta a %l1.")
 			let desc_cocina =  lib.out ("showMsg", ["desc_cocina",{l1:{id: "desc_cocina", txt: "mirar qué habrá dentro de la nevera"}}])
 
-			lib.GD_DefAllLinks ([
-				{id: desc_cocina, action: { choiceId: "action", actionId:"ex", o1Id: "nevera"} }
-			])
+			lib.GD_ResetLinks ()
+			lib.GD_addLink (	{id: desc_cocina, action: { choiceId: "action", actionId:"ex", o1Id: "nevera"} } )
+
 		}
 
 	});
@@ -286,12 +282,11 @@ items.push ({
 			let msg_pasillo_poster = lib.out ("showMsg", ["pasillo_poster",{l1: {id: "pasillo_poster", txt: "el póster"}}, !posterVisto & ratonPresente])
 			let msg_pasillo_hab_abuelo = lib.out ("showMsg", ["pasillo_hab_abuelo"])
 
-			lib.GD_DefAllLinks ([
-				{ id:msg_pasillo_cuadro, action: { choiceId: "action", actionId:"ex", o1Id: "cuadro1"}},
-				{ id:msg_pasillo_poster, action: { choiceId: "action", actionId:"ex", o1Id: "póster"}, libCode: {functionId:'setValue', par: {id:"póster", value:"1"}} },
-				{ id:msg_pasillo_hab_padres, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["hab_padres"]), targetId: "hab_padres", d1Id:"d0", d1: lib.exec ("getDir", ["d0"])}},
-				{ id:msg_pasillo_hab_hijos, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["hab_hijos"]), targetId: "hab_hijos", d1Id:"d270", d1: lib.exec ("getDir", ["d270"])}}
-			])
+			lib.GD_ResetLinks ()
+			lib.GD_addLink (	{ id:msg_pasillo_cuadro, action: { choiceId: "action", actionId:"ex", o1Id: "cuadro1"}} )
+			lib.GD_addLink (	{ id:msg_pasillo_poster, action: { choiceId: "action", actionId:"ex", o1Id: "póster"}, libCode: {functionId:'setValue', par: {id:"póster", value:"1"}} } )
+			lib.GD_addLink (	{ id:msg_pasillo_hab_padres, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["hab_padres"]), targetId: "hab_padres", d1Id:"d0", d1: lib.exec ("getDir", ["d0"])}} )
+			lib.GD_addLink (	{ id:msg_pasillo_hab_hijos, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["hab_hijos"]), targetId: "hab_hijos", d1Id:"d270", d1: lib.exec ("getDir", ["d270"])}} )
 
 		}
 
@@ -338,10 +333,9 @@ items.push ({
 
 			let msg_gato_presente = lib.out ("showMsg", ["desc-hab-hijos-gato-presente",{l1: {id: "gato", txt: "gato"}}, gatoHay & !gatoVisto])
 
-			lib.GD_DefAllLinks ([
-				{ id: msg_raton_presente, action: { choiceId: "action", actionId:"ex", o1Id: "ratón"} } ,
-				{ id: msg_gato_presente,  action: { choiceId: "action", actionId:"ex", o1Id: "gato"} }
-			])
+			lib.GD_ResetLinks ()
+			lib.GD_addLink (	{ id: msg_raton_presente, action: { choiceId: "action", actionId:"ex", o1Id: "ratón"} } )
+			lib.GD_addLink (	{ id: msg_gato_presente,  action: { choiceId: "action", actionId:"ex", o1Id: "gato"} } )
 
 		}
 
@@ -410,16 +404,13 @@ items.push ({
 			let msg_cuadro_7 = lib.out ("showMsg", ["el_cuadro_7",{l1: {id: "cuadro_7", txt: "una figura borrada a cuchilladas"}}, !bis_active])
 			let msg_cuadro_7_bis = lib.out ("showMsg", ["el_cuadro_7_bis",undefined, bis_active])
 
-			lib.GD_DefAllLinks ([
-				// activatedBy: cuadro1.familiaState.X
-
-				{ id: msg_cuadro_2, changeTo: msg_cuadro_2_bis, userCode: {functionId: "setFrame", par: {pnj:"padre"} }, activatedBy: "cuadro1.familiaState.padre" },
-				{ id: msg_cuadro_3, changeTo: msg_cuadro_3_bis, userCode: {functionId: "setFrame", par: {pnj:"madre"} }, activatedBy: "cuadro1.familiaState.madre" },
-				{ id: msg_cuadro_4, changeTo: msg_cuadro_4_bis, userCode: {functionId: "setFrame", par: {pnj:"chica"} }, activatedBy: "cuadro1.familiaState.chica"	},
-				{ id: msg_cuadro_5, changeTo: msg_cuadro_5_bis, userCode: {functionId: "setFrame", par: {pnj:"niño"} }, activatedBy: "cuadro1.familiaState.niño" 	},
-				{ id: msg_cuadro_6, changeTo: msg_cuadro_6_bis, userCode: {functionId: "setFrame", par: {pnj:"abuelo"} }, activatedBy: "cuadro1.familiaState.abuelo" },
-				{ id: msg_cuadro_7, changeTo: msg_cuadro_7_bis, userCode: {functionId: "setFrame", par: {pnj:"abuela"} }, activatedBy: "cuadro1.familiaState.abuela" }
-			])
+			lib.GD_ResetLinks ()
+			lib.GD_addLink (	{ id: msg_cuadro_2, changeTo: msg_cuadro_2_bis, userCode: {functionId: "setFrame", par: {pnj:"padre"} }, activatedBy: "cuadro1.familiaState.padre" } )
+			lib.GD_addLink (	{ id: msg_cuadro_3, changeTo: msg_cuadro_3_bis, userCode: {functionId: "setFrame", par: {pnj:"madre"} }, activatedBy: "cuadro1.familiaState.madre" } )
+			lib.GD_addLink (	{ id: msg_cuadro_4, changeTo: msg_cuadro_4_bis, userCode: {functionId: "setFrame", par: {pnj:"chica"} }, activatedBy: "cuadro1.familiaState.chica"	} )
+			lib.GD_addLink (	{ id: msg_cuadro_5, changeTo: msg_cuadro_5_bis, userCode: {functionId: "setFrame", par: {pnj:"niño"} }, activatedBy: "cuadro1.familiaState.niño" 	} )
+			lib.GD_addLink (	{ id: msg_cuadro_6, changeTo: msg_cuadro_6_bis, userCode: {functionId: "setFrame", par: {pnj:"abuelo"} }, activatedBy: "cuadro1.familiaState.abuelo" } )
+			lib.GD_addLink (	{ id: msg_cuadro_7, changeTo: msg_cuadro_7_bis, userCode: {functionId: "setFrame", par: {pnj:"abuela"} }, activatedBy: "cuadro1.familiaState.abuela" } )
 
 		}
 
@@ -452,11 +443,11 @@ items.push ({
 			let msg_huesos_1 = lib.out ("showMsg", ["huesos_1",{l1: {id: "huesos_1", txt: "sacarle una foto a la jaula y volverte a casa"}}, jaulaVisto & huesosVisto])
 			let msg_huesos_1_bis = lib.out ("showMsg", ["huesos_1_bis",undefined, jaulaVisto & !huesosVisto])
 
-			lib.GD_DefAllLinks ([
-				{ id: msg_chimenea_1, changeTo: msg_chimenea_1_bis, visibleToTrue: [msg_jaula_1], libCode: {functionId:'setValue', par: {id:"jaula", value:"1"}} },
-				{ id: msg_jaula_1, changeTo: msg_jaula_1_bis, visibleToTrue: [msg_huesos_1] , libCode: {functionId:'setValue', par: {id:"huesos", value:"1"}} },
-				{ id: msg_huesos_1, changeTo: msg_huesos_1_bis, action: { choiceId: "action", actionId:"sacar_foto", o1Id: "móvil"} }
-			])
+			lib.GD_ResetLinks ()
+			lib.GD_addLink (	{ id: msg_chimenea_1, changeTo: msg_chimenea_1_bis, visibleToTrue: [msg_jaula_1], libCode: {functionId:'setValue', par: {id:"jaula", value:"1"}} } )
+			lib.GD_addLink (	{ id: msg_jaula_1, changeTo: msg_jaula_1_bis, visibleToTrue: [msg_huesos_1] , libCode: {functionId:'setValue', par: {id:"huesos", value:"1"}} } )
+			lib.GD_addLink (	{ id: msg_huesos_1, changeTo: msg_huesos_1_bis, action: { choiceId: "action", actionId:"sacar_foto", o1Id: "móvil"} } )
+
 		}
 
 	});
@@ -521,20 +512,19 @@ items.push ({
 			lib.GD_CreateMsg ("es","desc_nevera_3", "Pero ya no queda nada de su contenido original.<br/>");
 			lib.out ("showMsg", ["desc_nevera_3",undefined, !mostrarContenido])
 
-			lib.GD_DefAllLinks ([
-				{ id: msg_desc_botella_1, changeTo: msg_desc_botella_1_bis,
+			lib.GD_ResetLinks ()
+			lib.GD_addLink (	{ id: msg_desc_botella_1, changeTo: msg_desc_botella_1_bis,
 					libCode: {functionId: "setValue", par: {id:"botella", value:"1"}}
-				},
-				{ id: msg_desc_taper_1, changeTo: msg_desc_taper_1_bis,
+				})
+			lib.GD_addLink (	{ id: msg_desc_taper_1, changeTo: msg_desc_taper_1_bis,
 					libCode: {functionId: "setValue", par: {id:"taper", value:"1"}}
-				},
-				{ id: msg_desc_dinamita_1, changeTo: msg_desc_dinamita_1_bis,
+				} )
+			lib.GD_addLink (	{ id: msg_desc_dinamita_1, changeTo: msg_desc_dinamita_1_bis,
 					libCode: {functionId: "setValue", par: {id:"dinamita", value:"1"}}
-				},
-				{ id: msg_desc_queso_1, changeTo: msg_desc_queso_1_bis,
+				} )
+			lib.GD_addLink (	{ id: msg_desc_queso_1, changeTo: msg_desc_queso_1_bis,
 					libCode: {functionId: "setValue", par: {id:"queso", value:"1"}}
-				}
-			])
+				} )
 
 		}
 
@@ -912,9 +902,8 @@ function initReactions (lib, usr) {
 				//  (selfie -> la foto saldrá sin sangre)
 
 
-				lib.GD_DefAllLinks ([
-					{ id:msg_coger_dinamita_3, action: { choiceId: "action", actionId:"sacar_foto", o1Id: "móvil"}}
-				])
+				lib.GD_ResetLinks ()
+				lib.GD_addLink (	{ id:msg_coger_dinamita_3, action: { choiceId: "action", actionId:"sacar_foto", o1Id: "móvil"}} )
 
 				lib.exec ("setLoc", ["dinamita", "limbo"])
 				lib.exec ("setLoc", ["botella", "limbo"])
