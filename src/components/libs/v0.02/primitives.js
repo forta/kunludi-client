@@ -317,8 +317,8 @@ function out (typeId, par) { // temp
 	let parIn
 	// mapping
 	if (typeId == "showMsg") {
-		parIn = (typeof par[0] == 'undefined') ? par : {txt: par[0], param: par[1], visibleIn: par[2]}
-		return this.CA_ShowMsg (parIn.txt, parIn.param, parIn.visibleIn)
+		parIn = (typeof par[0] == 'undefined') ? par : {txt: par[0], param: par[1], displayOptions: par[2]}
+		return this.CA_ShowMsg (parIn.txt, parIn.param, parIn.displayOptions)
 	}
 	//else
 	// here!! to-do
@@ -477,9 +477,28 @@ function CA_Refresh () {
  this.reactionList.push ({type:this.caMapping("REFRESH")});
 }
 
-function CA_ShowMsg (txt, param, visibleIn) {
+function CA_ShowMsg (txt, param, displayOptions) {
 
-  var visible = (typeof visibleIn == "undefined") ? true : visibleIn
+	var visible, visibleBy // visible: true by default; visibleBy undefined by default
+
+	if (typeof displayOptions == "object") {
+		if (typeof displayOptions.visibleBy != "undefined") {
+      visible = true
+			let value = this.IT_GetAttPropValueUsingId (displayOptions.visibleBy)
+			if (offlineMode) {
+				console.log ("visibleBy value: " + value)
+			}
+			// game variable must be grater than 0 to hide the message
+			if (value > 0) {
+				visible = false
+			}
+
+		} else {
+			visible = (typeof displayOptions.visible == "undefined") ? true : displayOptions.visible
+		}
+	} else { // if displayOptions is a value, it the value for visible
+		visible = (typeof displayOptions == "undefined") ? true : displayOptions
+	}
 
   var id = this.reactionList.length
   // to-do: this is a temp trick
@@ -1025,9 +1044,12 @@ function GD_addLink (linkDef) {
 			if (offlineMode) {
 				console.log ("Value: " + value)
 			}
+
+			// game variable must be grater than 0
 			if (value > 0) {
 				this.reactionList[rIndex].active = false
 			}
+
 			// to-do: ??
 			subReaction = {type: "activatedBy"}
 			subReaction.activatedBy = linkDef.activatedBy

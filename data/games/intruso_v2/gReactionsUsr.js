@@ -77,26 +77,28 @@ items.push ({
 
 		lib.GD_CreateMsg ("es","tecla","avanza")
 
+		lib.GD_ResetLinks ()
+
 		lib.GD_CreateMsg ("es","Intro0", "Bienvenido al juego Intruso, participante en la %l1.<br/>Correcciones hechas a fecha de 17 de noviembre, disculpen los bugs previos y gracias por los comentarios!<br/>");
+		let intro0 = lib.out ("showMsg", ["Intro0",{l1: {id: "intro0", txt: "ectocomp 2021"}}]);
+		lib.GD_addLink({ id:intro0, url: "https://itch.io/jam/ectocomp-2021-espanol"})
+
 		lib.GD_CreateMsg ("es","Intro1", "Antes de comenzar el juego, hay algunas %l1 que deberías conocer previamente.<br/>");
 		lib.GD_CreateMsg ("es","Intro2", "Pero si ya las conoces, puedes empezar a %l1 directamente.<br/>");
+		let intro1 = lib.out ("showMsg", ["Intro1",{l1: {id: "intro1", txt: "consideraciones de jugabilidad"}}]);
+		let intro2 = lib.out ("showMsg", ["Intro2",{l1: {id: "intro2", txt: "jugar"}}]);
+		lib.GD_addLink({ id:intro1, visibleToFalse: [intro2], changeTo: consi0})
+
 		lib.GD_CreateMsg ("es","Intro3", "Disfruta de la partida.<br/>");
+		let intro3 = lib.out ("showMsg", ["Intro3", undefined, false]); // visible: false, changed by a link
+		lib.GD_addLink({ id:intro2, visibleToFalse: [intro1], changeTo: intro3, action: { choiceId: "action", actionId:"goto", o1Id: "intro2"} })
+
 		lib.GD_CreateMsg ("es", "Consideración0", "Si ya has jugado anteriormente a juegos desarrollados con el motor de kunludi ya sabrás que la interacción se realiza con las opciones disponibles después del texto de la última reacción. Cuando la acción no es directa, primero tienes que seleccionar el objeto sobre el que quieres actuar y luego la acción a desarrollar.%l1<br/>");
 		lib.GD_CreateMsg ("es", "Consideración1", "En esta versión del motor, se han incorporado enlaces en los textos, simulando un poco el estilo Twine/Inkle. %l1<br/>");
 		lib.GD_CreateMsg ("es", "Consideración2", "También se ha incorporado un filtro para los los ítems y acciones disponibles. Si pulsas 'enter' mientras editas el filtro, se ejecutará la primera de las opciones disponibles. Es una forma muy dinámica de interacturar (al menos por web) y te animamos a usarla.%l1<br/>");
-
-		let intro0 = lib.out ("showMsg", ["Intro0",{l1: {id: "intro0", txt: "ectocomp 2021"}}]);
-		let intro1 = lib.out ("showMsg", ["Intro1",{l1: {id: "intro1", txt: "consideraciones de jugabilidad"}}]);
-		let intro2 = lib.out ("showMsg", ["Intro2",{l1: {id: "intro2", txt: "jugar"}}]);
-		let intro3 = lib.out ("showMsg", ["Intro3",undefined, false]);
 		let consi0 = lib.out ("showMsg", ["Consideración0",{l1: {id: "consi0", txt: "sigue leyendo"}}, false])
 		let consi1 = lib.out ("showMsg", ["Consideración1",{l1: {id: "consi1", txt: "sigue leyendo"}}, false])
 		let consi2 = lib.out ("showMsg", ["Consideración2",{l1: {id: "consi2", txt: "El juego comienza"}}, false])
-
-		lib.GD_ResetLinks ()
-		lib.GD_addLink({ id:intro0, url: "https://itch.io/jam/ectocomp-2021-espanol"})
-		lib.GD_addLink({ id:intro1, visibleToFalse: [intro2], changeTo: consi0})
-		lib.GD_addLink({ id:intro2, visibleToFalse: [intro1], changeTo: intro3, action: { choiceId: "action", actionId:"goto", o1Id: "intro2"} })
 		lib.GD_addLink({ id:consi0, changeTo: consi1})
 		lib.GD_addLink({ id:consi1, changeTo: consi2})
 		lib.GD_addLink({ id:consi2, changeTo: intro3, 	action: { choiceId: "action", actionId:"goto", o1Id: "intro2"}})
@@ -197,11 +199,11 @@ items.push ({
 
 		desc: function () {
 
+			lib.GD_ResetLinks ()
+
 			// debug: sólo por si en pruebas empezamos aquí.
 			lib.GD_CreateMsg ("es","tecla","avanza")
 			lib.exec ("setLoc", ["móvil", lib.exec ("pc")])
-
-			// here!
 
 			lib.GD_CreateMsg ("es","desc_hall_0", "Dejas detrás de ti la puerta exterior. Sabes que salir representa resignarte a la burla de tus amigos y perder tu fabuloso mazo de cartas.<br/>");
 			lib.out ("showMsg", ["desc_hall_0"]);
@@ -210,31 +212,27 @@ items.push ({
 
 			lib.GD_CreateMsg ("es","desc_hall_1", "Una inmensa %l1 domina uno de los laterales del salón. ");
 			let desc_hall_1 = lib.out ("showMsg", ["desc_hall_1",{l1:{id: "desc_hall_1", txt: "chimenea"}}])
+			lib.GD_addLink (	{ id: desc_hall_1, action: { choiceId: "action", actionId:"ex", o1Id: "chimenea"}, activatedBy: "huesos"  } )
 
 			lib.GD_CreateMsg ("es","desc_hall_a_cocina", "Por el otro lateral, atravesando el comedor, entrevés una puerta que seguramente %l1.<br/>");
+			let desc_hall_a_cocina = lib.out ("showMsg", ["desc_hall_a_cocina",{l1:{id: "desc_hall_a_cocina", txt: "lleva a la cocina"}}])
+			lib.GD_addLink (	{ id: desc_hall_a_cocina, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["cocina"]), targetId: "cocina", d1Id:"d270", d1: lib.exec ("getDir", ["d270"])}} )
+
 			lib.GD_CreateMsg ("es","desc_hall_2", "A través de un magnífica escalera con tapete, que sería rojo si no fuera por las marcas de %l1, ");
 			lib.GD_CreateMsg ("es","desc_hall_2_plus", " no sólo de personas sino también de animales de distintos tamaños y que no identificas, ");
-			lib.GD_CreateMsg ("es","desc_hall_3", " podrías %l1.");
-
-			let desc_hall_a_cocina = lib.out ("showMsg", ["desc_hall_a_cocina",{l1:{id: "desc_hall_a_cocina", txt: "lleva a la cocina"}}])
 			let desc_hall_2 = lib.out ("showMsg", ["desc_hall_2",{l1:{id: "desc_hall_2", txt: "pisadas"}}])
 			let desc_hall_2_plus = lib.out ("showMsg", ["desc_hall_2_plus",undefined, false])
-			let desc_hall_3 = lib.out ("showMsg", ["desc_hall_3",{l1:{id: "desc_hall_3", txt: "ir a la planta alta"}}])
+			lib.GD_addLink (	{ id: desc_hall_2, visibleToTrue: [desc_hall_2_plus]} )
 
+			lib.GD_CreateMsg ("es","desc_hall_3", " podrías %l1.");
+			let desc_hall_3 = lib.out ("showMsg", ["desc_hall_3",{l1:{id: "desc_hall_3", txt: "ir a la planta alta"}}])
+			lib.GD_addLink (	{id: desc_hall_3, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["pasillo"]), targetId: "pasillo", d1Id:"up", d1: lib.exec ("getDir", ["up"])}} )
 
 			lib.GD_CreateMsg ("es","interruptores_1", "Está todo bastante oscuro pero ves %l1 ");
 			lib.GD_CreateMsg ("es","interruptores_2", "que están cubiertos de mugre pegajosa y no funcionan.<br/>");
-
-			let interruptoresVisto = (lib.exec ("getValue", {id:"interruptores"}) != "0")
 			let msg_interruptores_1 = lib.out ("showMsg", ["interruptores_1",{l1:{id: "interruptores_1", txt: "algunos interruptores"}}])
-			let msg_interruptores_2 = lib.out ("showMsg", ["interruptores_2",undefined, interruptoresVisto])
-
-			lib.GD_ResetLinks ()
-			lib.GD_addLink (	{ id: desc_hall_1, action: { choiceId: "action", actionId:"ex", o1Id: "chimenea"}, activatedBy: "huesos"  } )
-			lib.GD_addLink (	{ id: desc_hall_a_cocina, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["cocina"]), targetId: "cocina", d1Id:"d270", d1: lib.exec ("getDir", ["d270"])}} )
-			lib.GD_addLink (	{ id: desc_hall_2, visibleToTrue: [desc_hall_2_plus]} )
+			let msg_interruptores_2 = lib.out ("showMsg", ["interruptores_2", undefined, {visibleBy: "interruptores"}])
 			lib.GD_addLink (	{ id: msg_interruptores_1, visibleToTrue: [msg_interruptores_2], activatedBy: "interruptores" } )
-			lib.GD_addLink (	{id: desc_hall_3, action: { choiceId: "dir1", actionId:"go", target: lib.exec("x",["pasillo"]), targetId: "pasillo", d1Id:"up", d1: lib.exec ("getDir", ["up"])}} )
 
 		}
 
@@ -366,50 +364,60 @@ items.push ({
 				(lib.exec ("getValue", {id: "cuadro1", att: "familiaState.hijo"} )  == "0"),
 				(lib.exec ("getValue", {id: "cuadro1", att: "familiaState.abuelo"} )  == "0") ]
 
-			let bis_active = !(familiaActivation[0] || familiaActivation[1] || familiaActivation[2] || familiaActivation[3] || familiaActivation[4])
-
-
 			// si no se han visto ya todos, no mostrar opciones habituales sino sólo los enlaces
+			let bis_active = !(familiaActivation[0] || familiaActivation[1] || familiaActivation[2] || familiaActivation[3] || familiaActivation[4])
 			if (!bis_active) {lib.out ("EnableChoices", [false])}
 
 			lib.GD_CreateMsg ("es","el_cuadro_1", "La familia Rarita al completo: ");
+			lib.out ("showMsg", ["el_cuadro_1"])
+			lib.GD_ResetLinks ()
 
-			lib.GD_CreateMsg ("es","el_cuadro_2", "el %l1, ");
-			lib.GD_CreateMsg ("es","el_cuadro_2_bis", "el Papá Rarito, con un lobo a sus pies; ");
+			/*
+			código viejo, pendiente de borrar si va bien la nueva verisón
+			lib.GD_CreateMsg ("es","el_cuadro_2", "el %l1, "); // enlace expandible
+			lib.GD_CreateMsg ("es","el_cuadro_2_bis", "el Papá Rarito, con un lobo a sus pies; "); // bis: mensaje expandido
+			let msg_cuadro_2 = lib.out ("showMsg", ["el_cuadro_2",{l1: {id: "cuadro_2", txt: "Papá Rarito"}}, !bis_active])
+			let msg_cuadro_2_bis = lib.out ("showMsg", ["el_cuadro_2_bis",undefined, bis_active])
+			lib.GD_addLink (	{ id: msg_cuadro_2, changeTo: msg_cuadro_2_bis, userCode: {functionId: "setFrame", par: {pnj:"padre"} }, activatedBy: "cuadro1.familiaState.padre" } )
+			*/
+
+			// to-do: se puede cambiar para que se traten por separado (no usar bis_active sino cada variable por separado)
+			// versión nueva! here!
+			lib.GD_CreateMsg ("es","el_cuadro_2", "el %l1, "); // enlace expandible
+			lib.GD_CreateMsg ("es","el_cuadro_2_bis", "el Papá Rarito, con un lobo a sus pies; "); // bis: mensaje expandido
+			let msg_cuadro_2 = lib.out ("showMsg", ["el_cuadro_2",{l1: {id: "cuadro_2", txt: "Papá Rarito"}}, {visibleBy: "cuadro1.familiaState.padre"}}])
+			// here! uso de "!"
+			let msg_cuadro_2_bis = lib.out ("showMsg", ["el_cuadro_2_bis",undefined, {visibleBy: "!cuadro1.familiaState.padre"} ])
+			lib.GD_addLink (	{ id: msg_cuadro_2, changeTo: msg_cuadro_2_bis, userCode: {functionId: "setFrame", par: {pnj:"padre"} }, activatedBy: "cuadro1.familiaState.padre" } )
 
 			lib.GD_CreateMsg ("es","el_cuadro_3", "la %l1, ");
 			lib.GD_CreateMsg ("es","el_cuadro_3_bis", "la Mamá Rarita, con una serpiente inmensa como bufanda; ");
-			lib.GD_CreateMsg ("es","el_cuadro_4", "la %l1, ");
-			lib.GD_CreateMsg ("es","el_cuadro_4_bis", "la Chica Rarita y su look gótico-punk, acariciando a un gato negro; ");
-			lib.GD_CreateMsg ("es","el_cuadro_5", "el %l1, y ");
-			lib.GD_CreateMsg ("es","el_cuadro_5_bis", "el Niño Rarito, jugando con un orondo ratón; ");
-			lib.GD_CreateMsg ("es","el_cuadro_6", ", el %l1,");
-			lib.GD_CreateMsg ("es","el_cuadro_6_bis", "el Abuelo Rarito, con un murciélago en el hombro;");
-			lib.GD_CreateMsg ("es","el_cuadro_7", "y %l1.<br/>");
-			lib.GD_CreateMsg ("es","el_cuadro_7_bis", "y una figura borrada a cuchilladas, que deja entrever a una señora mayor también con un murciélago sobre su hombro. Si existió una Abuela Rarita en la familia es algo que desconocías hasta ahora. ¿Por qué habrán querido destrozar su recuerdo de manera tan cruel?<br/>");
-
-			lib.out ("showMsg", ["el_cuadro_1"])
-
-			let msg_cuadro_2 = lib.out ("showMsg", ["el_cuadro_2",{l1: {id: "cuadro_2", txt: "Papá Rarito"}}, !bis_active])
-			let msg_cuadro_2_bis = lib.out ("showMsg", ["el_cuadro_2_bis",undefined, bis_active])
-
 			let msg_cuadro_3 = lib.out ("showMsg", ["el_cuadro_3",{l1: {id: "cuadro_3", txt: "Mamá Rarita"}}, !bis_active])
 			let msg_cuadro_3_bis = lib.out ("showMsg", ["el_cuadro_3_bis",undefined, bis_active])
+			lib.GD_addLink (	{ id: msg_cuadro_3, changeTo: msg_cuadro_3_bis, userCode: {functionId: "setFrame", par: {pnj:"madre"} }, activatedBy: "cuadro1.familiaState.madre" } )
+
+			lib.GD_CreateMsg ("es","el_cuadro_4", "la %l1, ");
+			lib.GD_CreateMsg ("es","el_cuadro_4_bis", "la Chica Rarita y su look gótico-punk, acariciando a un gato negro; ");
 			let msg_cuadro_4 = lib.out ("showMsg", ["el_cuadro_4",{l1: {id: "cuadro_4", txt: "Chica Rarita"}}, !bis_active])
 			let msg_cuadro_4_bis = lib.out ("showMsg", ["el_cuadro_4_bis",undefined, bis_active])
+			lib.GD_addLink (	{ id: msg_cuadro_4, changeTo: msg_cuadro_4_bis, userCode: {functionId: "setFrame", par: {pnj:"chica"} }, activatedBy: "cuadro1.familiaState.chica"	} )
+
+			lib.GD_CreateMsg ("es","el_cuadro_5", "el %l1, y ");
+			lib.GD_CreateMsg ("es","el_cuadro_5_bis", "el Niño Rarito, jugando con un orondo ratón; ");
 			let msg_cuadro_5 = lib.out ("showMsg", ["el_cuadro_5",{l1: {id: "cuadro_5", txt: "Niño Rarito"}}, !bis_active])
 			let msg_cuadro_5_bis = lib.out ("showMsg", ["el_cuadro_5_bis",undefined, bis_active])
+			lib.GD_addLink (	{ id: msg_cuadro_5, changeTo: msg_cuadro_5_bis, userCode: {functionId: "setFrame", par: {pnj:"niño"} }, activatedBy: "cuadro1.familiaState.niño" 	} )
+
+			lib.GD_CreateMsg ("es","el_cuadro_6", ", el %l1,");
+			lib.GD_CreateMsg ("es","el_cuadro_6_bis", "el Abuelo Rarito, con un murciélago en el hombro;");
 			let msg_cuadro_6 = lib.out ("showMsg", ["el_cuadro_6",{l1: {id: "cuadro_6", txt: "Abuelo Rarito"}}, !bis_active])
 			let msg_cuadro_6_bis = lib.out ("showMsg", ["el_cuadro_6_bis",undefined, bis_active])
+			lib.GD_addLink (	{ id: msg_cuadro_6, changeTo: msg_cuadro_6_bis, userCode: {functionId: "setFrame", par: {pnj:"abuelo"} }, activatedBy: "cuadro1.familiaState.abuelo" } )
+
+			lib.GD_CreateMsg ("es","el_cuadro_7", "y %l1.<br/>");
+			lib.GD_CreateMsg ("es","el_cuadro_7_bis", "y una figura borrada a cuchilladas, que deja entrever a una señora mayor también con un murciélago sobre su hombro. Si existió una Abuela Rarita en la familia es algo que desconocías hasta ahora. ¿Por qué habrán querido destrozar su recuerdo de manera tan cruel?<br/>");
 			let msg_cuadro_7 = lib.out ("showMsg", ["el_cuadro_7",{l1: {id: "cuadro_7", txt: "una figura borrada a cuchilladas"}}, !bis_active])
 			let msg_cuadro_7_bis = lib.out ("showMsg", ["el_cuadro_7_bis",undefined, bis_active])
-
-			lib.GD_ResetLinks ()
-			lib.GD_addLink (	{ id: msg_cuadro_2, changeTo: msg_cuadro_2_bis, userCode: {functionId: "setFrame", par: {pnj:"padre"} }, activatedBy: "cuadro1.familiaState.padre" } )
-			lib.GD_addLink (	{ id: msg_cuadro_3, changeTo: msg_cuadro_3_bis, userCode: {functionId: "setFrame", par: {pnj:"madre"} }, activatedBy: "cuadro1.familiaState.madre" } )
-			lib.GD_addLink (	{ id: msg_cuadro_4, changeTo: msg_cuadro_4_bis, userCode: {functionId: "setFrame", par: {pnj:"chica"} }, activatedBy: "cuadro1.familiaState.chica"	} )
-			lib.GD_addLink (	{ id: msg_cuadro_5, changeTo: msg_cuadro_5_bis, userCode: {functionId: "setFrame", par: {pnj:"niño"} }, activatedBy: "cuadro1.familiaState.niño" 	} )
-			lib.GD_addLink (	{ id: msg_cuadro_6, changeTo: msg_cuadro_6_bis, userCode: {functionId: "setFrame", par: {pnj:"abuelo"} }, activatedBy: "cuadro1.familiaState.abuelo" } )
 			lib.GD_addLink (	{ id: msg_cuadro_7, changeTo: msg_cuadro_7_bis, userCode: {functionId: "setFrame", par: {pnj:"abuela"} }, activatedBy: "cuadro1.familiaState.abuela" } )
 
 		}
@@ -423,13 +431,17 @@ items.push ({
 
 		desc: function () {
 
+			// to-do: cambiar variables JS por variables de juego con visibleBy
 			let jaulaVisto = (lib.exec ("getValue",  {id:"jaula"}) != "0")
 
 			lib.GD_CreateMsg ("es","chimenea_1", "Entre carbón y madera quemada observas los restos de %l1.");
 			lib.GD_CreateMsg ("es","chimenea_1_bis", "Entre carbón y madera quemada observas los restos de una jaula chamuscada. ");
 
+			lib.GD_ResetLinks ()
+
 			let msg_chimenea_1 = lib.out ("showMsg", ["chimenea_1",{l1: {id: "chimenea_1", txt: "una jaula chamuscada"}}, !jaulaVisto])
 			let msg_chimenea_1_bis = lib.out ("showMsg", ["chimenea_1_bis",undefined, jaulaVisto])
+			lib.GD_addLink (	{ id: msg_chimenea_1, changeTo: msg_chimenea_1_bis, visibleToTrue: [msg_jaula_1], libCode: {functionId:'setValue', par: {id:"jaula", value:"1"}} } )
 
 			let huesosVisto = (lib.exec ("getValue",  {id:"huesos"}) != "0")
 
@@ -437,15 +449,12 @@ items.push ({
 			lib.GD_CreateMsg ("es","jaula_1_bis", "Dentro puedes ver unos pequeños huesitos, ")
 			let msg_jaula_1 = lib.out ("showMsg", ["jaula_1",{l1: {id: "jaula_1", txt: "pequeños huesitos."}}, jaulaVisto & !huesosVisto])
 			let msg_jaula_1_bis = lib.out ("showMsg", ["jaula_1_bis",undefined, jaulaVisto & huesosVisto])
+			lib.GD_addLink (	{ id: msg_jaula_1, changeTo: msg_jaula_1_bis, visibleToTrue: [msg_huesos_1] , libCode: {functionId:'setValue', par: {id:"huesos", value:"1"}} } )
 
 			lib.GD_CreateMsg ("es","huesos_1", "como de ratón o murciélago. Capaz que estos bárbaros lo han quemado, ya sea para comérselo o a saber para qué innominioso ritual. ¿Cómo vas a poder conseguir el trofeo? Puedes %l1, o bien seguir investigando. Si consigues un trofeo mejor, quizás tus amigos te lo acepten.<br/>");
 			lib.GD_CreateMsg ("es","huesos_1_bis", "como de ratón o murciélago. Capaz que estos bárbaros lo han quemado, ya sea para comérselo o a saber para qué innominioso ritual. ¿Cómo vas a poder conseguir el trofeo? Puedes sacarle una foto a la jaula y volverte a casa, o bien seguir investigando. Si consigues un trofeo mejor, quizás tus amigos te lo acepten.");
 			let msg_huesos_1 = lib.out ("showMsg", ["huesos_1",{l1: {id: "huesos_1", txt: "sacarle una foto a la jaula y volverte a casa"}}, jaulaVisto & huesosVisto])
 			let msg_huesos_1_bis = lib.out ("showMsg", ["huesos_1_bis",undefined, jaulaVisto & !huesosVisto])
-
-			lib.GD_ResetLinks ()
-			lib.GD_addLink (	{ id: msg_chimenea_1, changeTo: msg_chimenea_1_bis, visibleToTrue: [msg_jaula_1], libCode: {functionId:'setValue', par: {id:"jaula", value:"1"}} } )
-			lib.GD_addLink (	{ id: msg_jaula_1, changeTo: msg_jaula_1_bis, visibleToTrue: [msg_huesos_1] , libCode: {functionId:'setValue', par: {id:"huesos", value:"1"}} } )
 			lib.GD_addLink (	{ id: msg_huesos_1, changeTo: msg_huesos_1_bis, action: { choiceId: "action", actionId:"sacar_foto", o1Id: "móvil"} } )
 
 		}
