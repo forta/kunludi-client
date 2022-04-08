@@ -397,12 +397,15 @@ function execLink (param) {
 	      console.log(ir.type + ": " + JSON.stringify(ir) )
 	      // params: .functionId, .par
 	      let status = processCode (this, ir.type, ir.functionId, ir.par )
+				/*
+				 // not used by now
 	      if (typeof status == 'object') {
 	        if (status.enableChoices == true) {
 	          this.setEnableChoices(true)
 	        }
 
 	      }
+				*/
 
 	    }
 	  }

@@ -483,14 +483,19 @@ function CA_ShowMsg (txt, param, displayOptions) {
 
 	if (typeof displayOptions == "object") {
 		if (typeof displayOptions.visibleBy != "undefined") {
-      visible = true
-			let value = this.IT_GetAttPropValueUsingId (displayOptions.visibleBy)
+			let visibleWithoutPrefix = displayOptions.visibleBy, value
+			if (displayOptions.visibleBy[0] == "!") {
+				visibleWithoutPrefix = visibleWithoutPrefix.substring(1)
+			}
+			value = this.IT_GetAttPropValueUsingId (visibleWithoutPrefix)
+			if (displayOptions.visibleBy[0] != "!") {
+				visible = (value > 0) ? false: true // game variable must be grater than 0 to hide the message
+			} else {  // "!"
+				visible = (value > 0) ? true: false // game variable must be grater than 0 to show the message
+			}
+			
 			if (offlineMode) {
 				console.log ("visibleBy value: " + value)
-			}
-			// game variable must be grater than 0 to hide the message
-			if (value > 0) {
-				visible = false
 			}
 
 		} else {
@@ -551,19 +556,19 @@ function CA_ShowMenu ( menu, menuPiece) {
   this.reactionList.push ({type:this.caMapping("SHOW_MENU"), menu:menu, menuPiece:menuPiece});
 }
 
-function CA_ShowImg (url, isLocal, isLink, txt, param) {
+function CA_ShowImg (url, isLocal, isLink, txt, param, visible) {
 
 	var id = this.reactionList.length
 
 	this.reactionList.push ({
+		id: id,
 		type:this.caMapping("GRAPH"),
 		url:url,
 		isLocal: (typeof isLocal == "undefined")? false : isLocal,
 		isLink: (typeof isLink == "undefined")? false: isLink,
 		txt:(typeof txt == "undefined")? "": txt,
 		param: param,
-		visible: true,
-		id: id
+		visible:(typeof visible == "undefined")? true: visible
 	});
 
 	return id

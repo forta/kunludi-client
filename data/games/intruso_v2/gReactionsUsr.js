@@ -199,7 +199,7 @@ items.push ({
 
 		desc: function () {
 
-			lib.GD_ResetLinks ()
+			// lib.GD_ResetLinks ()
 
 			// debug: sólo por si en pruebas empezamos aquí.
 			lib.GD_CreateMsg ("es","tecla","avanza")
@@ -233,7 +233,6 @@ items.push ({
 			let msg_interruptores_1 = lib.out ("showMsg", ["interruptores_1",{l1:{id: "interruptores_1", txt: "algunos interruptores"}}])
 			let msg_interruptores_2 = lib.out ("showMsg", ["interruptores_2", undefined, {visibleBy: "interruptores"}])
 			lib.GD_addLink (	{ id: msg_interruptores_1, visibleToTrue: [msg_interruptores_2], activatedBy: "interruptores" } )
-
 		}
 
 	});
@@ -357,67 +356,44 @@ items.push ({
 
 		desc: function () {
 
-			let familiaActivation = [
-				(lib.exec ("getValue", {id: "cuadro1", att: "familiaState.padre"} )  == "0"),
-				(lib.exec ("getValue", {id: "cuadro1", att: "familiaState.madre"} )  == "0"),
-				(lib.exec ("getValue", {id: "cuadro1", att: "familiaState.hija"} )  == "0"),
-				(lib.exec ("getValue", {id: "cuadro1", att: "familiaState.hijo"} )  == "0"),
-				(lib.exec ("getValue", {id: "cuadro1", att: "familiaState.abuelo"} )  == "0") ]
-
-			// si no se han visto ya todos, no mostrar opciones habituales sino sólo los enlaces
-			let bis_active = !(familiaActivation[0] || familiaActivation[1] || familiaActivation[2] || familiaActivation[3] || familiaActivation[4])
-			if (!bis_active) {lib.out ("EnableChoices", [false])}
-
 			lib.GD_CreateMsg ("es","el_cuadro_1", "La familia Rarita al completo: ");
 			lib.out ("showMsg", ["el_cuadro_1"])
 			lib.GD_ResetLinks ()
 
-			/*
-			código viejo, pendiente de borrar si va bien la nueva verisón
 			lib.GD_CreateMsg ("es","el_cuadro_2", "el %l1, "); // enlace expandible
 			lib.GD_CreateMsg ("es","el_cuadro_2_bis", "el Papá Rarito, con un lobo a sus pies; "); // bis: mensaje expandido
-			let msg_cuadro_2 = lib.out ("showMsg", ["el_cuadro_2",{l1: {id: "cuadro_2", txt: "Papá Rarito"}}, !bis_active])
-			let msg_cuadro_2_bis = lib.out ("showMsg", ["el_cuadro_2_bis",undefined, bis_active])
-			lib.GD_addLink (	{ id: msg_cuadro_2, changeTo: msg_cuadro_2_bis, userCode: {functionId: "setFrame", par: {pnj:"padre"} }, activatedBy: "cuadro1.familiaState.padre" } )
-			*/
-
-			// to-do: se puede cambiar para que se traten por separado (no usar bis_active sino cada variable por separado)
-			// versión nueva! here!
-			lib.GD_CreateMsg ("es","el_cuadro_2", "el %l1, "); // enlace expandible
-			lib.GD_CreateMsg ("es","el_cuadro_2_bis", "el Papá Rarito, con un lobo a sus pies; "); // bis: mensaje expandido
-			let msg_cuadro_2 = lib.out ("showMsg", ["el_cuadro_2",{l1: {id: "cuadro_2", txt: "Papá Rarito"}}, {visibleBy: "cuadro1.familiaState.padre"}}])
-			// here! uso de "!"
+			let msg_cuadro_2 = lib.out ("showMsg", ["el_cuadro_2",{l1: {id: "cuadro_2", txt: "Papá Rarito"}}, {visibleBy: "cuadro1.familiaState.padre"}])
 			let msg_cuadro_2_bis = lib.out ("showMsg", ["el_cuadro_2_bis",undefined, {visibleBy: "!cuadro1.familiaState.padre"} ])
 			lib.GD_addLink (	{ id: msg_cuadro_2, changeTo: msg_cuadro_2_bis, userCode: {functionId: "setFrame", par: {pnj:"padre"} }, activatedBy: "cuadro1.familiaState.padre" } )
 
 			lib.GD_CreateMsg ("es","el_cuadro_3", "la %l1, ");
 			lib.GD_CreateMsg ("es","el_cuadro_3_bis", "la Mamá Rarita, con una serpiente inmensa como bufanda; ");
-			let msg_cuadro_3 = lib.out ("showMsg", ["el_cuadro_3",{l1: {id: "cuadro_3", txt: "Mamá Rarita"}}, !bis_active])
-			let msg_cuadro_3_bis = lib.out ("showMsg", ["el_cuadro_3_bis",undefined, bis_active])
+			let msg_cuadro_3 = lib.out ("showMsg", ["el_cuadro_3",{l1: {id: "cuadro_3", txt: "Mamá Rarita"}}, {visibleBy: "cuadro1.familiaState.madre"}])
+			let msg_cuadro_3_bis = lib.out ("showMsg", ["el_cuadro_3_bis",undefined, {visibleBy: "!cuadro1.familiaState.madre"} ])
 			lib.GD_addLink (	{ id: msg_cuadro_3, changeTo: msg_cuadro_3_bis, userCode: {functionId: "setFrame", par: {pnj:"madre"} }, activatedBy: "cuadro1.familiaState.madre" } )
 
 			lib.GD_CreateMsg ("es","el_cuadro_4", "la %l1, ");
 			lib.GD_CreateMsg ("es","el_cuadro_4_bis", "la Chica Rarita y su look gótico-punk, acariciando a un gato negro; ");
-			let msg_cuadro_4 = lib.out ("showMsg", ["el_cuadro_4",{l1: {id: "cuadro_4", txt: "Chica Rarita"}}, !bis_active])
-			let msg_cuadro_4_bis = lib.out ("showMsg", ["el_cuadro_4_bis",undefined, bis_active])
+			let msg_cuadro_4 = lib.out ("showMsg", ["el_cuadro_4",{l1: {id: "cuadro_4", txt: "Chica Rarita"}}, {visibleBy: "cuadro1.familiaState.chica"}] )
+			let msg_cuadro_4_bis = lib.out ("showMsg", ["el_cuadro_4_bis",undefined, {visibleBy: "!cuadro1.familiaState.chica"}])
 			lib.GD_addLink (	{ id: msg_cuadro_4, changeTo: msg_cuadro_4_bis, userCode: {functionId: "setFrame", par: {pnj:"chica"} }, activatedBy: "cuadro1.familiaState.chica"	} )
 
 			lib.GD_CreateMsg ("es","el_cuadro_5", "el %l1, y ");
 			lib.GD_CreateMsg ("es","el_cuadro_5_bis", "el Niño Rarito, jugando con un orondo ratón; ");
-			let msg_cuadro_5 = lib.out ("showMsg", ["el_cuadro_5",{l1: {id: "cuadro_5", txt: "Niño Rarito"}}, !bis_active])
-			let msg_cuadro_5_bis = lib.out ("showMsg", ["el_cuadro_5_bis",undefined, bis_active])
+			let msg_cuadro_5 = lib.out ("showMsg", ["el_cuadro_5",{l1: {id: "cuadro_5", txt: "Niño Rarito"}}, {visibleBy: "cuadro1.familiaState.niño"}])
+			let msg_cuadro_5_bis = lib.out ("showMsg", ["el_cuadro_5_bis",undefined, {visibleBy: "!cuadro1.familiaState.niño"} ])
 			lib.GD_addLink (	{ id: msg_cuadro_5, changeTo: msg_cuadro_5_bis, userCode: {functionId: "setFrame", par: {pnj:"niño"} }, activatedBy: "cuadro1.familiaState.niño" 	} )
 
 			lib.GD_CreateMsg ("es","el_cuadro_6", ", el %l1,");
 			lib.GD_CreateMsg ("es","el_cuadro_6_bis", "el Abuelo Rarito, con un murciélago en el hombro;");
-			let msg_cuadro_6 = lib.out ("showMsg", ["el_cuadro_6",{l1: {id: "cuadro_6", txt: "Abuelo Rarito"}}, !bis_active])
-			let msg_cuadro_6_bis = lib.out ("showMsg", ["el_cuadro_6_bis",undefined, bis_active])
+			let msg_cuadro_6 = lib.out ("showMsg", ["el_cuadro_6",{l1: {id: "cuadro_6", txt: "Abuelo Rarito"}}, {visibleBy: "cuadro1.familiaState.abuelo"}])
+			let msg_cuadro_6_bis = lib.out ("showMsg", ["el_cuadro_6_bis",undefined, {visibleBy: "!cuadro1.familiaState.abuelo"} ])
 			lib.GD_addLink (	{ id: msg_cuadro_6, changeTo: msg_cuadro_6_bis, userCode: {functionId: "setFrame", par: {pnj:"abuelo"} }, activatedBy: "cuadro1.familiaState.abuelo" } )
 
 			lib.GD_CreateMsg ("es","el_cuadro_7", "y %l1.<br/>");
 			lib.GD_CreateMsg ("es","el_cuadro_7_bis", "y una figura borrada a cuchilladas, que deja entrever a una señora mayor también con un murciélago sobre su hombro. Si existió una Abuela Rarita en la familia es algo que desconocías hasta ahora. ¿Por qué habrán querido destrozar su recuerdo de manera tan cruel?<br/>");
-			let msg_cuadro_7 = lib.out ("showMsg", ["el_cuadro_7",{l1: {id: "cuadro_7", txt: "una figura borrada a cuchilladas"}}, !bis_active])
-			let msg_cuadro_7_bis = lib.out ("showMsg", ["el_cuadro_7_bis",undefined, bis_active])
+			let msg_cuadro_7 = lib.out ("showMsg", ["el_cuadro_7",{l1: {id: "cuadro_7", txt: "una figura borrada a cuchilladas"}}, {visibleBy: "cuadro1.familiaState.abuela"}])
+			let msg_cuadro_7_bis = lib.out ("showMsg", ["el_cuadro_7_bis",undefined, {visibleBy: "!cuadro1.familiaState.abuela"} ])
 			lib.GD_addLink (	{ id: msg_cuadro_7, changeTo: msg_cuadro_7_bis, userCode: {functionId: "setFrame", par: {pnj:"abuela"} }, activatedBy: "cuadro1.familiaState.abuela" } )
 
 		}
@@ -975,27 +951,30 @@ function initAttributes (lib, usr) {
 function initUserFunctions (lib, usr) {
 
 	userFunctions.push ({
-		id: 'setFrame',
+		id: 'setFrame', // se podría llamar afterClick; to-do: pendiente un mecanismo para refrescar comportamientos después de cambio automático de variable afectado por activatedBy
 		code: function (par) { // par.pnj
 				let status = {}
 
-				lib.out ("EnableChoices", [true])
+				//lib.out ("EnableChoices", [true])
 			  console.log ("usr.setFrame: " + JSON.stringify (par))
 
 				let familiaActivation = [
 					(lib.exec ("getValue", ["cuadro1", "familiaState.padre"]) == "0"),
 					(lib.exec ("getValue", ["cuadro1", "familiaState.madre"]) == "0"),
-					(lib.exec ("getValue", ["cuadro1", "familiaState.hija"]) == "0"),
-					(lib.exec ("getValue", ["cuadro1", "familiaState.hijo"]) == "0"),
-					(lib.exec ("getValue", ["cuadro1", "familiaState.abuelo"]) == "0") ]
+					(lib.exec ("getValue", ["cuadro1", "familiaState.chica"]) == "0"),
+					(lib.exec ("getValue", ["cuadro1", "familiaState.niño"]) == "0"),
+					(lib.exec ("getValue", ["cuadro1", "familiaState.abuelo"]) == "0"),
+					(lib.exec ("getValue", ["cuadro1", "familiaState.abuela"]) == "0") ]
 
-					let bis_active = !(familiaActivation[0] || familiaActivation[1] || familiaActivation[2] || familiaActivation[3] || familiaActivation[4])
+				let bis_active = !(familiaActivation[0] || familiaActivation[1] || familiaActivation[2] || familiaActivation[3] || familiaActivation[4] || familiaActivation[5])
 
-					// si se han visto ya todos, mostrar opciones habituales
-					if (bis_active) {
-						//lib.out ("EnableChoices", [false])
-						status.enableChoices = true
-				}
+				/*
+				// si se han visto ya todos, mostrar opciones habituales
+				if (bis_active) {
+					//lib.out ("EnableChoices", [false])
+			    status.enableChoices = true
+			  }
+				*/
 
 				return status
 			}
